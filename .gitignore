@@ -1,0 +1,21 @@
+# Dependency directories
+Supplyspot_Backend/node_modules/
+Supplyspot_frontend/node_modules/
+
+# Local env files
+Supplyspot_Backend/.env
+Supplyspot_frontend/.env
+
+# Build outputs
+Supplyspot_frontend/dist/
+Supplyspot_frontend/build/
+
+# SQLite files
+Supplyspot_Backend/*.sqlite3
+
+# Log files
+Supplyspot_Backend/logs/*.log
+
+# OS files
+.DS_Store
+Thumbs.db

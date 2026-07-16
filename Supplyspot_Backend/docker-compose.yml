@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: supplier-spot-db
+    environment:
+      POSTGRES_DB: supplier_spot
+      POSTGRES_USER: supplier_spot_user
+      POSTGRES_PASSWORD: password123
+      POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/setup-database.sql:/docker-entrypoint-initdb.d/01-setup.sql
+    networks:
+      - supplier-spot-network
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: supplier-spot-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - supplier-spot-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  supplier-spot-network:
+    driver: bridge
