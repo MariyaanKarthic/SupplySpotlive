@@ -26,6 +26,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Login from './components/Login';
+import { Analytics as VercelAnalytics } from "@vercel/analytics/react";
 
 export type NavigationItem =
   | "registration"
@@ -144,6 +145,7 @@ export default function App() {
           <Route path="*" element={<Navigate to="/dashboard" />} />
         </Routes>
       </BrowserRouter>
+      <VercelAnalytics />
     </AuthProvider>
   );
 }
