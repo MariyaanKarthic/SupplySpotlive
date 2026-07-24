@@ -53,7 +53,7 @@ import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrate
 import { DraggableTableRow, DraggableTableHeader } from './ui/draggable-table-row';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from './ui/sheet';
 import { Label } from './ui/label';
 import { Textarea } from './ui/textarea';
 import { Progress } from './ui/progress';
@@ -375,21 +375,6 @@ export function RegulatoryCompliance() {
   const [complianceViewMode, setComplianceViewMode] = useState<'card' | 'list' | 'table'>('table');
   const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
 
-  // Dnd-kit sensors for drag detection
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  );
-
-  const handleDragEnd = (event: any) => {
-    const { active, over } = event;
-    if (active.id !== over?.id) {
-      // Handle reorder if needed
-    }
-  };
-
   const handleSelectRow = (id: string) => {
     setSelectedRows((prev) => {
       const newSet = new Set(prev);
@@ -409,6 +394,23 @@ export function RegulatoryCompliance() {
       setSelectedRows(new Set());
     }
   };
+
+  // Dnd-kit sensors for drag detection
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const handleDragEnd = (event: any) => {
+    const { active, over } = event;
+    if (active.id !== over?.id) {
+      // Handle reorder if needed
+    }
+  };
+
+
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
@@ -491,21 +493,21 @@ export function RegulatoryCompliance() {
             <Download className="w-4 h-4" />
             Export Report
           </Button>
-          <Dialog open={showCreateAlert} onOpenChange={setShowCreateAlert}>
-            <DialogTrigger asChild>
+          <Sheet open={showCreateAlert} onOpenChange={setShowCreateAlert}>
+            <SheetTrigger asChild>
               <Button className="gap-2">
                 <Plus className="w-4 h-4" />
                 Add Alert
               </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-2xl">
-              <DialogHeader>
-                <DialogTitle>Create Regulatory Alert</DialogTitle>
-                <DialogDescription>
+            </SheetTrigger>
+            <SheetContent className="sm:max-w-2xl overflow-y-auto">
+              <SheetHeader>
+                <SheetTitle>Create Regulatory Alert</SheetTitle>
+                <SheetDescription>
                   Add a new regulatory or sustainability alert for monitoring
-                </DialogDescription>
-              </DialogHeader>
-              <div className="space-y-4">
+                </SheetDescription>
+              </SheetHeader>
+              <div className="space-y-4 mt-4">
                 <div>
                   <Label>Alert Title</Label>
                   <Input placeholder="Enter alert title" />
@@ -558,8 +560,8 @@ export function RegulatoryCompliance() {
                   </Button>
                 </div>
               </div>
-            </DialogContent>
-          </Dialog>
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
 
@@ -777,8 +779,8 @@ export function RegulatoryCompliance() {
                       </div>
                       
                       <div className="flex flex-col gap-2 ml-4">
-                        <Dialog>
-                          <DialogTrigger asChild>
+                        <Sheet>
+                          <SheetTrigger asChild>
                             <Button 
                               variant="outline" 
                               size="sm"
@@ -787,16 +789,16 @@ export function RegulatoryCompliance() {
                               <Eye className="w-4 h-4 mr-1" />
                               View Details
                             </Button>
-                          </DialogTrigger>
-                          <DialogContent className="max-w-4xl">
-                            <DialogHeader>
-                              <DialogTitle>{selectedAlert?.title}</DialogTitle>
-                              <DialogDescription>
+                          </SheetTrigger>
+                          <SheetContent className="sm:max-w-4xl overflow-y-auto">
+                            <SheetHeader>
+                              <SheetTitle>{selectedAlert?.title}</SheetTitle>
+                              <SheetDescription>
                                 Regulatory Alert Details - {selectedAlert?.id}
-                              </DialogDescription>
-                            </DialogHeader>
+                              </SheetDescription>
+                            </SheetHeader>
                             {selectedAlert && (
-                              <div className="space-y-6">
+                              <div className="space-y-6 mt-4">
                                 <div className="grid grid-cols-2 gap-4">
                                   <div>
                                     <Label>Type & Severity</Label>
@@ -864,8 +866,8 @@ export function RegulatoryCompliance() {
                                 )}
                               </div>
                             )}
-                          </DialogContent>
-                        </Dialog>
+                          </SheetContent>
+                        </Sheet>
                         
                         <Button variant="outline" size="sm">
                           <Edit className="w-4 h-4 mr-1" />
@@ -1029,8 +1031,8 @@ export function RegulatoryCompliance() {
                           <Badge variant="outline" className="text-green-600 bg-green-50">
                             {framework.status}
                           </Badge>
-                          <Dialog>
-                            <DialogTrigger asChild>
+                          <Sheet>
+                            <SheetTrigger asChild>
                               <Button 
                                 variant="outline" 
                                 size="sm"
@@ -1038,16 +1040,16 @@ export function RegulatoryCompliance() {
                               >
                                 View Details
                               </Button>
-                            </DialogTrigger>
-                            <DialogContent className="max-w-4xl">
-                              <DialogHeader>
-                                <DialogTitle>{framework.name}</DialogTitle>
-                                <DialogDescription>
+                            </SheetTrigger>
+                            <SheetContent className="sm:max-w-4xl overflow-y-auto">
+                              <SheetHeader>
+                                <SheetTitle>{framework.name}</SheetTitle>
+                                <SheetDescription>
                                   Compliance Framework Details and Requirements
-                                </DialogDescription>
-                              </DialogHeader>
+                                </SheetDescription>
+                              </SheetHeader>
                               {selectedFramework && (
-                                <div className="space-y-6">
+                                <div className="space-y-6 mt-4">
                                   <div className="grid grid-cols-3 gap-4">
                                     <div>
                                       <Label>Category</Label>
@@ -1106,8 +1108,8 @@ export function RegulatoryCompliance() {
                                   </div>
                                 </div>
                               )}
-                            </DialogContent>
-                          </Dialog>
+                            </SheetContent>
+                          </Sheet>
                         </div>
                       </div>
                       

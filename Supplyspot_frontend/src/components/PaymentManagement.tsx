@@ -3,9 +3,10 @@ import { Card } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Badge } from './ui/badge';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from './ui/sheet';
 import { Label } from './ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+import { DatePicker } from './ui/date-picker';
 import { 
   Search, 
   Plus, 
@@ -167,21 +168,21 @@ export function PaymentManagement() {
         <div>
           <h1 className="text-3xl font-semibold">Payment Management</h1>
         </div>
-        <Dialog open={isAddPaymentOpen} onOpenChange={setIsAddPaymentOpen}>
-          <DialogTrigger asChild>
+        <Sheet open={isAddPaymentOpen} onOpenChange={setIsAddPaymentOpen}>
+          <SheetTrigger asChild>
             <Button className="gap-2">
               <Plus className="w-4 h-4" />
               Process Payment
             </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-2xl">
-            <DialogHeader>
-              <DialogTitle>Process New Payment</DialogTitle>
-              <DialogDescription>
+          </SheetTrigger>
+          <SheetContent className="sm:max-w-xl overflow-y-auto">
+            <SheetHeader>
+              <SheetTitle>Process New Payment</SheetTitle>
+              <SheetDescription>
                 Process a new payment by entering the payment details below.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="grid grid-cols-2 gap-4">
+              </SheetDescription>
+            </SheetHeader>
+            <div className="grid grid-cols-2 gap-4 mt-4">
               <div className="space-y-2">
                 <Label htmlFor="payment-vendor">Vendor</Label>
                 <Select>
@@ -196,21 +197,12 @@ export function PaymentManagement() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="payment-invoice">Invoice Number</Label>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select invoice" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="inv001">INV-2023-001</SelectItem>
-                    <SelectItem value="inv002">INV-2023-002</SelectItem>
-                    <SelectItem value="inv003">INV-2023-003</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
                 <Label htmlFor="payment-amount">Amount</Label>
                 <Input id="payment-amount" type="number" placeholder="0.00" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="payment-date">Payment Date</Label>
+                <DatePicker id="payment-date" placeholder="Select payment date" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="payment-method">Payment Method</Label>
@@ -219,20 +211,16 @@ export function PaymentManagement() {
                     <SelectValue placeholder="Select method" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="bank">Bank Transfer</SelectItem>
+                    <SelectItem value="wire">Bank Wire Transfer</SelectItem>
                     <SelectItem value="ach">ACH Transfer</SelectItem>
-                    <SelectItem value="credit">Credit Card</SelectItem>
+                    <SelectItem value="card">Corporate Card</SelectItem>
                     <SelectItem value="check">Check</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="payment-date">Payment Date</Label>
-                <Input id="payment-date" type="date" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="payment-reference">Reference Number</Label>
-                <Input id="payment-reference" placeholder="Transaction reference" />
+              <div className="space-y-2 col-span-2">
+                <Label htmlFor="payment-invoice">Associated Invoice</Label>
+                <Input id="payment-invoice" placeholder="INV-2023-XXX" />
               </div>
               <div className="space-y-2 col-span-2">
                 <Label htmlFor="payment-notes">Notes</Label>
@@ -247,8 +235,8 @@ export function PaymentManagement() {
                 Process Payment
               </Button>
             </div>
-          </DialogContent>
-        </Dialog>
+          </SheetContent>
+        </Sheet>
       </div>
 
       {/* Quick Stats */}
@@ -408,25 +396,25 @@ export function PaymentManagement() {
         </div>
       </Card>
 
-      {/* Payment Detail Modal */}
-      <Dialog open={isViewPaymentOpen} onOpenChange={setIsViewPaymentOpen}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>Payment Details</DialogTitle>
-            <DialogDescription>
+      {/* Payment Detail Sheet */}
+      <Sheet open={isViewPaymentOpen} onOpenChange={setIsViewPaymentOpen}>
+        <SheetContent className="sm:max-w-xl overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle>Payment Details</SheetTitle>
+            <SheetDescription>
               View detailed information about this payment.
-            </DialogDescription>
-          </DialogHeader>
+            </SheetDescription>
+          </SheetHeader>
           {selectedPayment && (
-            <div className="space-y-4">
+            <div className="space-y-4 mt-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label>Payment ID</Label>
-                  <p className="text-sm mt-1">{selectedPayment.paymentId}</p>
+                  <p className="text-sm font-semibold mt-1">{selectedPayment.paymentId}</p>
                 </div>
                 <div>
                   <Label>Vendor</Label>
-                  <p className="text-sm mt-1">{selectedPayment.vendor}</p>
+                  <p className="text-sm font-medium mt-1">{selectedPayment.vendor}</p>
                 </div>
                 <div>
                   <Label>Invoice Number</Label>
@@ -516,8 +504,8 @@ export function PaymentManagement() {
               </div>
             </div>
           )}
-        </DialogContent>
-      </Dialog>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }

@@ -3,7 +3,7 @@ import { Card, CardHeader, CardTitle, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Badge } from './ui/badge';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from './ui/dialog';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from './ui/sheet';
 import { Label } from './ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
@@ -1293,8 +1293,8 @@ export function PurchaseOrderManagement() {
         </TabsContent>
       </Tabs>
 
-      <Dialog open={isPOModalOpen} onOpenChange={setIsPOModalOpen}>
-        <DialogContent className="max-w-4xl w-[95vw] sm:w-full overflow-hidden flex flex-col p-0 gap-0 border-none shadow-2xl">
+      <Sheet open={isPOModalOpen} onOpenChange={setIsPOModalOpen}>
+        <SheetContent className="sm:max-w-4xl overflow-y-auto p-0 border-none shadow-2xl">
           {selectedPO && (
             <>
               <div className="bg-slate-900 p-6 text-white shrink-0">
@@ -1496,19 +1496,19 @@ export function PurchaseOrderManagement() {
               </div>
             </>
           )}
-        </DialogContent>
-      </Dialog>
+        </SheetContent>
+      </Sheet>
 
-      {/* Change Request Modal */}
-      <Dialog open={isChangeRequestModalOpen} onOpenChange={setIsChangeRequestModalOpen}>
-        <DialogContent className="max-w-xl w-[80vw]">
-          <DialogHeader>
-            <DialogTitle>Request Change</DialogTitle>
-            <DialogDescription>
+      {/* Change Request Sheet */}
+      <Sheet open={isChangeRequestModalOpen} onOpenChange={setIsChangeRequestModalOpen}>
+        <SheetContent className="sm:max-w-xl overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle>Request Change</SheetTitle>
+            <SheetDescription>
               Submit a change request for this purchase order
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
+            </SheetDescription>
+          </SheetHeader>
+          <div className="space-y-4 mt-4">
             <div className="space-y-2">
               <Label>Change Type</Label>
               <Select>
@@ -1558,19 +1558,19 @@ export function PurchaseOrderManagement() {
               </Button>
             </div>
           </div>
-        </DialogContent>
-      </Dialog>
+        </SheetContent>
+      </Sheet>
 
-      {/* Communication Modal */}
-      <Dialog open={isCommunicationModalOpen} onOpenChange={setIsCommunicationModalOpen}>
-        <DialogContent className="max-w-xl w-[80vw]">
-          <DialogHeader>
-            <DialogTitle>Send Message</DialogTitle>
-            <DialogDescription>
+      {/* Communication Sheet */}
+      <Sheet open={isCommunicationModalOpen} onOpenChange={setIsCommunicationModalOpen}>
+        <SheetContent className="sm:max-w-xl overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle>Send Message</SheetTitle>
+            <SheetDescription>
               Communicate with the buyer about this purchase order
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
+            </SheetDescription>
+          </SheetHeader>
+          <div className="space-y-4 mt-4">
             <div className="space-y-2">
               <Label>Subject</Label>
               <Input placeholder="Message subject" />
@@ -1608,8 +1608,8 @@ export function PurchaseOrderManagement() {
               </Button>
             </div>
           </div>
-        </DialogContent>
-      </Dialog>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }

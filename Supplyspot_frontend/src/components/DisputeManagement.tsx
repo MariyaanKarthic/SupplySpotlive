@@ -60,9 +60,10 @@ import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrate
 import { DraggableTableRow, DraggableTableHeader } from './ui/draggable-table-row';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from './ui/sheet';
 import { Label } from './ui/label';
 import { Textarea } from './ui/textarea';
+import { DatePicker } from './ui/date-picker';
 import { Progress } from './ui/progress';
 import { Switch } from './ui/switch';
 import { Separator } from './ui/separator';
@@ -955,21 +956,6 @@ export function DisputeManagement() {
   const [disputeViewMode, setDisputeViewMode] = useState<'card' | 'list' | 'table'>('table');
   const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
 
-  // Dnd-kit sensors for drag detection
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  );
-
-  const handleDragEnd = (event: any) => {
-    const { active, over } = event;
-    if (active.id !== over?.id) {
-      // Handle reorder if needed
-    }
-  };
-
   const handleSelectRow = (id: string) => {
     setSelectedRows((prev) => {
       const newSet = new Set(prev);
@@ -989,6 +975,23 @@ export function DisputeManagement() {
       setSelectedRows(new Set());
     }
   };
+
+  // Dnd-kit sensors for drag detection
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const handleDragEnd = (event: any) => {
+    const { active, over } = event;
+    if (active.id !== over?.id) {
+      // Handle reorder if needed
+    }
+  };
+
+
 
   // Reply handling functions
   const handleSendQuickReply = (disputeId: string) => {
@@ -1102,20 +1105,20 @@ export function DisputeManagement() {
             <Download className="w-4 h-4" />
             Export Report
           </Button>
-          <Dialog open={showCreateDispute} onOpenChange={setShowCreateDispute}>
-            <DialogTrigger asChild>
+          <Sheet open={showCreateDispute} onOpenChange={setShowCreateDispute}>
+            <SheetTrigger asChild>
               <Button className="gap-2">
                 <Plus className="w-4 h-4" />
                 Submit Query
               </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle>Submit New Query/Dispute</DialogTitle>
-                <DialogDescription>
+            </SheetTrigger>
+            <SheetContent className="sm:max-w-4xl overflow-y-auto">
+              <SheetHeader>
+                <SheetTitle>Submit New Query/Dispute</SheetTitle>
+                <SheetDescription>
                   Create a new dispute or query with automatic routing and SLA tracking
-                </DialogDescription>
-              </DialogHeader>
+                </SheetDescription>
+              </SheetHeader>
               <div className="space-y-6">
                 <div>
                   <Label>Title</Label>
@@ -1285,11 +1288,11 @@ export function DisputeManagement() {
                       <div className="grid grid-cols-2 gap-4">
                         <div>
                           <Label>Invoice Date</Label>
-                          <Input type="date" />
+                          <DatePicker placeholder="Select invoice date" />
                         </div>
                         <div>
                           <Label>Due Date</Label>
-                          <Input type="date" />
+                          <DatePicker placeholder="Select due date" />
                         </div>
                       </div>
 
@@ -1413,8 +1416,8 @@ export function DisputeManagement() {
                   </Button>
                 </div>
               </div>
-            </DialogContent>
-          </Dialog>
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
 
@@ -1798,8 +1801,8 @@ export function DisputeManagement() {
                       </div>
                       
                       <div className="flex flex-col gap-2 ml-4">
-                        <Dialog>
-                          <DialogTrigger asChild>
+                        <Sheet>
+                          <SheetTrigger asChild>
                             <Button 
                               variant="outline" 
                               size="sm"
@@ -1808,16 +1811,16 @@ export function DisputeManagement() {
                               <Eye className="w-4 h-4 mr-1" />
                               View Details
                             </Button>
-                          </DialogTrigger>
-                          <DialogContent className="max-w-6xl">
-                            <DialogHeader>
-                              <DialogTitle>{selectedDispute?.title}</DialogTitle>
-                              <DialogDescription>
+                          </SheetTrigger>
+                          <SheetContent className="sm:max-w-4xl overflow-y-auto">
+                            <SheetHeader>
+                              <SheetTitle>{selectedDispute?.title}</SheetTitle>
+                              <SheetDescription>
                                 Dispute #{selectedDispute?.id} - {selectedDispute?.submittedBy.company}
-                              </DialogDescription>
-                            </DialogHeader>
+                              </SheetDescription>
+                            </SheetHeader>
                             {selectedDispute && (
-                              <div className="space-y-6">
+                              <div className="space-y-6 mt-4">
                                 <div className="grid grid-cols-3 gap-4">
                                   <div>
                                     <Label>Status</Label>
@@ -1986,8 +1989,8 @@ export function DisputeManagement() {
                                 </div>
                               </div>
                             )}
-                          </DialogContent>
-                        </Dialog>
+                          </SheetContent>
+                        </Sheet>
                         
                         <Button 
                           variant="outline" 

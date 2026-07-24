@@ -3,13 +3,14 @@ import { Card, CardHeader, CardTitle, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Badge } from './ui/badge';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from './ui/dialog';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetFooter } from './ui/sheet';
 import { Label } from './ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Textarea } from './ui/textarea';
 import { Progress } from './ui/progress';
 import { Alert, AlertDescription } from './ui/alert';
+import { DatePicker } from './ui/date-picker';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
 // Standardized Draggable components are used from ui/draggable-table-row
 import { 
@@ -523,6 +524,26 @@ export function GoodsReceipts() {
   const [showMetrics, setShowMetrics] = useState(true);
   const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set());
 
+  const handleSelectRow = (id: number) => {
+    setSelectedRows((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(id)) {
+        newSet.delete(id);
+      } else {
+        newSet.add(id);
+      }
+      return newSet;
+    });
+  };
+
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedRows(new Set(filteredGRs.map((gr) => gr.id)));
+    } else {
+      setSelectedRows(new Set());
+    }
+  };
+
   // Dnd-kit sensors for drag detection
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -635,26 +656,6 @@ export function GoodsReceipts() {
         const newIndex = items.findIndex((i) => i.id === over.id);
         return arrayMove(items, oldIndex, newIndex);
       });
-    }
-  };
-
-  const handleSelectRow = (id: number) => {
-    setSelectedRows((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(id)) {
-        newSet.delete(id);
-      } else {
-        newSet.add(id);
-      }
-      return newSet;
-    });
-  };
-
-  const handleSelectAll = (checked: boolean) => {
-    if (checked) {
-      setSelectedRows(new Set(filteredGRs.map((gr) => gr.id)));
-    } else {
-      setSelectedRows(new Set());
     }
   };
 
@@ -1418,15 +1419,15 @@ export function GoodsReceipts() {
         )}
       </Card>
 
-      {/* Create GR Dialog */}
-      <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>Create Goods Receipt</DialogTitle>
-            <DialogDescription>
+      {/* Create GR Sheet */}
+      <Sheet open={showCreateDialog} onOpenChange={setShowCreateDialog}>
+        <SheetContent className="sm:max-w-2xl overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle>Create Goods Receipt</SheetTitle>
+            <SheetDescription>
               Record received goods against a purchase order
-            </DialogDescription>
-          </DialogHeader>
+            </SheetDescription>
+          </SheetHeader>
 
           <div className="space-y-4 py-4">
             <div className="grid grid-cols-2 gap-4">
@@ -1448,11 +1449,11 @@ export function GoodsReceipts() {
 
               <div className="space-y-2">
                 <Label htmlFor="receiptDate">Receipt Date *</Label>
-                <Input
+                <DatePicker
                   id="receiptDate"
-                  type="date"
                   value={newGR.receiptDate}
                   onChange={(e) => setNewGR({...newGR, receiptDate: e.target.value})}
+                  placeholder="Select receipt date"
                 />
               </div>
             </div>
@@ -1519,7 +1520,7 @@ export function GoodsReceipts() {
             </Alert>
           </div>
 
-          <DialogFooter>
+          <SheetFooter>
             <Button variant="outline" onClick={() => setShowCreateDialog(false)}>
               Cancel
             </Button>
@@ -1530,13 +1531,13 @@ export function GoodsReceipts() {
               <Save className="w-4 h-4 mr-2" />
               Create Goods Receipt
             </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          </SheetFooter>
+        </SheetContent>
+      </Sheet>
 
-      {/* View/Edit GR Dialog */}
-      <Dialog open={showViewDialog} onOpenChange={setShowViewDialog}>
-        <DialogContent className="max-w-[95vw] lg:max-w-7xl h-[92vh] p-0 overflow-hidden border-none shadow-2xl">
+      {/* View/Edit GR Sheet */}
+      <Sheet open={showViewDialog} onOpenChange={setShowViewDialog}>
+        <SheetContent className="sm:max-w-[95vw] lg:sm:max-w-7xl h-[92vh] p-0 overflow-y-auto border-none shadow-2xl">
           {selectedGR && (
             <div className="flex h-full flex-col lg:flex-row bg-white">
               {/* Main Content Area - Left Side */}
@@ -1843,8 +1844,8 @@ export function GoodsReceipts() {
               </div>
             </div>
           )}
-        </DialogContent>
-      </Dialog>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }

@@ -27,6 +27,8 @@ import { AuthProvider } from './contexts/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Login from './components/Login';
 import { Analytics as VercelAnalytics } from "@vercel/analytics/react";
+import { SidebarProvider } from "./components/ui/sidebar";
+import { PageSkeleton } from "./components/PageSkeleton";
 
 export type NavigationItem =
   | "registration"
@@ -51,6 +53,40 @@ export type NavigationItem =
   | "supplier-dashboard"
   | "databoards"
   | "settings";
+
+import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "./components/ui/breadcrumb";
+
+const sectionTitles: Record<NavigationItem, string> = {
+  registration: "Vendor Registration",
+  "registration-review": "Registration Review",
+  vendors: "Vendor Management",
+  contracts: "Contract Management",
+  "sourcing-rfx": "Sourcing & RFx",
+  rfq: "RFQ Management",
+  "purchase-orders": "Purchase Orders",
+  "goods-receipts": "Goods Receipts",
+  "procurement-collaboration": "Procurement Collaboration",
+  invoices: "Invoice Management",
+  "ap-automation": "AP Automation",
+  payments: "Payment Management",
+  documents: "Document Management",
+  analytics: "Analytics",
+  "audit-trail": "Audit Trail",
+  "regulatory-compliance": "Regulatory Compliance",
+  "delivery-slots": "Delivery Slots",
+  "dispute-management": "Dispute Management",
+  "gate-entry": "Gate Entry Integration",
+  "supplier-dashboard": "Supplier Dashboard",
+  databoards: "Databoards",
+  settings: "Settings",
+};
 
 function Dashboard() {
   const [activeSection, setActiveSection] =
@@ -114,17 +150,39 @@ function Dashboard() {
   };
 
   return (
-    <div className="flex h-screen bg-background">
-      <Sidebar
-        activeSection={activeSection}
-        onSectionChange={setActiveSection}
-      />
-      <main className="flex-1 overflow-hidden">
-        <div className="h-full overflow-y-auto">
-          {renderContent()}
-        </div>
-      </main>
-    </div>
+    <SidebarProvider defaultOpen={true}>
+      <div className="flex h-screen w-full bg-background overflow-hidden">
+        <Sidebar
+          activeSection={activeSection}
+          onSectionChange={setActiveSection}
+        />
+        <main className="flex-1 overflow-hidden flex flex-col min-w-0">
+          <div className="border-b px-6 py-3 bg-background/95 backdrop-blur shrink-0">
+            <Breadcrumb>
+              <BreadcrumbList>
+                <BreadcrumbItem>
+                  <BreadcrumbLink 
+                    onClick={() => setActiveSection("vendors")} 
+                    className="cursor-pointer"
+                  >
+                    Dashboard
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  <BreadcrumbPage>{sectionTitles[activeSection] || "Overview"}</BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
+          </div>
+          <div className="flex-1 overflow-y-auto">
+            <React.Suspense fallback={<PageSkeleton />}>
+              {renderContent()}
+            </React.Suspense>
+          </div>
+        </main>
+      </div>
+    </SidebarProvider>
   );
 }
 

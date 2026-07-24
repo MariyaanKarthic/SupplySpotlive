@@ -6,7 +6,7 @@ import { Label } from './ui/label';
 import { Badge } from './ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from './ui/dialog';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from './ui/sheet';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Checkbox } from './ui/checkbox';
 import { Calendar } from './ui/calendar';
@@ -833,6 +833,11 @@ export const Databoards: React.FC = () => {
     return <ArrowUpDown className="w-4 h-4" />;
   };
 
+  // Reset selected rows when switching tabs, pages, search, or filters
+  React.useEffect(() => {
+    setSelectedRows(new Set());
+  }, [activeTab, currentPage, searchTerm, filters]);
+
   const handleSelectRow = (id: string) => {
     const newSelected = new Set(selectedRows);
     if (newSelected.has(id)) {
@@ -843,8 +848,8 @@ export const Databoards: React.FC = () => {
     setSelectedRows(newSelected);
   };
 
-  const handleSelectAll = () => {
-    if (selectedRows.size === paginatedData.length) {
+  const handleSelectAll = (checked?: boolean) => {
+    if (checked === false || (checked !== true && selectedRows.size === paginatedData.length)) {
       setSelectedRows(new Set());
     } else {
       setSelectedRows(new Set(paginatedData.map((item: any) => item.id)));
@@ -1511,15 +1516,15 @@ export const Databoards: React.FC = () => {
             {selectedRows.size > 0 && (
               <div className="flex items-center gap-2 p-4 bg-muted rounded-lg">
                 <span className="text-sm font-medium">{selectedRows.size} items selected</span>
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" onClick={() => setShowExportDialog(true)}>
                   <Download className="w-4 h-4 mr-2" />
                   Export Selected
                 </Button>
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" onClick={() => setSelectedRows(new Set())}>
                   <Archive className="w-4 h-4 mr-2" />
                   Archive
                 </Button>
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" onClick={() => setSelectedRows(new Set())}>
                   <Trash2 className="w-4 h-4 mr-2" />
                   Delete
                 </Button>
@@ -1603,16 +1608,16 @@ export const Databoards: React.FC = () => {
         </CardContent>
       </Card>
 
-      {/* Export Dialog */}
-      <Dialog open={showExportDialog} onOpenChange={setShowExportDialog}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>Export Data</DialogTitle>
-            <DialogDescription>
+      {/* Export Sheet */}
+      <Sheet open={showExportDialog} onOpenChange={setShowExportDialog}>
+        <SheetContent className="sm:max-w-md overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle>Export Data</SheetTitle>
+            <SheetDescription>
               Choose the format and data to export
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
+            </SheetDescription>
+          </SheetHeader>
+          <div className="space-y-4 mt-4">
             <div>
               <Label>Data Type</Label>
               <Select defaultValue={activeTab}>
@@ -1652,7 +1657,7 @@ export const Databoards: React.FC = () => {
               <Label htmlFor="include-filtered">Only export filtered data</Label>
             </div>
 
-            <div className="flex justify-end gap-2">
+            <div className="flex justify-end gap-2 pt-4">
               <Button variant="outline" onClick={() => setShowExportDialog(false)}>
                 Cancel
               </Button>
@@ -1662,8 +1667,8 @@ export const Databoards: React.FC = () => {
               </Button>
             </div>
           </div>
-        </DialogContent>
-      </Dialog>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 };

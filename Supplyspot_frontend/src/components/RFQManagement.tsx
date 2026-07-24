@@ -3,13 +3,14 @@ import { Card } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Badge } from './ui/badge';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from './ui/dialog';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from './ui/sheet';
 import { Label } from './ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Textarea } from './ui/textarea';
 import { Progress } from './ui/progress';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
+import { DatePicker } from './ui/date-picker';
 import {
   Search,
   Plus,
@@ -2279,17 +2280,17 @@ export function RFQManagement() {
         </TabsContent>
       </Tabs>
 
-      {/* RFQ Details Modal */}
-      <Dialog open={isRFQModalOpen} onOpenChange={setIsRFQModalOpen}>
-        <DialogContent className="max-w-4xl w-[95vw] sm:w-full">
-          <DialogHeader>
-            <DialogTitle>RFQ Details</DialogTitle>
-            <DialogDescription>
+      {/* RFQ Details Sheet */}
+      <Sheet open={isRFQModalOpen} onOpenChange={setIsRFQModalOpen}>
+        <SheetContent className="sm:max-w-4xl overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle>RFQ Details</SheetTitle>
+            <SheetDescription>
               Review RFQ requirements and submit your quotation
-            </DialogDescription>
-          </DialogHeader>
+            </SheetDescription>
+          </SheetHeader>
           {selectedRFQ && (
-            <div className="space-y-6">
+            <div className="space-y-6 mt-4">
               {/* RFQ Header */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -2297,56 +2298,57 @@ export function RFQManagement() {
                   <p className="text-sm mt-1">{selectedRFQ.rfqNumber}</p>
                 </div>
                 <div>
-                  <Label>Buyer</Label>
-                  <p className="text-sm mt-1">{selectedRFQ.buyer}</p>
-                </div>
-                <div>
-                  <Label>Title</Label>
-                  <p className="text-sm mt-1">{selectedRFQ.title}</p>
-                </div>
-                <div>
                   <Label>Category</Label>
                   <p className="text-sm mt-1">{selectedRFQ.category}</p>
                 </div>
                 <div>
-                  <Label>Budget</Label>
-                  <p className="text-lg font-semibold mt-1">{selectedRFQ.currency} {selectedRFQ.budget?.toLocaleString()}</p>
+                  <Label>Issued Date</Label>
+                  <p className="text-sm mt-1">{selectedRFQ.issuedDate}</p>
                 </div>
                 <div>
-                  <Label>Due Date</Label>
-                  <p className="text-sm mt-1">{selectedRFQ.dueDate}</p>
+                  <Label>Submission Deadline</Label>
+                  <p className="text-sm mt-1">{selectedRFQ.submissionDeadline}</p>
+                </div>
+                <div>
+                  <Label>Estimated Value</Label>
+                  <p className="text-lg font-semibold mt-1">{selectedRFQ.currency} {selectedRFQ.estimatedValue?.toLocaleString()}</p>
+                </div>
+                <div>
+                  <Label>Status</Label>
+                  <div className="mt-1">
+                    <Badge className={getStatusColor(selectedRFQ.status)}>
+                      {selectedRFQ.status}
+                    </Badge>
+                  </div>
                 </div>
               </div>
 
               {/* Description */}
               <div>
                 <Label>Description</Label>
-                <p className="text-sm mt-1 p-3 bg-muted/30 rounded">{selectedRFQ.description}</p>
+                <p className="text-sm mt-1">{selectedRFQ.description}</p>
+              </div>
+
+              {/* Requirements */}
+              <div>
+                <Label>Requirements</Label>
+                <ul className="list-disc list-inside text-sm mt-1 space-y-1">
+                  {selectedRFQ.requirements?.map((req: string, idx: number) => (
+                    <li key={idx}>{req}</li>
+                  ))}
+                </ul>
               </div>
 
               {/* Attachments */}
               {selectedRFQ.attachments && selectedRFQ.attachments.length > 0 && (
                 <div>
                   <Label className="text-sm font-semibold text-slate-700">Attachments</Label>
-                  <div className="grid grid-cols-1 gap-2 mt-3">
+                  <div className="flex flex-wrap gap-2 mt-2">
                     {selectedRFQ.attachments.map((attachment: string, index: number) => (
-                      <div key={index} className="flex items-center gap-4 p-3 border border-slate-200 rounded-xl bg-slate-50/20 hover:bg-white hover:border-primary/40 hover:shadow-sm transition-all group">
-                        <div className="h-10 w-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 shrink-0">
-                          <FileText className="w-5 h-5" />
-                        </div>
-                        <div className="flex flex-col flex-1 min-w-0">
-                          <span className="text-sm font-semibold text-slate-700 truncate">{attachment}</span>
-                          <span className="text-[10px] text-slate-400 font-medium uppercase tracking-wider">Document</span>
-                        </div>
-                        <div className="flex gap-2">
-                          <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full hover:bg-slate-100 border border-slate-100" title="View Attachment">
-                            <Eye className="w-4.5 h-4.5 text-slate-600" />
-                          </Button>
-                          <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full hover:bg-blue-50 border border-blue-50" title="Download Attachment">
-                            <Download className="w-4.5 h-4.5 text-blue-600" />
-                          </Button>
-                        </div>
-                      </div>
+                      <Badge key={index} variant="outline" className="gap-1 p-2">
+                        <FileText className="w-4 h-4 text-blue-600" />
+                        <span>{attachment}</span>
+                      </Badge>
                     ))}
                   </div>
                 </div>
@@ -2372,25 +2374,25 @@ export function RFQManagement() {
               </div>
             </div>
           )}
-        </DialogContent>
-      </Dialog>
+        </SheetContent>
+      </Sheet>
 
-      {/* Quotation Details Modal */}
-      <Dialog open={isQuotationModalOpen} onOpenChange={setIsQuotationModalOpen}>
-        <DialogContent className="max-w-4xl w-[85vw]">
-          <DialogHeader>
-            <DialogTitle>Quotation Details</DialogTitle>
-            <DialogDescription>
+      {/* Quotation Details Sheet */}
+      <Sheet open={isQuotationModalOpen} onOpenChange={setIsQuotationModalOpen}>
+        <SheetContent className="sm:max-w-4xl overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle>Quotation Details</SheetTitle>
+            <SheetDescription>
               Review your submitted quotation
-            </DialogDescription>
-          </DialogHeader>
+            </SheetDescription>
+          </SheetHeader>
           {selectedQuotation && (
-            <div className="space-y-6">
+            <div className="space-y-6 mt-4">
               {/* Quotation Header */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label>Quotation Number</Label>
-                  <p className="text-sm mt-1">{selectedQuotation.quotationNumber}</p>
+                  <p className="text-sm font-semibold mt-1">{selectedQuotation.quotationNumber}</p>
                 </div>
                 <div>
                   <Label>RFQ Number</Label>
@@ -2465,19 +2467,19 @@ export function RFQManagement() {
               </div>
             </div>
           )}
-        </DialogContent>
-      </Dialog>
+        </SheetContent>
+      </Sheet>
 
-      {/* Clarification Request Modal */}
-      <Dialog open={isClarificationModalOpen} onOpenChange={setIsClarificationModalOpen}>
-        <DialogContent className="max-w-lg w-[80vw]">
-          <DialogHeader>
-            <DialogTitle>Request Clarification</DialogTitle>
-            <DialogDescription>
+      {/* Clarification Request Sheet */}
+      <Sheet open={isClarificationModalOpen} onOpenChange={setIsClarificationModalOpen}>
+        <SheetContent className="sm:max-w-lg overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle>Request Clarification</SheetTitle>
+            <SheetDescription>
               Ask questions about the RFQ requirements
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
+            </SheetDescription>
+          </SheetHeader>
+          <div className="space-y-4 mt-4">
             <div className="space-y-2">
               <Label>Question</Label>
               <Textarea
@@ -2510,46 +2512,17 @@ export function RFQManagement() {
               </Button>
             </div>
           </div>
-        </DialogContent>
-      </Dialog>
-
-      <style dangerouslySetInnerHTML={{
-        __html: `
-        @media print {
-          body * {
-            visibility: hidden;
-          }
-          .print-container, .print-container * {
-            visibility: visible;
-          }
-          .print-container {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 100%;
-            padding: 0;
-            margin: 0;
-            border: none;
-            box-shadow: none;
-          }
-          .no-print {
-            display: none !important;
-          }
-          table {
-            width: 100% !important;
-            border-collapse: collapse !important;
-          }
-          th, td {
-            border: 1px solid #e2e8f0 !important;
-      {/* Quotation Form Modal (Create/Edit) */}
-      <Dialog open={isQuotationFormModalOpen} onOpenChange={setIsQuotationFormModalOpen}>
-        <DialogContent className="max-w-3xl">
-          <DialogHeader>
-            <DialogTitle>{quotationFormMode === 'create' ? 'Submit New Quotation' : 'Edit Quotation'}</DialogTitle>
-            <DialogDescription>
+        </SheetContent>
+      </Sheet>
+      {/* Quotation Form Sheet (Create/Edit) */}
+      <Sheet open={isQuotationFormModalOpen} onOpenChange={setIsQuotationFormModalOpen}>
+        <SheetContent className="sm:max-w-3xl overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle>{quotationFormMode === 'create' ? 'Submit New Quotation' : 'Edit Quotation'}</SheetTitle>
+            <SheetDescription>
               {quotationFormMode === 'create' ? 'Fill in the details to submit your proposal' : 'Update the details of your submitted quotation'}
-            </DialogDescription>
-          </DialogHeader>
+            </SheetDescription>
+          </SheetHeader>
           {currentQuotationForForm && (
             <div className="space-y-4 max-h-[70vh] overflow-y-auto px-1">
               <div className="grid grid-cols-2 gap-4">
@@ -2559,10 +2532,10 @@ export function RFQManagement() {
                 </div>
                 <div className="space-y-2">
                   <Label>Valid Until</Label>
-                  <Input 
-                    type="date" 
+                  <DatePicker 
                     value={currentQuotationForForm.validUntil} 
                     onChange={(e) => setCurrentQuotationForForm({...currentQuotationForForm, validUntil: e.target.value})}
+                    placeholder="Select expiration date"
                   />
                 </div>
               </div>
@@ -2691,31 +2664,24 @@ export function RFQManagement() {
               </div>
             </div>
           )}
-        </DialogContent>
-      </Dialog>
+        </SheetContent>
+      </Sheet>
 
-      {/* Delete Confirmation Modal */}
-      <Dialog open={isDeleteQuotationConfirmOpen} onOpenChange={setIsDeleteQuotationConfirmOpen}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>Cancel Quotation</DialogTitle>
-            <DialogDescription>
+      {/* Delete Confirmation Sheet */}
+      <Sheet open={isDeleteQuotationConfirmOpen} onOpenChange={setIsDeleteQuotationConfirmOpen}>
+        <SheetContent className="sm:max-w-md overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle>Cancel Quotation</SheetTitle>
+            <SheetDescription>
               Are you sure you want to cancel this quotation? This action cannot be undone.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="flex justify-end gap-3 pt-4">
+            </SheetDescription>
+          </SheetHeader>
+          <div className="flex justify-end gap-3 pt-6">
             <Button variant="outline" onClick={() => setIsDeleteQuotationConfirmOpen(false)}>No, Keep it</Button>
             <Button variant="destructive" onClick={handleDeleteQuotation}>Yes, Cancel Proposal</Button>
           </div>
-        </DialogContent>
-      </Dialog>
-            padding: 8px !important;
-          }
-          .sticky {
-            position: static !important;
-          }
-        }
-      `}} />
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }

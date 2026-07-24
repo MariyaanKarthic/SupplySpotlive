@@ -10,7 +10,8 @@ import { Progress } from './ui/progress';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Checkbox } from './ui/checkbox';
 import { Alert, AlertDescription } from './ui/alert';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from './ui/dialog';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from './ui/sheet';
+import { DatePicker } from './ui/date-picker';
 import { 
   Building2,
   FileText,
@@ -962,16 +963,16 @@ export function RegistrationReview() {
   );
 
   const renderRequestInfoModal = () => (
-    <Dialog open={isRequestInfoModalOpen} onOpenChange={setIsRequestInfoModalOpen}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>Request Additional Information</DialogTitle>
-          <DialogDescription>
+    <Sheet open={isRequestInfoModalOpen} onOpenChange={setIsRequestInfoModalOpen}>
+      <SheetContent className="sm:max-w-4xl overflow-y-auto">
+        <SheetHeader>
+          <SheetTitle>Request Additional Information</SheetTitle>
+          <SheetDescription>
             Request specific information or documents from {selectedRegistration?.companyName}
-          </DialogDescription>
-        </DialogHeader>
+          </SheetDescription>
+        </SheetHeader>
         
-        <div className="space-y-6">
+        <div className="space-y-6 mt-4">
           {/* Template Selection */}
           <Card className="p-4">
             <h3 className="mb-4 flex items-center gap-2">
@@ -1049,11 +1050,10 @@ export function RegistrationReview() {
 
               <div className="space-y-2">
                 <Label>Due Date</Label>
-                <Input
-                  type="date"
+                <DatePicker
                   value={requestDueDate}
                   onChange={(e) => setRequestDueDate(e.target.value)}
-                  min={new Date().toISOString().split('T')[0]}
+                  placeholder="Select due date"
                 />
               </div>
 
@@ -1171,8 +1171,8 @@ export function RegistrationReview() {
             </div>
           </div>
         </div>
-      </DialogContent>
-    </Dialog>
+      </SheetContent>
+    </Sheet>
   );
 
   const renderActiveRequests = () => (

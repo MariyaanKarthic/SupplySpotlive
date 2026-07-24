@@ -5,7 +5,7 @@ import { Label } from './ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Alert, AlertDescription } from './ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from './ui/sheet';
 import { Badge } from './ui/badge';
 import { 
   Loader2, 
@@ -22,6 +22,7 @@ import {
   ExternalLink,
   Download
 } from 'lucide-react';
+import { PageSkeleton } from './PageSkeleton';
 
 interface Invite {
   id: string;
@@ -245,11 +246,7 @@ export default function InviteManager() {
   };
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    );
+    return <PageSkeleton />;
   }
 
   return (
@@ -260,21 +257,21 @@ export default function InviteManager() {
           <h1 className="text-3xl font-bold">Invite Management</h1>
           <p className="text-gray-600 mt-1">Create and manage user invitations</p>
         </div>
-        <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
-          <DialogTrigger asChild>
+        <Sheet open={showCreateDialog} onOpenChange={setShowCreateDialog}>
+          <SheetTrigger asChild>
             <Button>
               <Plus className="mr-2 h-4 w-4" />
               Create Invite
             </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Create New Invite</DialogTitle>
-              <DialogDescription>
+          </SheetTrigger>
+          <SheetContent className="sm:max-w-md overflow-y-auto">
+            <SheetHeader>
+              <SheetTitle>Create New Invite</SheetTitle>
+              <SheetDescription>
                 Generate a new invite code for user registration
-              </DialogDescription>
-            </DialogHeader>
-            <form onSubmit={handleCreateInvite} className="space-y-4">
+              </SheetDescription>
+            </SheetHeader>
+            <form onSubmit={handleCreateInvite} className="space-y-4 mt-4">
               <div className="space-y-2">
                 <Label htmlFor="email">Email (Optional)</Label>
                 <Input
@@ -362,8 +359,8 @@ export default function InviteManager() {
                 </Button>
               </div>
             </form>
-          </DialogContent>
-        </Dialog>
+          </SheetContent>
+        </Sheet>
       </div>
 
       {/* Alerts */}

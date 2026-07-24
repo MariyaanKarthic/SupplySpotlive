@@ -4,10 +4,11 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Badge } from './ui/badge';
 import { Progress } from './ui/progress';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from './ui/sheet';
 import { Label } from './ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Textarea } from './ui/textarea';
+import { DatePicker } from './ui/date-picker';
 import { 
   Search, 
   Plus, 
@@ -149,21 +150,21 @@ export function ContractManagement() {
           <h1 className="text-3xl font-semibold">Contract Management</h1>
           <p className="text-muted-foreground">Manage vendor contracts and agreements</p>
         </div>
-        <Dialog open={isAddContractOpen} onOpenChange={setIsAddContractOpen}>
-          <DialogTrigger asChild>
+        <Sheet open={isAddContractOpen} onOpenChange={setIsAddContractOpen}>
+          <SheetTrigger asChild>
             <Button className="gap-2">
               <Plus className="w-4 h-4" />
               Add Contract
             </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-xl w-[80vw]">
-            <DialogHeader>
-              <DialogTitle>Create New Contract</DialogTitle>
-              <DialogDescription>
+          </SheetTrigger>
+          <SheetContent className="sm:max-w-xl overflow-y-auto">
+            <SheetHeader>
+              <SheetTitle>Create New Contract</SheetTitle>
+              <SheetDescription>
                 Create a new contract by filling out the details below.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="grid grid-cols-2 gap-4">
+              </SheetDescription>
+            </SheetHeader>
+            <div className="grid grid-cols-2 gap-4 mt-4">
               <div className="space-y-2 col-span-2">
                 <Label htmlFor="contract-title">Contract Title</Label>
                 <Input id="contract-title" placeholder="Enter contract title" />
@@ -200,15 +201,15 @@ export function ContractManagement() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="contract-start">Start Date</Label>
-                <Input id="contract-start" type="date" />
+                <DatePicker id="contract-start" placeholder="Select start date" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="contract-end">End Date</Label>
-                <Input id="contract-end" type="date" />
+                <DatePicker id="contract-end" placeholder="Select end date" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="contract-renewal">Renewal Date</Label>
-                <Input id="contract-renewal" type="date" />
+                <DatePicker id="contract-renewal" placeholder="Select renewal date" />
               </div>
               <div className="space-y-2 col-span-2">
                 <Label htmlFor="contract-description">Description</Label>
@@ -223,8 +224,8 @@ export function ContractManagement() {
                 Create Contract
               </Button>
             </div>
-          </DialogContent>
-        </Dialog>
+          </SheetContent>
+        </Sheet>
       </div>
 
       {/* Quick Stats */}
@@ -372,25 +373,25 @@ export function ContractManagement() {
         </div>
       </Card>
 
-      {/* Contract Detail Modal */}
-      <Dialog open={isViewContractOpen} onOpenChange={setIsViewContractOpen}>
-        <DialogContent className="max-w-4xl w-[85vw]">
-          <DialogHeader>
-            <DialogTitle>Contract Details</DialogTitle>
-            <DialogDescription>
+      {/* Contract Detail Sheet */}
+      <Sheet open={isViewContractOpen} onOpenChange={setIsViewContractOpen}>
+        <SheetContent className="sm:max-w-2xl overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle>Contract Details</SheetTitle>
+            <SheetDescription>
               View detailed information about this contract.
-            </DialogDescription>
-          </DialogHeader>
+            </SheetDescription>
+          </SheetHeader>
           {selectedContract && (
-            <div className="space-y-6">
+            <div className="space-y-6 mt-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label>Contract Title</Label>
-                  <p className="text-sm mt-1">{selectedContract.title}</p>
+                  <p className="text-sm mt-1 font-medium">{selectedContract.title}</p>
                 </div>
                 <div>
                   <Label>Vendor</Label>
-                  <p className="text-sm mt-1">{selectedContract.vendor}</p>
+                  <p className="text-sm mt-1 font-medium">{selectedContract.vendor}</p>
                 </div>
                 <div>
                   <Label>Contract Type</Label>
@@ -398,7 +399,7 @@ export function ContractManagement() {
                 </div>
                 <div>
                   <Label>Contract Value</Label>
-                  <p className="text-sm mt-1">${selectedContract.value.toLocaleString()}</p>
+                  <p className="text-sm mt-1 font-semibold">${selectedContract.value.toLocaleString()}</p>
                 </div>
                 <div>
                   <Label>Start Date</Label>
@@ -450,8 +451,8 @@ export function ContractManagement() {
               </div>
             </div>
           )}
-        </DialogContent>
-      </Dialog>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }

@@ -48,7 +48,7 @@ import { Badge } from './ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from './ui/sheet';
 import { Label } from './ui/label';
 import { Textarea } from './ui/textarea';
 import { Separator } from './ui/separator';
@@ -412,20 +412,20 @@ export function SourcingRFx() {
             <Upload className="w-4 h-4" />
             Import from SAP
           </Button>
-          <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
-            <DialogTrigger asChild>
+          <Sheet open={showCreateDialog} onOpenChange={setShowCreateDialog}>
+            <SheetTrigger asChild>
               <Button className="gap-2">
                 <Plus className="w-4 h-4" />
                 Create RFx
               </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-4xl">
-              <DialogHeader>
-                <DialogTitle>Create New RFx</DialogTitle>
-                <DialogDescription>
+            </SheetTrigger>
+            <SheetContent className="sm:max-w-4xl overflow-y-auto">
+              <SheetHeader>
+                <SheetTitle>Create New RFx</SheetTitle>
+                <SheetDescription>
                   Create a new Request for Quotation, Proposal, or Information
-                </DialogDescription>
-              </DialogHeader>
+                </SheetDescription>
+              </SheetHeader>
               <div className="space-y-6">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
@@ -524,19 +524,19 @@ export function SourcingRFx() {
                   <Label>Enable Reverse Auction</Label>
                 </div>
                 
-                <div className="flex justify-between">
-                  <Dialog open={showScoringDialog} onOpenChange={setShowScoringDialog}>
-                    <DialogTrigger asChild>
+                <div className="flex justify-between pt-4">
+                  <Sheet open={showScoringDialog} onOpenChange={setShowScoringDialog}>
+                    <SheetTrigger asChild>
                       <Button variant="outline">Configure Scoring</Button>
-                    </DialogTrigger>
-                    <DialogContent className="max-w-2xl">
-                      <DialogHeader>
-                        <DialogTitle>Scoring Criteria Configuration</DialogTitle>
-                        <DialogDescription>
+                    </SheetTrigger>
+                    <SheetContent className="sm:max-w-2xl overflow-y-auto">
+                      <SheetHeader>
+                        <SheetTitle>Scoring Criteria Configuration</SheetTitle>
+                        <SheetDescription>
                           Set weights for different evaluation criteria (total must equal 100%)
-                        </DialogDescription>
-                      </DialogHeader>
-                      <div className="space-y-4">
+                        </SheetDescription>
+                      </SheetHeader>
+                      <div className="space-y-4 mt-4">
                         {Object.entries(newRFx.scoringCriteria || {}).map(([key, criterion]) => (
                           <div key={key} className="flex items-center space-x-4">
                             <Switch 
@@ -567,17 +567,9 @@ export function SourcingRFx() {
                             <span className="w-12 text-right">{criterion.weight}%</span>
                           </div>
                         ))}
-                        <div className="pt-2 border-t">
-                          <p className="text-sm">
-                            Total Weight: {calculateTotalWeight(newRFx.scoringCriteria!)}%
-                            {calculateTotalWeight(newRFx.scoringCriteria!) !== 100 && (
-                              <span className="text-red-500 ml-2">Must equal 100%</span>
-                            )}
-                          </p>
-                        </div>
                       </div>
-                    </DialogContent>
-                  </Dialog>
+                    </SheetContent>
+                  </Sheet>
                   
                   <div className="flex gap-2">
                     <Button variant="outline" onClick={() => setShowCreateDialog(false)}>
@@ -587,8 +579,8 @@ export function SourcingRFx() {
                   </div>
                 </div>
               </div>
-            </DialogContent>
-          </Dialog>
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
 
@@ -788,8 +780,8 @@ export function SourcingRFx() {
                     </div>
                     
                     <div className="flex flex-col gap-2 ml-4">
-                      <Dialog>
-                        <DialogTrigger asChild>
+                      <Sheet>
+                        <SheetTrigger asChild>
                           <Button 
                             variant="outline" 
                             size="sm"
@@ -798,14 +790,14 @@ export function SourcingRFx() {
                             <Eye className="w-4 h-4 mr-1" />
                             View
                           </Button>
-                        </DialogTrigger>
-                        <DialogContent className="max-w-4xl">
-                          <DialogHeader>
-                            <DialogTitle>{selectedRFx?.title}</DialogTitle>
-                            <DialogDescription>{selectedRFx?.type} Details</DialogDescription>
-                          </DialogHeader>
+                        </SheetTrigger>
+                        <SheetContent className="sm:max-w-4xl overflow-y-auto">
+                          <SheetHeader>
+                            <SheetTitle>{selectedRFx?.title}</SheetTitle>
+                            <SheetDescription>{selectedRFx?.type} Details</SheetDescription>
+                          </SheetHeader>
                           {selectedRFx && (
-                            <div className="space-y-6">
+                            <div className="space-y-6 mt-4">
                               <div className="grid grid-cols-2 gap-4">
                                 <div>
                                   <Label>Status</Label>
@@ -870,8 +862,8 @@ export function SourcingRFx() {
                               )}
                             </div>
                           )}
-                        </DialogContent>
-                      </Dialog>
+                        </SheetContent>
+                      </Sheet>
                       
                       <Button variant="outline" size="sm">
                         <Edit className="w-4 h-4 mr-1" />
@@ -1087,17 +1079,17 @@ export function SourcingRFx() {
                       </TableCell>
                       <TableCell>
                         <div className="flex gap-1">
-                          <Dialog>
-                            <DialogTrigger asChild>
+                          <Sheet>
+                            <SheetTrigger asChild>
                               <Button variant="ghost" size="sm">
                                 <Eye className="w-4 h-4" />
                               </Button>
-                            </DialogTrigger>
-                            <DialogContent className="max-w-3xl">
-                              <DialogHeader>
-                                <DialogTitle>Response Details - {response.supplierName}</DialogTitle>
-                              </DialogHeader>
-                              <div className="space-y-6">
+                            </SheetTrigger>
+                            <SheetContent className="sm:max-w-3xl overflow-y-auto">
+                              <SheetHeader>
+                                <SheetTitle>Response Details - {response.supplierName}</SheetTitle>
+                              </SheetHeader>
+                              <div className="space-y-6 mt-4">
                                 <div className="grid grid-cols-3 gap-4">
                                   <div>
                                     <Label>Total Score</Label>
@@ -1155,8 +1147,8 @@ export function SourcingRFx() {
                                   </div>
                                 )}
                               </div>
-                            </DialogContent>
-                          </Dialog>
+                            </SheetContent>
+                          </Sheet>
                           <Button variant="ghost" size="sm">
                             <MessageSquare className="w-4 h-4" />
                           </Button>

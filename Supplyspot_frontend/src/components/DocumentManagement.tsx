@@ -3,7 +3,7 @@ import { Card } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Badge } from './ui/badge';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from './ui/sheet';
 import { Label } from './ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { 
@@ -173,21 +173,21 @@ export function DocumentManagement() {
           <h1 className="text-3xl font-semibold">Document Management</h1>
           <p className="text-muted-foreground">Manage vendor documents and files</p>
         </div>
-        <Dialog open={isUploadOpen} onOpenChange={setIsUploadOpen}>
-          <DialogTrigger asChild>
+        <Sheet open={isUploadOpen} onOpenChange={setIsUploadOpen}>
+          <SheetTrigger asChild>
             <Button className="gap-2">
               <Upload className="w-4 h-4" />
               Upload Document
             </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-2xl">
-            <DialogHeader>
-              <DialogTitle>Upload New Document</DialogTitle>
-              <DialogDescription>
+          </SheetTrigger>
+          <SheetContent className="sm:max-w-2xl overflow-y-auto">
+            <SheetHeader>
+              <SheetTitle>Upload New Document</SheetTitle>
+              <SheetDescription>
                 Upload a new document by selecting a file and filling out the details below.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="space-y-4">
+              </SheetDescription>
+            </SheetHeader>
+            <div className="space-y-4 mt-4">
               <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center">
                 <Upload className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
                 <p className="text-lg font-medium">Drop files here or click to browse</p>
@@ -259,8 +259,8 @@ export function DocumentManagement() {
                 Upload Document
               </Button>
             </div>
-          </DialogContent>
-        </Dialog>
+          </SheetContent>
+        </Sheet>
       </div>
 
       {/* Quick Stats */}
@@ -545,17 +545,17 @@ export function DocumentManagement() {
         </Card>
       )}
 
-      {/* Document Detail Modal */}
-      <Dialog open={isViewDocumentOpen} onOpenChange={setIsViewDocumentOpen}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>Document Details</DialogTitle>
-            <DialogDescription>
+      {/* Document Detail Sheet */}
+      <Sheet open={isViewDocumentOpen} onOpenChange={setIsViewDocumentOpen}>
+        <SheetContent className="sm:max-w-2xl overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle>Document Details</SheetTitle>
+            <SheetDescription>
               View detailed information about this document.
-            </DialogDescription>
-          </DialogHeader>
+            </SheetDescription>
+          </SheetHeader>
           {selectedDocument && (
-            <div className="space-y-4">
+            <div className="space-y-4 mt-4">
               <div className="flex items-center gap-3 p-4 bg-muted/50 rounded-lg">
                 {getFileTypeIcon(selectedDocument.fileType)}
                 <div>
@@ -633,8 +633,8 @@ export function DocumentManagement() {
               </div>
             </div>
           )}
-        </DialogContent>
-      </Dialog>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }

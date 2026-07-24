@@ -3,12 +3,13 @@ import { Card } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Badge } from './ui/badge';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from './ui/sheet';
 import { Label } from './ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Progress } from './ui/progress';
 import { Textarea } from './ui/textarea';
+import { DatePicker } from './ui/date-picker';
 import { 
   Search, 
   Plus, 
@@ -335,21 +336,21 @@ export function InvoiceManagement() {
             <Scan className="w-4 h-4" />
             OCR Scan
           </Button>
-          <Dialog open={isAddInvoiceOpen} onOpenChange={setIsAddInvoiceOpen}>
-            <DialogTrigger asChild>
+          <Sheet open={isAddInvoiceOpen} onOpenChange={setIsAddInvoiceOpen}>
+            <SheetTrigger asChild>
               <Button className="gap-2">
                 <Plus className="w-4 h-4" />
                 Add Invoice
               </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-xl w-[80vw]">
-              <DialogHeader>
-                <DialogTitle>Create New Invoice</DialogTitle>
-                <DialogDescription>
+            </SheetTrigger>
+            <SheetContent className="sm:max-w-xl overflow-y-auto">
+              <SheetHeader>
+                <SheetTitle>Create New Invoice</SheetTitle>
+                <SheetDescription>
                   Create a new invoice by entering the details below.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="grid grid-cols-2 gap-4">
+                </SheetDescription>
+              </SheetHeader>
+              <div className="grid grid-cols-2 gap-4 mt-4">
                 <div className="space-y-2">
                   <Label htmlFor="invoice-number">Invoice Number</Label>
                   <Input id="invoice-number" placeholder="INV-2023-XXX" />
@@ -373,11 +374,11 @@ export function InvoiceManagement() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="invoice-due">Due Date</Label>
-                  <Input id="invoice-due" type="date" />
+                  <DatePicker id="invoice-due" placeholder="Select due date" />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="invoice-issue">Issue Date</Label>
-                  <Input id="invoice-issue" type="date" />
+                  <DatePicker id="invoice-issue" placeholder="Select issue date" />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="invoice-category">Category</Label>
@@ -398,7 +399,7 @@ export function InvoiceManagement() {
                   <Input id="invoice-description" placeholder="Invoice description" />
                 </div>
               </div>
-              <div className="flex justify-end gap-2 mt-4">
+              <div className="flex justify-end gap-2 mt-6">
                 <Button variant="outline" onClick={() => setIsAddInvoiceOpen(false)}>
                   Cancel
                 </Button>
@@ -406,8 +407,8 @@ export function InvoiceManagement() {
                   Create Invoice
                 </Button>
               </div>
-            </DialogContent>
-          </Dialog>
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
 
@@ -908,25 +909,25 @@ export function InvoiceManagement() {
         </TabsContent>
       </Tabs>
 
-      {/* Invoice Detail Modal */}
-      <Dialog open={isViewInvoiceOpen} onOpenChange={setIsViewInvoiceOpen}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>Invoice Details</DialogTitle>
-            <DialogDescription>
+      {/* Invoice Detail Sheet */}
+      <Sheet open={isViewInvoiceOpen} onOpenChange={setIsViewInvoiceOpen}>
+        <SheetContent className="sm:max-w-2xl overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle>Invoice Details</SheetTitle>
+            <SheetDescription>
               View detailed information about this invoice.
-            </DialogDescription>
-          </DialogHeader>
+            </SheetDescription>
+          </SheetHeader>
           {selectedInvoice && (
-            <div className="space-y-4">
+            <div className="space-y-4 mt-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label>Invoice Number</Label>
-                  <p className="text-sm mt-1">{selectedInvoice.invoiceNumber}</p>
+                  <p className="text-sm mt-1 font-semibold">{selectedInvoice.invoiceNumber}</p>
                 </div>
                 <div>
                   <Label>Vendor</Label>
-                  <p className="text-sm mt-1">{selectedInvoice.vendor}</p>
+                  <p className="text-sm mt-1 font-medium">{selectedInvoice.vendor}</p>
                 </div>
                 <div>
                   <Label>Issue Date</Label>
@@ -935,6 +936,10 @@ export function InvoiceManagement() {
                 <div>
                   <Label>Due Date</Label>
                   <p className="text-sm mt-1">{selectedInvoice.dueDate}</p>
+                </div>
+                <div>
+                  <Label>Amount</Label>
+                  <p className="text-sm mt-1 font-semibold">${selectedInvoice.amount.toLocaleString()}</p>
                 </div>
                 <div>
                   <Label>Status</Label>
@@ -999,23 +1004,23 @@ export function InvoiceManagement() {
               </div>
             </div>
           )}
-        </DialogContent>
-      </Dialog>
+        </SheetContent>
+      </Sheet>
 
-      {/* OCR Processing Modal */}
-      <Dialog open={isOcrModalOpen} onOpenChange={setIsOcrModalOpen}>
-        <DialogContent className="max-w-3xl">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
+      {/* OCR Processing Sheet */}
+      <Sheet open={isOcrModalOpen} onOpenChange={setIsOcrModalOpen}>
+        <SheetContent className="sm:max-w-3xl overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle className="flex items-center gap-2">
               <Scan className="w-5 h-5" />
               OCR Invoice Processing
-            </DialogTitle>
-            <DialogDescription>
+            </SheetTitle>
+            <SheetDescription>
               Upload or scan invoices for automatic data extraction and PO matching
-            </DialogDescription>
-          </DialogHeader>
+            </SheetDescription>
+          </SheetHeader>
           
-          <div className="space-y-6">
+          <div className="space-y-6 mt-4">
             {/* Upload Methods */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <Card className="p-4 border-2 border-dashed border-muted-foreground/25 hover:border-primary/50 cursor-pointer">
@@ -1166,23 +1171,23 @@ export function InvoiceManagement() {
               )}
             </div>
           </div>
-        </DialogContent>
-      </Dialog>
+        </SheetContent>
+      </Sheet>
 
-      {/* Vendor Submission Portal Modal */}
-      <Dialog open={isVendorSubmissionOpen} onOpenChange={setIsVendorSubmissionOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
+      {/* Vendor Submission Portal Sheet */}
+      <Sheet open={isVendorSubmissionOpen} onOpenChange={setIsVendorSubmissionOpen}>
+        <SheetContent className="sm:max-w-4xl overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle className="flex items-center gap-2">
               <Globe className="w-5 h-5" />
               Vendor Submission Portal
-            </DialogTitle>
-            <DialogDescription>
+            </SheetTitle>
+            <SheetDescription>
               Manage vendor invoice submissions and portal access
-            </DialogDescription>
-          </DialogHeader>
+            </SheetDescription>
+          </SheetHeader>
           
-          <div className="space-y-6">
+          <div className="space-y-6 mt-4">
             {/* Portal Statistics */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <Card className="p-4">
@@ -1196,10 +1201,10 @@ export function InvoiceManagement() {
               </Card>
               <Card className="p-4">
                 <div className="flex items-center gap-2">
-                  <Upload className="w-5 h-5 text-green-600" />
+                  <FileText className="w-5 h-5 text-green-600" />
                   <div>
-                    <p className="text-sm text-muted-foreground">This Month</p>
-                    <p className="text-xl font-semibold">{vendorSubmissions.length}</p>
+                    <p className="text-sm text-muted-foreground">Submissions Today</p>
+                    <p className="text-xl font-semibold">18</p>
                   </div>
                 </div>
               </Card>
@@ -1207,51 +1212,21 @@ export function InvoiceManagement() {
                 <div className="flex items-center gap-2">
                   <Clock className="w-5 h-5 text-yellow-600" />
                   <div>
-                    <p className="text-sm text-muted-foreground">Processing</p>
-                    <p className="text-xl font-semibold">
-                      {vendorSubmissions.filter(sub => sub.status === 'Processing').length}
-                    </p>
+                    <p className="text-sm text-muted-foreground">Pending Review</p>
+                    <p className="text-xl font-semibold">7</p>
                   </div>
                 </div>
               </Card>
               <Card className="p-4">
                 <div className="flex items-center gap-2">
-                  <CheckCircle className="w-5 h-5 text-green-600" />
+                  <CheckCircle className="w-5 h-5 text-purple-600" />
                   <div>
                     <p className="text-sm text-muted-foreground">Auto-Approved</p>
-                    <p className="text-xl font-semibold">89%</p>
+                    <p className="text-xl font-semibold">82%</p>
                   </div>
                 </div>
               </Card>
             </div>
-
-            {/* Submission Methods */}
-            <Card className="p-4">
-              <h4 className="mb-4">Available Submission Methods</h4>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="flex items-center gap-3 p-3 border rounded">
-                  <Globe className="w-5 h-5 text-blue-600" />
-                  <div>
-                    <p className="font-medium">Web Portal</p>
-                    <p className="text-sm text-muted-foreground">portal.company.com/invoices</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3 p-3 border rounded">
-                  <Mail className="w-5 h-5 text-green-600" />
-                  <div>
-                    <p className="font-medium">Email Submission</p>
-                    <p className="text-sm text-muted-foreground">invoices@company.com</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3 p-3 border rounded">
-                  <Zap className="w-5 h-5 text-purple-600" />
-                  <div>
-                    <p className="font-medium">E-Invoice API</p>
-                    <p className="text-sm text-muted-foreground">Direct integration</p>
-                  </div>
-                </div>
-              </div>
-            </Card>
 
             {/* Recent Submissions Table */}
             <Card>
@@ -1359,8 +1334,8 @@ export function InvoiceManagement() {
               </div>
             </Card>
           </div>
-        </DialogContent>
-      </Dialog>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }

@@ -51,7 +51,7 @@ import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrate
 import { DraggableTableRow, DraggableTableHeader } from './ui/draggable-table-row';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from './ui/sheet';
 import { Label } from './ui/label';
 import { Textarea } from './ui/textarea';
 import { Progress } from './ui/progress';
@@ -298,21 +298,6 @@ export function DeliverySlots() {
   const [viewMode, setViewMode] = useState<'calendar' | 'list'>('calendar');
   const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
 
-  // Dnd-kit sensors for drag detection
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  );
-
-  const handleDragEnd = (event: any) => {
-    const { active, over } = event;
-    if (active.id !== over?.id) {
-      // Handle reorder if needed
-    }
-  };
-
   const handleSelectRow = (id: string) => {
     setSelectedRows((prev) => {
       const newSet = new Set(prev);
@@ -332,6 +317,23 @@ export function DeliverySlots() {
       setSelectedRows(new Set());
     }
   };
+
+  // Dnd-kit sensors for drag detection
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const handleDragEnd = (event: any) => {
+    const { active, over } = event;
+    if (active.id !== over?.id) {
+      // Handle reorder if needed
+    }
+  };
+
+
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -433,21 +435,21 @@ export function DeliverySlots() {
             <Download className="w-4 h-4" />
             Export Schedule
           </Button>
-          <Dialog open={showCreateSlot} onOpenChange={setShowCreateSlot}>
-            <DialogTrigger asChild>
+          <Sheet open={showCreateSlot} onOpenChange={setShowCreateSlot}>
+            <SheetTrigger asChild>
               <Button className="gap-2">
                 <Plus className="w-4 h-4" />
                 Create Slot
               </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-3xl">
-              <DialogHeader>
-                <DialogTitle>Create New Delivery Slot</DialogTitle>
-                <DialogDescription>
+            </SheetTrigger>
+            <SheetContent className="sm:max-w-3xl overflow-y-auto">
+              <SheetHeader>
+                <SheetTitle>Create New Delivery Slot</SheetTitle>
+                <SheetDescription>
                   Configure a new automated delivery slot with intelligent scheduling
-                </DialogDescription>
-              </DialogHeader>
-              <div className="space-y-6">
+                </SheetDescription>
+              </SheetHeader>
+              <div className="space-y-6 mt-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label>Location</Label>
@@ -548,8 +550,8 @@ export function DeliverySlots() {
                   </Button>
                 </div>
               </div>
-            </DialogContent>
-          </Dialog>
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
 
@@ -855,8 +857,8 @@ export function DeliverySlots() {
                             </TableCell>
                             <TableCell>
                               <div className="flex gap-1">
-                                <Dialog>
-                                  <DialogTrigger asChild>
+                                <Sheet>
+                                  <SheetTrigger asChild>
                                     <Button 
                                       variant="ghost" 
                                       size="sm"
@@ -864,113 +866,62 @@ export function DeliverySlots() {
                                     >
                                       <Eye className="w-4 h-4" />
                                     </Button>
-                                  </DialogTrigger>
-                              <DialogContent className="max-w-4xl">
-                                <DialogHeader>
-                                  <DialogTitle>Delivery Slot Details</DialogTitle>
-                                  <DialogDescription>
-                                    {selectedSlot?.location.name} - {selectedSlot && format(selectedSlot.date, 'PPp')}
-                                  </DialogDescription>
-                                </DialogHeader>
-                                {selectedSlot && (
-                                  <div className="space-y-6">
-                                    <div className="grid grid-cols-3 gap-4">
-                                      <div>
-                                        <Label>Status</Label>
-                                        <Badge className={getStatusColor(selectedSlot.status)}>
-                                          {selectedSlot.status}
-                                        </Badge>
-                                      </div>
-                                      <div>
-                                        <Label>Type</Label>
-                                        <Badge className={getSlotTypeColor(selectedSlot.slotType)}>
-                                          {selectedSlot.slotType}
-                                        </Badge>
-                                      </div>
-                                      <div>
-                                        <Label>Priority</Label>
-                                        <Badge className={getPriorityColor(selectedSlot.priority)}>
-                                          {selectedSlot.priority}
-                                        </Badge>
-                                      </div>
-                                    </div>
-                                    
-                                    <div className="grid grid-cols-2 gap-4">
-                                      <div>
-                                        <Label>Time Slot</Label>
-                                        <p>{selectedSlot.startTime} - {selectedSlot.endTime}</p>
-                                        <p className="text-sm text-muted-foreground">
-                                          Duration: {selectedSlot.duration} minutes
-                                        </p>
-                                      </div>
-                                      <div>
-                                        <Label>Capacity</Label>
-                                        <p>{selectedSlot.capacity - selectedSlot.availableCapacity} / {selectedSlot.capacity} booked</p>
-                                        <Progress 
-                                          value={((selectedSlot.capacity - selectedSlot.availableCapacity) / selectedSlot.capacity) * 100} 
-                                          className="mt-1"
-                                        />
-                                      </div>
-                                    </div>
-                                    
-                                    <div>
-                                      <Label>Location Details</Label>
-                                      <div className="p-3 bg-muted rounded-lg">
-                                        <p className="font-medium">{selectedSlot.location.name}</p>
-                                        <p className="text-sm text-muted-foreground">
-                                          {selectedSlot.location.address}
-                                        </p>
-                                        <div className="flex flex-wrap gap-2 mt-2">
-                                          {selectedSlot.location.facilities.map((facility, index) => (
-                                            <Badge key={index} variant="outline" className="text-xs">
-                                              {facility}
+                                  </SheetTrigger>
+                                  <SheetContent className="sm:max-w-4xl overflow-y-auto">
+                                    <SheetHeader>
+                                      <SheetTitle>Delivery Slot Details</SheetTitle>
+                                      <SheetDescription>
+                                        {selectedSlot?.location.name} - {selectedSlot && format(selectedSlot.date, 'PPp')}
+                                      </SheetDescription>
+                                    </SheetHeader>
+                                    {selectedSlot && (
+                                      <div className="space-y-6 mt-4">
+                                        <div className="grid grid-cols-3 gap-4">
+                                          <div>
+                                            <Label>Slot Type</Label>
+                                            <p className="capitalize">{selectedSlot.slotType}</p>
+                                          </div>
+                                          <div>
+                                            <Label>Priority</Label>
+                                            <Badge className={getPriorityColor(selectedSlot.priority)}>
+                                              {selectedSlot.priority}
                                             </Badge>
-                                          ))}
+                                          </div>
+                                          <div>
+                                            <Label>Status</Label>
+                                            <Badge className={getStatusColor(selectedSlot.status)}>
+                                              {selectedSlot.status}
+                                            </Badge>
+                                          </div>
                                         </div>
-                                      </div>
-                                    </div>
-                                    
-                                    {selectedSlot.bookings.length > 0 && (
-                                      <div>
-                                        <Label>Current Bookings ({selectedSlot.bookings.length})</Label>
-                                        <div className="space-y-2 mt-2">
-                                          {selectedSlot.bookings.map((booking) => (
-                                            <div key={booking.id} className="p-3 border rounded-lg">
-                                              <div className="flex items-center justify-between mb-2">
-                                                <p className="font-medium">{booking.supplierName}</p>
-                                                <Badge className={getBookingStatusColor(booking.status)}>
-                                                  {booking.status}
-                                                </Badge>
-                                              </div>
-                                              <div className="grid grid-cols-2 gap-4 text-sm">
-                                                <div>
-                                                  <span className="text-muted-foreground">PO:</span>
-                                                  <p>{booking.poNumber || 'N/A'}</p>
+
+                                        {selectedSlot.bookings && selectedSlot.bookings.length > 0 && (
+                                          <div>
+                                            <Label>Current Bookings ({selectedSlot.bookings.length})</Label>
+                                            <div className="space-y-2 mt-2">
+                                              {selectedSlot.bookings.map((booking) => (
+                                                <div key={booking.id} className="p-3 border rounded-lg">
+                                                  <div className="flex items-center justify-between mb-2">
+                                                    <p className="font-medium">{booking.supplierName}</p>
+                                                    <Badge className={getBookingStatusColor(booking.status)}>
+                                                      {booking.status}
+                                                    </Badge>
+                                                  </div>
+                                                  <div className="grid grid-cols-2 gap-4 text-sm">
+                                                    <div>
+                                                      <span className="text-muted-foreground">PO:</span>
+                                                      <p>{booking.poNumber || 'N/A'}</p>
+                                                    </div>
+                                                  </div>
                                                 </div>
-                                                <div>
-                                                  <span className="text-muted-foreground">Volume:</span>
-                                                  <p>{booking.expectedVolume} units</p>
-                                                </div>
-                                                <div>
-                                                  <span className="text-muted-foreground">Contact:</span>
-                                                  <p>{booking.contactPerson}</p>
-                                                </div>
-                                                <div>
-                                                  <span className="text-muted-foreground">Priority:</span>
-                                                  <Badge variant="outline" className={getPriorityColor(booking.priority)}>
-                                                    {booking.priority}
-                                                  </Badge>
-                                                </div>
-                                              </div>
+                                              ))}
                                             </div>
-                                          ))}
-                                        </div>
+                                          </div>
+                                        )}
                                       </div>
                                     )}
-                                  </div>
-                                )}
-                              </DialogContent>
-                            </Dialog>
+                                  </SheetContent>
+                                </Sheet>
                             <Button variant="ghost" size="sm">
                               <Edit className="w-4 h-4" />
                             </Button>

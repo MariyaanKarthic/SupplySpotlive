@@ -8,12 +8,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Avatar, AvatarFallback } from './ui/avatar';
 import { ScrollArea } from './ui/scroll-area';
 import { Separator } from './ui/separator';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
+import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from './ui/sheet';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Label } from './ui/label';
 import { Calendar as CalendarComponent } from './ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
-import { toast } from 'sonner@2.0.3';
+import { DatePicker } from './ui/date-picker';
+import { toast } from 'sonner';
 import { 
   MessageSquare, 
   FileText, 
@@ -491,9 +492,9 @@ export default function ProcurementCollaboration() {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          {/* Notifications Dialog */}
-          <Dialog open={showNotifications} onOpenChange={setShowNotifications}>
-            <DialogTrigger asChild>
+          {/* Notifications Sheet */}
+          <Sheet open={showNotifications} onOpenChange={setShowNotifications}>
+            <SheetTrigger asChild>
               <Button variant="outline" className="relative">
                 <Bell className="h-4 w-4 mr-2" />
                 Notifications
@@ -501,15 +502,15 @@ export default function ProcurementCollaboration() {
                   <Badge className="ml-2 bg-red-500">{unreadNotifications}</Badge>
                 )}
               </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-md">
-              <DialogHeader>
-                <DialogTitle>Notifications</DialogTitle>
-                <DialogDescription>
+            </SheetTrigger>
+            <SheetContent className="sm:max-w-md overflow-y-auto">
+              <SheetHeader>
+                <SheetTitle>Notifications</SheetTitle>
+                <SheetDescription>
                   Stay updated with your collaboration activities
-                </DialogDescription>
-              </DialogHeader>
-              <ScrollArea className="h-[400px] pr-4">
+                </SheetDescription>
+              </SheetHeader>
+              <ScrollArea className="h-[calc(100vh-120px)] pr-4 mt-4">
                 <div className="space-y-3">
                   {notifications.map((notification) => (
                     <div
@@ -539,25 +540,25 @@ export default function ProcurementCollaboration() {
                   ))}
                 </div>
               </ScrollArea>
-            </DialogContent>
-          </Dialog>
+            </SheetContent>
+          </Sheet>
 
-          {/* Quick Upload Dialog */}
-          <Dialog open={showQuickUpload} onOpenChange={setShowQuickUpload}>
-            <DialogTrigger asChild>
+          {/* Quick Upload Sheet */}
+          <Sheet open={showQuickUpload} onOpenChange={setShowQuickUpload}>
+            <SheetTrigger asChild>
               <Button>
                 <Upload className="h-4 w-4 mr-2" />
                 Quick Upload
               </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-lg">
-              <DialogHeader>
-                <DialogTitle>Quick Upload Documents</DialogTitle>
-                <DialogDescription>
+            </SheetTrigger>
+            <SheetContent className="sm:max-w-lg overflow-y-auto">
+              <SheetHeader>
+                <SheetTitle>Quick Upload Documents</SheetTitle>
+                <SheetDescription>
                   Upload documents to the current collaboration
-                </DialogDescription>
-              </DialogHeader>
-              <div className="space-y-4">
+                </SheetDescription>
+              </SheetHeader>
+              <div className="space-y-4 mt-4">
                 <div>
                   <Label>Document Category</Label>
                   <Select value={uploadCategory} onValueChange={setUploadCategory}>
@@ -601,7 +602,7 @@ export default function ProcurementCollaboration() {
                   <Textarea placeholder="Add a description for these documents..." />
                 </div>
               </div>
-              <DialogFooter>
+              <SheetFooter className="mt-4">
                 <Button variant="outline" onClick={() => setShowQuickUpload(false)}>
                   Cancel
                 </Button>
@@ -609,9 +610,9 @@ export default function ProcurementCollaboration() {
                   <Upload className="h-4 w-4 mr-2" />
                   Upload Files
                 </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+              </SheetFooter>
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
 
@@ -1137,16 +1138,16 @@ export default function ProcurementCollaboration() {
         </div>
       </div>
 
-      {/* View Document Dialog */}
-      <Dialog open={showViewDocument} onOpenChange={setShowViewDocument}>
-        <DialogContent className="max-w-4xl">
-          <DialogHeader>
-            <DialogTitle>Document Preview</DialogTitle>
-            <DialogDescription>
+      {/* View Document Sheet */}
+      <Sheet open={showViewDocument} onOpenChange={setShowViewDocument}>
+        <SheetContent className="sm:max-w-4xl overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle>Document Preview</SheetTitle>
+            <SheetDescription>
               {selectedDocument?.name}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
+            </SheetDescription>
+          </SheetHeader>
+          <div className="space-y-4 mt-4">
             <div className="bg-slate-100 rounded-lg p-8 flex items-center justify-center min-h-[400px]">
               <div className="text-center">
                 <FileText className="h-16 w-16 text-slate-400 mx-auto mb-4" />
@@ -1167,19 +1168,19 @@ export default function ProcurementCollaboration() {
               </Button>
             </div>
           </div>
-        </DialogContent>
-      </Dialog>
+        </SheetContent>
+      </Sheet>
 
-      {/* Approve Request Dialog */}
-      <Dialog open={showApproveDialog} onOpenChange={setShowApproveDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Approve Request</DialogTitle>
-            <DialogDescription>
+      {/* Approve Request Sheet */}
+      <Sheet open={showApproveDialog} onOpenChange={setShowApproveDialog}>
+        <SheetContent className="sm:max-w-lg overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle>Approve Request</SheetTitle>
+            <SheetDescription>
               Review and approve {selectedItem?.title}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
+            </SheetDescription>
+          </SheetHeader>
+          <div className="space-y-4 mt-4">
             <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
               <div className="flex items-center gap-2 mb-2">
                 <CheckCircle className="h-5 w-5 text-green-600" />
@@ -1199,7 +1200,7 @@ export default function ProcurementCollaboration() {
               />
             </div>
           </div>
-          <DialogFooter>
+          <SheetFooter className="mt-4">
             <Button variant="outline" onClick={() => setShowApproveDialog(false)}>
               Cancel
             </Button>
@@ -1207,20 +1208,20 @@ export default function ProcurementCollaboration() {
               <CheckCircle className="h-4 w-4 mr-2" />
               Approve Request
             </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          </SheetFooter>
+        </SheetContent>
+      </Sheet>
 
-      {/* Upload Quotation Dialog */}
-      <Dialog open={showUploadQuotation} onOpenChange={setShowUploadQuotation}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Upload Quotation Response</DialogTitle>
-            <DialogDescription>
+      {/* Upload Quotation Sheet */}
+      <Sheet open={showUploadQuotation} onOpenChange={setShowUploadQuotation}>
+        <SheetContent className="sm:max-w-lg overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle>Upload Quotation Response</SheetTitle>
+            <SheetDescription>
               Upload quotation documents for {selectedItem?.title}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
+            </SheetDescription>
+          </SheetHeader>
+          <div className="space-y-4 mt-4">
             <div>
               <Label>Select Quotation Files</Label>
               <Input
@@ -1248,7 +1249,7 @@ export default function ProcurementCollaboration() {
               <Textarea placeholder="Add any comments about the quotation..." />
             </div>
           </div>
-          <DialogFooter>
+          <SheetFooter className="mt-4">
             <Button variant="outline" onClick={() => setShowUploadQuotation(false)}>
               Cancel
             </Button>
@@ -1256,20 +1257,20 @@ export default function ProcurementCollaboration() {
               <Upload className="h-4 w-4 mr-2" />
               Upload Quotation
             </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          </SheetFooter>
+        </SheetContent>
+      </Sheet>
 
-      {/* Request Clarification Dialog */}
-      <Dialog open={showRequestClarification} onOpenChange={setShowRequestClarification}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Request Clarification</DialogTitle>
-            <DialogDescription>
+      {/* Request Clarification Sheet */}
+      <Sheet open={showRequestClarification} onOpenChange={setShowRequestClarification}>
+        <SheetContent className="sm:max-w-lg overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle>Request Clarification</SheetTitle>
+            <SheetDescription>
               Send a clarification request to {selectedItem?.vendor}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
+            </SheetDescription>
+          </SheetHeader>
+          <div className="space-y-4 mt-4">
             <div>
               <Label>Clarification Message</Label>
               <Textarea
@@ -1294,7 +1295,7 @@ export default function ProcurementCollaboration() {
               </Select>
             </div>
           </div>
-          <DialogFooter>
+          <SheetFooter className="mt-4">
             <Button variant="outline" onClick={() => setShowRequestClarification(false)}>
               Cancel
             </Button>
@@ -1302,20 +1303,20 @@ export default function ProcurementCollaboration() {
               <Send className="h-4 w-4 mr-2" />
               Send Request
             </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          </SheetFooter>
+        </SheetContent>
+      </Sheet>
 
-      {/* Assign Team Member Dialog */}
-      <Dialog open={showAssignTeam} onOpenChange={setShowAssignTeam}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Assign Team Member</DialogTitle>
-            <DialogDescription>
+      {/* Assign Team Member Sheet */}
+      <Sheet open={showAssignTeam} onOpenChange={setShowAssignTeam}>
+        <SheetContent className="sm:max-w-lg overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle>Assign Team Member</SheetTitle>
+            <SheetDescription>
               Assign a team member to {selectedItem?.title}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
+            </SheetDescription>
+          </SheetHeader>
+          <div className="space-y-4 mt-4">
             <div>
               <Label>Select Team Member</Label>
               <Select value={selectedTeamMember} onValueChange={setSelectedTeamMember}>
@@ -1336,7 +1337,7 @@ export default function ProcurementCollaboration() {
               <Textarea placeholder="Add a note for the team member..." />
             </div>
           </div>
-          <DialogFooter>
+          <SheetFooter className="mt-4">
             <Button variant="outline" onClick={() => setShowAssignTeam(false)}>
               Cancel
             </Button>
@@ -1344,20 +1345,20 @@ export default function ProcurementCollaboration() {
               <UserPlus className="h-4 w-4 mr-2" />
               Assign Member
             </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          </SheetFooter>
+        </SheetContent>
+      </Sheet>
 
-      {/* Schedule Meeting Dialog */}
-      <Dialog open={showScheduleMeeting} onOpenChange={setShowScheduleMeeting}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>Schedule Meeting</DialogTitle>
-            <DialogDescription>
+      {/* Schedule Meeting Sheet */}
+      <Sheet open={showScheduleMeeting} onOpenChange={setShowScheduleMeeting}>
+        <SheetContent className="sm:max-w-2xl overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle>Schedule Meeting</SheetTitle>
+            <SheetDescription>
               Schedule a meeting with {selectedItem?.vendor}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
+            </SheetDescription>
+          </SheetHeader>
+          <div className="space-y-4 mt-4">
             <div>
               <Label>Meeting Title</Label>
               <Input
@@ -1403,7 +1404,7 @@ export default function ProcurementCollaboration() {
               <Textarea placeholder="Enter meeting agenda..." className="min-h-[100px]" />
             </div>
           </div>
-          <DialogFooter>
+          <SheetFooter className="mt-4">
             <Button variant="outline" onClick={() => setShowScheduleMeeting(false)}>
               Cancel
             </Button>
@@ -1411,20 +1412,20 @@ export default function ProcurementCollaboration() {
               <Calendar className="h-4 w-4 mr-2" />
               Schedule Meeting
             </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          </SheetFooter>
+        </SheetContent>
+      </Sheet>
 
-      {/* Generate Report Dialog */}
-      <Dialog open={showGenerateReport} onOpenChange={setShowGenerateReport}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Generate Report</DialogTitle>
-            <DialogDescription>
+      {/* Generate Report Sheet */}
+      <Sheet open={showGenerateReport} onOpenChange={setShowGenerateReport}>
+        <SheetContent className="sm:max-w-lg overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle>Generate Report</SheetTitle>
+            <SheetDescription>
               Generate a detailed report for {selectedItem?.title}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
+            </SheetDescription>
+          </SheetHeader>
+          <div className="space-y-4 mt-4">
             <div>
               <Label>Report Type</Label>
               <Select value={reportType} onValueChange={setReportType}>
@@ -1443,8 +1444,8 @@ export default function ProcurementCollaboration() {
             <div>
               <Label>Date Range</Label>
               <div className="grid grid-cols-2 gap-2">
-                <Input type="date" placeholder="From" />
-                <Input type="date" placeholder="To" />
+                <DatePicker placeholder="From Date" />
+                <DatePicker placeholder="To Date" />
               </div>
             </div>
             <div>
@@ -1461,7 +1462,7 @@ export default function ProcurementCollaboration() {
               </Select>
             </div>
           </div>
-          <DialogFooter>
+          <SheetFooter className="mt-4">
             <Button variant="outline" onClick={() => setShowGenerateReport(false)}>
               Cancel
             </Button>
@@ -1469,24 +1470,24 @@ export default function ProcurementCollaboration() {
               <BarChart className="h-4 w-4 mr-2" />
               Generate Report
             </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          </SheetFooter>
+        </SheetContent>
+      </Sheet>
 
-      {/* View Details Dialog - Comprehensive for RFQ/BID/Quotation/Approval */}
-      <Dialog open={showViewDetails} onOpenChange={setShowViewDetails}>
-        <DialogContent className="max-w-5xl w-[90vw] max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>
+      {/* View Details Sheet - Comprehensive for RFQ/BID/Quotation/Approval */}
+      <Sheet open={showViewDetails} onOpenChange={setShowViewDetails}>
+        <SheetContent className="sm:max-w-5xl overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle>
               {selectedItem?.type === 'rfq' && 'RFQ Details'}
               {selectedItem?.type === 'bid' && 'BID Details'}
               {selectedItem?.type === 'quotation' && 'Quotation Details'}
               {selectedItem?.type === 'approval' && 'Approval Workflow'}
-            </DialogTitle>
-            <DialogDescription>
+            </SheetTitle>
+            <SheetDescription>
               Complete details for {selectedItem?.id}
-            </DialogDescription>
-          </DialogHeader>
+            </SheetDescription>
+          </SheetHeader>
           
           {selectedItem && (
             <div className="space-y-6">
@@ -1969,7 +1970,7 @@ export default function ProcurementCollaboration() {
             </div>
           )}
 
-          <DialogFooter className="gap-2">
+          <SheetFooter className="gap-2 mt-4">
             <Button variant="outline" onClick={() => setShowViewDetails(false)}>
               Close
             </Button>
@@ -1986,9 +1987,9 @@ export default function ProcurementCollaboration() {
                 Review & Approve
               </Button>
             )}
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          </SheetFooter>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }

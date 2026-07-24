@@ -39,7 +39,7 @@ import { DateRange } from 'react-day-picker';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 import { Calendar as CalendarComponent } from './ui/calendar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from './ui/sheet';
 import { Separator } from './ui/separator';
 import { ScrollArea } from './ui/scroll-area';
 import { format } from 'date-fns';
@@ -675,71 +675,71 @@ export function AuditTrail() {
                                 </div>
                               </TableCell>
                               <TableCell>
-                                <Dialog>
-                                  <DialogTrigger asChild>
-                                    <Button variant="ghost" size="sm" onClick={() => setSelectedEntry(entry)}>
-                                      <Eye className="w-4 h-4" />
-                                    </Button>
-                                  </DialogTrigger>
-                                  <DialogContent className="max-w-2xl">
-                                    <DialogHeader>
-                                      <DialogTitle>Audit Entry Details</DialogTitle>
-                                      <DialogDescription>
-                                        Complete information for audit entry {entry.id}
-                                      </DialogDescription>
-                                    </DialogHeader>
-                                    {selectedEntry && (
-                                      <div className="space-y-4">
-                                        <div className="grid grid-cols-2 gap-4">
-                                          <div>
-                                            <label className="text-sm font-medium">Action</label>
-                                            <p className="text-sm text-muted-foreground">{selectedEntry.action}</p>
-                                          </div>
-                                          <div>
-                                            <label className="text-sm font-medium">Entity</label>
-                                            <p className="text-sm text-muted-foreground">{selectedEntry.entityName}</p>
-                                          </div>
-                                          <div>
-                                            <label className="text-sm font-medium">User</label>
-                                            <p className="text-sm text-muted-foreground">
-                                              {selectedEntry.userName} ({selectedEntry.userRole})
-                                            </p>
-                                          </div>
-                                          <div>
-                                            <label className="text-sm font-medium">Timestamp</label>
-                                            <p className="text-sm text-muted-foreground">
-                                              {format(selectedEntry.timestamp, 'MMM dd, yyyy HH:mm:ss')}
-                                            </p>
-                                          </div>
-                                          <div>
-                                            <label className="text-sm font-medium">Module</label>
-                                            <p className="text-sm text-muted-foreground capitalize">{selectedEntry.module}</p>
-                                          </div>
-                                          <div>
-                                            <label className="text-sm font-medium">Status</label>
-                                            <Badge className={getStatusColor(selectedEntry.status)}>
-                                              {selectedEntry.status}
-                                            </Badge>
-                                          </div>
-                                          <div>
-                                            <label className="text-sm font-medium">Risk Level</label>
-                                            <Badge className={getRiskColor(selectedEntry.riskLevel)}>
-                                              {selectedEntry.riskLevel}
-                                            </Badge>
-                                          </div>
-                                          <div>
-                                            <label className="text-sm font-medium">Compliance Score</label>
-                                            <p className="text-sm text-muted-foreground">{selectedEntry.complianceScore}%</p>
-                                          </div>
-                                          <div>
-                                            <label className="text-sm font-medium">Session ID</label>
-                                            <p className="text-sm text-muted-foreground font-mono">{selectedEntry.sessionId}</p>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    )}
-                                  </DialogContent>
-                                </Dialog>
+                                 <Sheet>
+                                   <SheetTrigger asChild>
+                                     <Button variant="ghost" size="sm" onClick={() => setSelectedEntry(entry)}>
+                                       <Eye className="w-4 h-4" />
+                                     </Button>
+                                   </SheetTrigger>
+                                   <SheetContent className="sm:max-w-2xl overflow-y-auto">
+                                     <SheetHeader>
+                                       <SheetTitle>Audit Entry Details</SheetTitle>
+                                       <SheetDescription>
+                                         Complete information for audit entry {entry.id}
+                                       </SheetDescription>
+                                     </SheetHeader>
+                                     {selectedEntry && (
+                                       <div className="space-y-4 mt-4">
+                                         <div className="grid grid-cols-2 gap-4">
+                                           <div>
+                                             <label className="text-sm font-medium">Action</label>
+                                             <p className="text-sm text-muted-foreground">{selectedEntry.action}</p>
+                                           </div>
+                                           <div>
+                                             <label className="text-sm font-medium">Entity</label>
+                                             <p className="text-sm text-muted-foreground">{selectedEntry.entityName}</p>
+                                           </div>
+                                           <div>
+                                             <label className="text-sm font-medium">User</label>
+                                             <p className="text-sm text-muted-foreground">
+                                               {selectedEntry.userName} ({selectedEntry.userRole})
+                                             </p>
+                                           </div>
+                                           <div>
+                                             <label className="text-sm font-medium">Timestamp</label>
+                                             <p className="text-sm text-muted-foreground">
+                                               {format(selectedEntry.timestamp, 'MMM dd, yyyy HH:mm:ss')}
+                                             </p>
+                                           </div>
+                                           <div>
+                                             <label className="text-sm font-medium">Module</label>
+                                             <p className="text-sm text-muted-foreground capitalize">{selectedEntry.module}</p>
+                                           </div>
+                                           <div>
+                                             <label className="text-sm font-medium">Status</label>
+                                             <Badge className={getStatusColor(selectedEntry.status)}>
+                                               {selectedEntry.status}
+                                             </Badge>
+                                           </div>
+                                           <div>
+                                             <label className="text-sm font-medium">Risk Level</label>
+                                             <Badge className={getRiskColor(selectedEntry.riskLevel)}>
+                                               {selectedEntry.riskLevel}
+                                             </Badge>
+                                           </div>
+                                           <div>
+                                             <label className="text-sm font-medium">Compliance Score</label>
+                                             <p className="text-sm text-muted-foreground">{selectedEntry.complianceScore}%</p>
+                                           </div>
+                                           <div>
+                                             <label className="text-sm font-medium">Session ID</label>
+                                             <p className="text-sm text-muted-foreground font-mono">{selectedEntry.sessionId}</p>
+                                           </div>
+                                         </div>
+                                       </div>
+                                     )}
+                                   </SheetContent>
+                                 </Sheet>
                               </TableCell>
                             </DraggableTableRow>
                           );
@@ -872,8 +872,8 @@ export function AuditTrail() {
                           <Badge className={getWorkflowStatusColor(workflow.status)}>
                             {workflow.status}
                           </Badge>
-                          <Dialog>
-                            <DialogTrigger asChild>
+                          <Sheet>
+                            <SheetTrigger asChild>
                               <Button 
                                 variant="outline" 
                                 size="sm"
@@ -881,16 +881,16 @@ export function AuditTrail() {
                               >
                                 View Details
                               </Button>
-                            </DialogTrigger>
-                            <DialogContent className="max-w-4xl">
-                              <DialogHeader>
-                                <DialogTitle>Workflow Details: {workflow.name}</DialogTitle>
-                                <DialogDescription>
+                            </SheetTrigger>
+                            <SheetContent className="sm:max-w-4xl overflow-y-auto">
+                              <SheetHeader>
+                                <SheetTitle>Workflow Details: {workflow.name}</SheetTitle>
+                                <SheetDescription>
                                   Complete workflow progress and step details
-                                </DialogDescription>
-                              </DialogHeader>
+                                </SheetDescription>
+                              </SheetHeader>
                               {selectedWorkflow && (
-                                <div className="space-y-6">
+                                <div className="space-y-6 mt-4">
                                   <div className="grid grid-cols-3 gap-4">
                                     <div>
                                       <label className="text-sm font-medium">Status</label>
@@ -966,8 +966,8 @@ export function AuditTrail() {
                                   </div>
                                 </div>
                               )}
-                            </DialogContent>
-                          </Dialog>
+                            </SheetContent>
+                          </Sheet>
                         </div>
                       </div>
                       

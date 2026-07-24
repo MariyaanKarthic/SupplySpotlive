@@ -3,7 +3,7 @@ import { Card } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Badge } from './ui/badge';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from './ui/dialog';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from './ui/sheet';
 import { Label } from './ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Textarea } from './ui/textarea';
@@ -11,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Progress } from './ui/progress';
 import { Checkbox } from './ui/checkbox';
 import { RadioGroup, RadioGroupItem } from './ui/radio-group';
+import { DatePicker } from './ui/date-picker';
 import { vendorService } from '../services/api';
 import { Logo } from './Logo';
 import { 
@@ -525,7 +526,7 @@ export function VendorRegistration() {
               </div>
               <div className="space-y-2">
                 <Label>Incorporation Date</Label>
-                <Input type="date" />
+                <DatePicker placeholder="Select incorporation date" />
               </div>
               <div className="space-y-2">
                 <Label>MSME Registration</Label>
@@ -1042,34 +1043,24 @@ export function VendorRegistration() {
     </div>
   );
 
-  // Registration Review Modal
+  // Registration Review Sheet
   const renderReviewModal = () => (
-    <Dialog open={isReviewModalOpen} onOpenChange={setIsReviewModalOpen}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>Registration Review - {selectedRegistration?.companyName}</DialogTitle>
-          <DialogDescription>
+    <Sheet open={isReviewModalOpen} onOpenChange={setIsReviewModalOpen}>
+      <SheetContent className="sm:max-w-4xl overflow-y-auto">
+        <SheetHeader>
+          <SheetTitle>Registration Review - {selectedRegistration?.companyName}</SheetTitle>
+          <SheetDescription>
             Complete review of vendor registration details and documentation
-          </DialogDescription>
-        </DialogHeader>
+          </SheetDescription>
+        </SheetHeader>
         
         {selectedRegistration && (
-          <div className="space-y-6">
+          <div className="space-y-6 mt-4">
             {/* Basic Information */}
             <Card className="p-4">
-              <h3 className="mb-4">Company Information</h3>
+              <h4 className="font-semibold mb-3">Basic Information</h4>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm text-muted-foreground">Company Name</p>
-                  <p className="font-medium">{selectedRegistration.companyName}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Category</p>
-                  <p className="font-medium">{selectedRegistration.category}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">GSTIN</p>
-                  <p className="font-medium">{selectedRegistration.gstin}</p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Registration Date</p>
@@ -1165,8 +1156,8 @@ export function VendorRegistration() {
             </div>
           </div>
         )}
-      </DialogContent>
-    </Dialog>
+      </SheetContent>
+    </Sheet>
   );
 
   return (

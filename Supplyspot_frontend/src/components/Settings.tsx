@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Textarea } from './ui/textarea';
 import { Separator } from './ui/separator';
 import { Badge } from './ui/badge';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from './ui/sheet';
 import { 
   Settings as SettingsIcon,
   User,
@@ -142,21 +142,21 @@ export function Settings() {
           <h3 className="text-lg font-semibold">User Management</h3>
           <p className="text-sm text-muted-foreground">Manage user accounts and permissions</p>
         </div>
-        <Dialog open={isAddUserOpen} onOpenChange={setIsAddUserOpen}>
-          <DialogTrigger asChild>
+        <Sheet open={isAddUserOpen} onOpenChange={setIsAddUserOpen}>
+          <SheetTrigger asChild>
             <Button className="gap-2">
               <Plus className="w-4 h-4" />
               Add User
             </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Add New User</DialogTitle>
-              <DialogDescription>
+          </SheetTrigger>
+          <SheetContent className="sm:max-w-xl overflow-y-auto">
+            <SheetHeader>
+              <SheetTitle>Add New User</SheetTitle>
+              <SheetDescription>
                 Add a new user to the system by entering their details below.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="space-y-4">
+              </SheetDescription>
+            </SheetHeader>
+            <div className="space-y-4 mt-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="user-name">Full Name</Label>
@@ -185,13 +185,13 @@ export function Settings() {
                   <Input id="user-department" placeholder="Finance" />
                 </div>
               </div>
-              <div className="flex justify-end gap-2">
+              <div className="flex justify-end gap-2 pt-4">
                 <Button variant="outline" onClick={() => setIsAddUserOpen(false)}>Cancel</Button>
                 <Button onClick={() => setIsAddUserOpen(false)}>Add User</Button>
               </div>
             </div>
-          </DialogContent>
-        </Dialog>
+          </SheetContent>
+        </Sheet>
       </div>
 
       <Card>

@@ -3,13 +3,13 @@ import { Card } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Badge } from './ui/badge';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from './ui/dialog';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from './ui/sheet';
 import { Label } from './ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Textarea } from './ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Progress } from './ui/progress';
+import { DatePicker } from './ui/date-picker';
 import {
   Search,
   Plus,
@@ -1514,9 +1514,7 @@ export function VendorManagement({ onNavigateToRegistration }: VendorManagementP
                 </div>
                 <div className="space-y-2">
                   <Label className="text-xs font-bold text-slate-700">Follow-up Date</Label>
-                  <div className="relative">
-                    <Input type="date" className="h-10 text-xs bg-slate-50 border-none shadow-none" defaultValue="2023-09-25" />
-                  </div>
+                  <DatePicker placeholder="Select follow-up date" className="h-10 text-xs bg-slate-50 border-none shadow-none" />
                 </div>
               </div>
               <div className="space-y-2">

@@ -3,14 +3,14 @@ import { Card } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Badge } from './ui/badge';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from './ui/dialog';
+import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from './ui/sheet';
 import { Label } from './ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Progress } from './ui/progress';
 import { Textarea } from './ui/textarea';
 import { Switch } from './ui/switch';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 import { 
   Search, 
   Plus, 
@@ -1279,17 +1279,17 @@ export function APAutomation() {
         </TabsContent>
       </Tabs>
 
-      {/* Approval Review Modal */}
-      <Dialog open={isApprovalModalOpen} onOpenChange={setIsApprovalModalOpen}>
-        <DialogContent className="max-w-3xl">
-          <DialogHeader>
-            <DialogTitle>Review Invoice Approval</DialogTitle>
-            <DialogDescription>
+      {/* Approval Review Sheet */}
+      <Sheet open={isApprovalModalOpen} onOpenChange={setIsApprovalModalOpen}>
+        <SheetContent className="sm:max-w-3xl overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle>Review Invoice Approval</SheetTitle>
+            <SheetDescription>
               Review invoice details and validation results before approval
-            </DialogDescription>
-          </DialogHeader>
+            </SheetDescription>
+          </SheetHeader>
           {selectedApproval && (
-            <div className="space-y-6">
+            <div className="space-y-6 mt-4">
               {/* Invoice Details */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -1377,19 +1377,19 @@ export function APAutomation() {
               </div>
             </div>
           )}
-        </DialogContent>
-      </Dialog>
+        </SheetContent>
+      </Sheet>
 
-      {/* Add Rule Modal */}
-      <Dialog open={isRulesModalOpen} onOpenChange={setIsRulesModalOpen}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Add Approval Rule</DialogTitle>
-            <DialogDescription>
+      {/* Add Rule Sheet */}
+      <Sheet open={isRulesModalOpen} onOpenChange={setIsRulesModalOpen}>
+        <SheetContent className="sm:max-w-3xl overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle>Add Approval Rule</SheetTitle>
+            <SheetDescription>
               Create a new approval rule to automate invoice routing
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
+            </SheetDescription>
+          </SheetHeader>
+          <div className="space-y-4 mt-4">
             {/* Basic Information */}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
@@ -1575,7 +1575,7 @@ export function APAutomation() {
             </div>
           </div>
           
-          <DialogFooter>
+          <SheetFooter className="mt-4">
             <Button variant="outline" onClick={() => {
               setIsRulesModalOpen(false);
               resetRuleForm();
@@ -1586,20 +1586,20 @@ export function APAutomation() {
               <Plus className="w-4 h-4 mr-2" />
               Create Rule
             </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          </SheetFooter>
+        </SheetContent>
+      </Sheet>
 
-      {/* Edit Rule Modal */}
-      <Dialog open={isEditRuleModalOpen} onOpenChange={setIsEditRuleModalOpen}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Edit Approval Rule</DialogTitle>
-            <DialogDescription>
+      {/* Edit Rule Sheet */}
+      <Sheet open={isEditRuleModalOpen} onOpenChange={setIsEditRuleModalOpen}>
+        <SheetContent className="sm:max-w-3xl overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle>Edit Approval Rule</SheetTitle>
+            <SheetDescription>
               Update the approval rule configuration
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
+            </SheetDescription>
+          </SheetHeader>
+          <div className="space-y-4 mt-4">
             {/* Same form as Add Rule Modal */}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
@@ -1782,7 +1782,7 @@ export function APAutomation() {
             </div>
           </div>
           
-          <DialogFooter>
+          <SheetFooter className="mt-4">
             <Button variant="outline" onClick={() => {
               setIsEditRuleModalOpen(false);
               resetRuleForm();
@@ -1793,20 +1793,20 @@ export function APAutomation() {
               <CheckCircle className="w-4 h-4 mr-2" />
               Update Rule
             </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          </SheetFooter>
+        </SheetContent>
+      </Sheet>
 
-      {/* Test Rule Modal */}
-      <Dialog open={isTestRuleModalOpen} onOpenChange={setIsTestRuleModalOpen}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>Test Approval Rule</DialogTitle>
-            <DialogDescription>
+      {/* Test Rule Sheet */}
+      <Sheet open={isTestRuleModalOpen} onOpenChange={setIsTestRuleModalOpen}>
+        <SheetContent className="sm:max-w-2xl overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle>Test Approval Rule</SheetTitle>
+            <SheetDescription>
               Test "{selectedRule?.name}" with sample invoice data
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
+            </SheetDescription>
+          </SheetHeader>
+          <div className="space-y-4 mt-4">
             <div className="grid grid-cols-3 gap-4">
               <div className="space-y-2">
                 <Label>Invoice Amount</Label>
@@ -1923,13 +1923,13 @@ export function APAutomation() {
             )}
           </div>
           
-          <DialogFooter>
+          <SheetFooter className="mt-4">
             <Button variant="outline" onClick={() => setIsTestRuleModalOpen(false)}>
               Close
             </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          </SheetFooter>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }

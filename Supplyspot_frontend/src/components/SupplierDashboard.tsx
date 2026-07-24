@@ -5,13 +5,14 @@ import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Badge } from './ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from './ui/dialog';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from './ui/sheet';
 import { Alert, AlertDescription, AlertTitle } from './ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Textarea } from './ui/textarea';
 import { Progress } from './ui/progress';
 import { Calendar } from './ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
+import { DatePicker } from './ui/date-picker';
 import {
   Building2,
   User,
@@ -2618,16 +2619,16 @@ export const SupplierDashboard: React.FC = () => {
         </TabsContent>
       </Tabs>
 
-      {/* Submit Quotation Dialog */}
-      <Dialog open={showSubmitQuotation} onOpenChange={setShowSubmitQuotation}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Submit Quotation</DialogTitle>
-            <DialogDescription>
+      {/* Submit Quotation Sheet */}
+      <Sheet open={showSubmitQuotation} onOpenChange={setShowSubmitQuotation}>
+        <SheetContent className="sm:max-w-4xl overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle>Submit Quotation</SheetTitle>
+            <SheetDescription>
               Submit your quotation for the selected RFQ
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-6">
+            </SheetDescription>
+          </SheetHeader>
+          <div className="space-y-6 mt-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="rfq-selection">Select RFQ</Label>
@@ -2706,18 +2707,18 @@ export const SupplierDashboard: React.FC = () => {
               </Button>
             </div>
           </div>
-        </DialogContent>
-      </Dialog>
+        </SheetContent>
+      </Sheet>
 
-      {/* Create Invoice Dialog */}
-      <Dialog open={showCreateInvoice} onOpenChange={setShowCreateInvoice}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Create Invoice</DialogTitle>
-            <DialogDescription>
+      {/* Create Invoice Sheet */}
+      <Sheet open={showCreateInvoice} onOpenChange={setShowCreateInvoice}>
+        <SheetContent className="sm:max-w-4xl overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle>Create Invoice</SheetTitle>
+            <SheetDescription>
               Create a new invoice for delivered goods or services
-            </DialogDescription>
-          </DialogHeader>
+            </SheetDescription>
+          </SheetHeader>
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
@@ -2737,7 +2738,7 @@ export const SupplierDashboard: React.FC = () => {
               </div>
               <div>
                 <Label htmlFor="invoice-date">Invoice Date</Label>
-                <Input id="invoice-date" type="date" defaultValue={format(new Date(), 'yyyy-MM-dd')} />
+                <DatePicker id="invoice-date" placeholder="Select invoice date" />
               </div>
             </div>
 
@@ -2809,19 +2810,19 @@ export const SupplierDashboard: React.FC = () => {
               </Button>
             </div>
           </div>
-        </DialogContent>
-      </Dialog>
+        </SheetContent>
+      </Sheet>
 
-      {/* Upload Document Dialog */}
-      <Dialog open={showUploadDocument} onOpenChange={setShowUploadDocument}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>Upload Compliance Document</DialogTitle>
-            <DialogDescription>
+      {/* Upload Document Sheet */}
+      <Sheet open={showUploadDocument} onOpenChange={setShowUploadDocument}>
+        <SheetContent className="sm:max-w-2xl overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle>Upload Compliance Document</SheetTitle>
+            <SheetDescription>
               Upload certificates, licenses, and other compliance documents
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-6">
+            </SheetDescription>
+          </SheetHeader>
+          <div className="space-y-6 mt-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="document-type">Document Type</Label>
@@ -2846,7 +2847,7 @@ export const SupplierDashboard: React.FC = () => {
 
             <div>
               <Label htmlFor="expiry-date">Expiry Date (if applicable)</Label>
-              <Input id="expiry-date" type="date" />
+              <DatePicker id="expiry-date" placeholder="Select expiry date" />
             </div>
 
             <div>
@@ -2884,19 +2885,19 @@ export const SupplierDashboard: React.FC = () => {
               </Button>
             </div>
           </div>
-        </DialogContent>
-      </Dialog>
+        </SheetContent>
+      </Sheet>
 
-      {/* Shipment Notification Dialog */}
-      <Dialog open={showShipmentNotification} onOpenChange={setShowShipmentNotification}>
-        <DialogContent className="max-w-3xl">
-          <DialogHeader>
-            <DialogTitle>Update Shipment Status</DialogTitle>
-            <DialogDescription>
+      {/* Shipment Notification Sheet */}
+      <Sheet open={showShipmentNotification} onOpenChange={setShowShipmentNotification}>
+        <SheetContent className="sm:max-w-3xl overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle>Update Shipment Status</SheetTitle>
+            <SheetDescription>
               Update material readiness and shipping information for your purchase orders
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-6">
+            </SheetDescription>
+          </SheetHeader>
+          <div className="space-y-6 mt-4">
             <div>
               <Label htmlFor="shipment-po">Purchase Order</Label>
               <Select>
@@ -2943,7 +2944,7 @@ export const SupplierDashboard: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="expected-ship-date">Expected Shipping Date</Label>
-                <Input id="expected-ship-date" type="date" />
+                <DatePicker id="expected-ship-date" placeholder="Select shipping date" />
               </div>
               <div>
                 <Label htmlFor="carrier-info">Carrier Information</Label>
@@ -2997,25 +2998,25 @@ export const SupplierDashboard: React.FC = () => {
               </Button>
             </div>
           </div>
-        </DialogContent>
-      </Dialog>
+        </SheetContent>
+      </Sheet>
 
-      {/* --- Detail Modals (Functional Flows) --- */}
+      {/* --- Detail Sheets (Functional Flows) --- */}
 
-      {/* RFQ Detail Modal */}
-      <Dialog open={!!selectedRFQ} onOpenChange={(open: boolean) => !open && setSelectedRFQ(null)}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
+      {/* RFQ Detail Sheet */}
+      <Sheet open={!!selectedRFQ} onOpenChange={(open: boolean) => !open && setSelectedRFQ(null)}>
+        <SheetContent className="sm:max-w-3xl overflow-y-auto">
+          <SheetHeader>
             <div className="flex justify-between items-center pr-8">
               <div>
-                <DialogTitle className="text-xl font-bold">{selectedRFQ?.rfqNumber}</DialogTitle>
-                <DialogDescription>{selectedRFQ?.category} • Issued {selectedRFQ && format(selectedRFQ.issuedDate, 'MMM dd, yyyy')}</DialogDescription>
+                <SheetTitle className="text-xl font-bold">{selectedRFQ?.rfqNumber}</SheetTitle>
+                <SheetDescription>{selectedRFQ?.category} • Issued {selectedRFQ && format(selectedRFQ.issuedDate, 'MMM dd, yyyy')}</SheetDescription>
               </div>
               <Badge className={selectedRFQ ? getStatusColor(selectedRFQ.status) : ''}>
                 {selectedRFQ?.status}
               </Badge>
             </div>
-          </DialogHeader>
+          </SheetHeader>
           {selectedRFQ && (
             <div className="space-y-6 pt-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -3105,23 +3106,23 @@ export const SupplierDashboard: React.FC = () => {
               </div>
             </div>
           )}
-        </DialogContent>
-      </Dialog>
+        </SheetContent>
+      </Sheet>
 
-      {/* PO Detail Modal */}
-      <Dialog open={!!selectedPO} onOpenChange={(open: boolean) => !open && setSelectedPO(null)}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
+      {/* PO Detail Sheet */}
+      <Sheet open={!!selectedPO} onOpenChange={(open: boolean) => !open && setSelectedPO(null)}>
+        <SheetContent className="sm:max-w-4xl overflow-y-auto">
+          <SheetHeader>
             <div className="flex justify-between items-center pr-8">
               <div>
-                <DialogTitle className="text-xl font-bold">{selectedPO?.poNumber}</DialogTitle>
-                <DialogDescription>Reference: {selectedPO?.rfqReference || 'Direct Order'} • Ordered {selectedPO && format(selectedPO.orderDate, 'MMM dd, yyyy')}</DialogDescription>
+                <SheetTitle className="text-xl font-bold">{selectedPO?.poNumber}</SheetTitle>
+                <SheetDescription>Reference: {selectedPO?.rfqReference || 'Direct Order'} • Ordered {selectedPO && format(selectedPO.orderDate, 'MMM dd, yyyy')}</SheetDescription>
               </div>
               <Badge className={selectedPO ? getStatusColor(selectedPO.status) : ''}>
                 {selectedPO?.status}
               </Badge>
             </div>
-          </DialogHeader>
+          </SheetHeader>
           {selectedPO && (
             <div className="space-y-6 pt-4">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -3193,28 +3194,28 @@ export const SupplierDashboard: React.FC = () => {
               </div>
             </div>
           )}
-        </DialogContent>
-      </Dialog>
+        </SheetContent>
+      </Sheet>
 
-      {/* Invoice Detail Modal */}
-      <Dialog open={!!selectedInvoice} onOpenChange={(open: boolean) => !open && setSelectedInvoice(null)}>
-        <DialogContent className="max-w-3xl">
-          <DialogHeader>
+      {/* Invoice Detail Sheet */}
+      <Sheet open={!!selectedInvoice} onOpenChange={(open: boolean) => !open && setSelectedInvoice(null)}>
+        <SheetContent className="sm:max-w-3xl overflow-y-auto">
+          <SheetHeader>
             <div className="flex justify-between items-center pr-8">
               <div className="flex items-center gap-4">
                 <div className="p-2 bg-blue-100 rounded-lg">
                   <Receipt className="w-6 h-6 text-blue-600" />
                 </div>
                 <div>
-                  <DialogTitle className="text-xl font-bold">{selectedInvoice?.invoiceNumber}</DialogTitle>
-                  <DialogDescription>PO Ref: {selectedInvoice?.poReference}</DialogDescription>
+                  <SheetTitle className="text-xl font-bold">{selectedInvoice?.invoiceNumber}</SheetTitle>
+                  <SheetDescription>PO Ref: {selectedInvoice?.poReference}</SheetDescription>
                 </div>
               </div>
               <Badge className={selectedInvoice ? getStatusColor(selectedInvoice.status) : ''}>
                 {selectedInvoice?.status}
               </Badge>
             </div>
-          </DialogHeader>
+          </SheetHeader>
           {selectedInvoice && (
             <div className="space-y-6 pt-4">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-sm border-b pb-6">
@@ -3257,8 +3258,8 @@ export const SupplierDashboard: React.FC = () => {
               </div>
             </div>
           )}
-        </DialogContent>
-      </Dialog>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 };

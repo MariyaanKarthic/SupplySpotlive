@@ -3,7 +3,7 @@ import { Card } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Badge } from './ui/badge';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from './ui/dialog';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from './ui/sheet';
 import { Label } from './ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
@@ -887,17 +887,17 @@ export function APAutomation() {
         </TabsContent>
       </Tabs>
 
-      {/* Approval Review Modal */}
-      <Dialog open={isApprovalModalOpen} onOpenChange={setIsApprovalModalOpen}>
-        <DialogContent className="max-w-3xl">
-          <DialogHeader>
-            <DialogTitle>Review Invoice Approval</DialogTitle>
-            <DialogDescription>
+      {/* Approval Review Sheet */}
+      <Sheet open={isApprovalModalOpen} onOpenChange={setIsApprovalModalOpen}>
+        <SheetContent className="sm:max-w-3xl overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle>Review Invoice Approval</SheetTitle>
+            <SheetDescription>
               Review invoice details and validation results before approval
-            </DialogDescription>
-          </DialogHeader>
+            </SheetDescription>
+          </SheetHeader>
           {selectedApproval && (
-            <div className="space-y-6">
+            <div className="space-y-6 mt-4">
               {/* Invoice Details */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -985,19 +985,19 @@ export function APAutomation() {
               </div>
             </div>
           )}
-        </DialogContent>
-      </Dialog>
+        </SheetContent>
+      </Sheet>
 
-      {/* Add Rule Modal */}
-      <Dialog open={isRulesModalOpen} onOpenChange={setIsRulesModalOpen}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>Add Approval Rule</DialogTitle>
-            <DialogDescription>
+      {/* Add Rule Sheet */}
+      <Sheet open={isRulesModalOpen} onOpenChange={setIsRulesModalOpen}>
+        <SheetContent className="sm:max-w-2xl overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle>Add Approval Rule</SheetTitle>
+            <SheetDescription>
               Create a new approval rule to automate invoice routing
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
+            </SheetDescription>
+          </SheetHeader>
+          <div className="space-y-4 mt-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Rule Name</Label>
@@ -1069,8 +1069,8 @@ export function APAutomation() {
               </Button>
             </div>
           </div>
-        </DialogContent>
-      </Dialog>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }
