@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card } from './ui/card';
+import { Card, CardContent } from './ui/card';
 import { Badge } from './ui/badge';
 import { Progress } from './ui/progress';
 import { 
@@ -44,74 +44,61 @@ export function Dashboard() {
     <div className="p-6 space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-semibold">Dashboard</h1>
-        <p className="text-muted-foreground">Overview of your vendor and supplier management</p>
+        <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">Dashboard</h1>
       </div>
 
       {/* Key Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="p-6">
-          <div className="flex items-center justify-between">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+        <Card className="border-l-4 border-l-blue-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Total Vendors</p>
-              <p className="text-2xl font-semibold">284</p>
-              <div className="flex items-center gap-1 mt-1">
-                <TrendingUp className="w-4 h-4 text-green-500" />
-                <span className="text-sm text-green-500">+12%</span>
-              </div>
+              <p className="text-xs text-muted-foreground font-semibold">Total Vendors</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">284</p>
+              <p className="text-[11px] text-emerald-600 font-medium">+12% growth</p>
             </div>
-            <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-              <Users className="w-6 h-6 text-blue-600" />
+            <div className="p-2.5 bg-blue-50 rounded-lg">
+              <Users className="w-5 h-5 text-blue-600" />
             </div>
-          </div>
+          </CardContent>
         </Card>
 
-        <Card className="p-6">
-          <div className="flex items-center justify-between">
+        <Card className="border-l-4 border-l-emerald-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Active Contracts</p>
-              <p className="text-2xl font-semibold">156</p>
-              <div className="flex items-center gap-1 mt-1">
-                <TrendingDown className="w-4 h-4 text-red-500" />
-                <span className="text-sm text-red-500">-3%</span>
-              </div>
+              <p className="text-xs text-muted-foreground font-semibold">Active Contracts</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">156</p>
+              <p className="text-[11px] text-rose-600 font-medium">-3% vs target</p>
             </div>
-            <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-              <FileText className="w-6 h-6 text-green-600" />
+            <div className="p-2.5 bg-emerald-50 rounded-lg">
+              <FileText className="w-5 h-5 text-emerald-600" />
             </div>
-          </div>
+          </CardContent>
         </Card>
 
-        <Card className="p-6">
-          <div className="flex items-center justify-between">
+        <Card className="border-l-4 border-l-amber-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Monthly Spend</p>
-              <p className="text-2xl font-semibold">$67K</p>
-              <div className="flex items-center gap-1 mt-1">
-                <TrendingUp className="w-4 h-4 text-green-500" />
-                <span className="text-sm text-green-500">+8%</span>
-              </div>
+              <p className="text-xs text-muted-foreground font-semibold">Monthly Spend</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">$67K</p>
+              <p className="text-[11px] text-emerald-600 font-medium">+8% spend rate</p>
             </div>
-            <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
-              <DollarSign className="w-6 h-6 text-yellow-600" />
+            <div className="p-2.5 bg-amber-50 rounded-lg">
+              <DollarSign className="w-5 h-5 text-amber-600" />
             </div>
-          </div>
+          </CardContent>
         </Card>
 
-        <Card className="p-6">
-          <div className="flex items-center justify-between">
+        <Card className="border-l-4 border-l-rose-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Pending Approvals</p>
-              <p className="text-2xl font-semibold">23</p>
-              <div className="flex items-center gap-1 mt-1">
-                <AlertTriangle className="w-4 h-4 text-orange-500" />
-                <span className="text-sm text-orange-500">Requires attention</span>
-              </div>
+              <p className="text-xs text-muted-foreground font-semibold">Pending Approvals</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">23</p>
+              <p className="text-[11px] text-rose-600 font-medium">Requires attention</p>
             </div>
-            <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
-              <AlertTriangle className="w-6 h-6 text-red-600" />
+            <div className="p-2.5 bg-rose-50 rounded-lg">
+              <AlertTriangle className="w-5 h-5 text-rose-600" />
             </div>
-          </div>
+          </CardContent>
         </Card>
       </div>
 

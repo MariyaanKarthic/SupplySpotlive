@@ -413,24 +413,20 @@ export function AuditTrail() {
   };
 
   return (
-    <div className="p-6 space-y-6 max-w-7xl mx-auto">
+    <div className="p-4 sm:p-6 space-y-6 w-full max-w-full overflow-x-hidden">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold flex items-center gap-3">
-            <FileCheck className="w-8 h-8 text-primary" />
+          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">
             Audit Trail & Approvals
           </h1>
-          <p className="text-muted-foreground mt-2">
-            Comprehensive tracking of all approval processes for enhanced transparency and compliance oversight
-          </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" className="gap-2">
+          <Button variant="outline" size="sm" className="gap-2">
             <Download className="w-4 h-4" />
             Export Report
           </Button>
-          <Button variant="outline" className="gap-2">
+          <Button variant="outline" size="sm" className="gap-2">
             <RefreshCw className="w-4 h-4" />
             Refresh
           </Button>
@@ -438,55 +434,55 @@ export function AuditTrail() {
       </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Total Approvals</p>
-                <p className="text-2xl font-bold">1,247</p>
-                <p className="text-xs text-green-600">+12% from last month</p>
-              </div>
-              <CheckCircle className="w-8 h-8 text-green-500" />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+        <Card className="border-l-4 border-l-emerald-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
+            <div>
+              <p className="text-xs text-muted-foreground font-semibold">Total Approvals</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">1,247</p>
+              <p className="text-[11px] text-emerald-600 font-medium">+12% from last month</p>
+            </div>
+            <div className="p-2.5 bg-emerald-50 rounded-lg">
+              <CheckCircle className="w-5 h-5 text-emerald-600" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Pending Reviews</p>
-                <p className="text-2xl font-bold">23</p>
-                <p className="text-xs text-yellow-600">3 require attention</p>
-              </div>
-              <Clock className="w-8 h-8 text-yellow-500" />
+        <Card className="border-l-4 border-l-amber-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
+            <div>
+              <p className="text-xs text-muted-foreground font-semibold">Pending Reviews</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">23</p>
+              <p className="text-[11px] text-amber-600 font-medium">3 require attention</p>
+            </div>
+            <div className="p-2.5 bg-amber-50 rounded-lg">
+              <Clock className="w-5 h-5 text-amber-600" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">SLA Breaches</p>
-                <p className="text-2xl font-bold">5</p>
-                <p className="text-xs text-red-600">2 critical</p>
-              </div>
-              <AlertCircle className="w-8 h-8 text-red-500" />
+        <Card className="border-l-4 border-l-rose-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
+            <div>
+              <p className="text-xs text-muted-foreground font-semibold">SLA Breaches</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">5</p>
+              <p className="text-[11px] text-rose-600 font-medium">2 critical</p>
+            </div>
+            <div className="p-2.5 bg-rose-50 rounded-lg">
+              <AlertCircle className="w-5 h-5 text-rose-600" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Avg. Approval Time</p>
-                <p className="text-2xl font-bold">2.3</p>
-                <p className="text-xs text-muted-foreground">days</p>
-              </div>
-              <Shield className="w-8 h-8 text-blue-500" />
+        <Card className="border-l-4 border-l-blue-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
+            <div>
+              <p className="text-xs text-muted-foreground font-semibold">Avg. Approval Time</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">2.3 Days</p>
+              <p className="text-[11px] text-blue-600 font-medium">Fast cycle time</p>
+            </div>
+            <div className="p-2.5 bg-blue-50 rounded-lg">
+              <Shield className="w-5 h-5 text-blue-600" />
             </div>
           </CardContent>
         </Card>
@@ -494,7 +490,7 @@ export function AuditTrail() {
 
       {/* Main Content */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="w-fit">
           <TabsTrigger value="entries">Audit Entries</TabsTrigger>
           <TabsTrigger value="workflows">Approval Workflows</TabsTrigger>
           <TabsTrigger value="compliance">Compliance Dashboard</TabsTrigger>
@@ -860,7 +856,7 @@ export function AuditTrail() {
               <div className="space-y-4">
                 {mockWorkflows.map((workflow) => (
                   <Card key={workflow.id} className="border-l-4 border-l-primary">
-                    <CardContent className="p-6">
+                    <CardContent className="p-3.5">
                       <div className="flex items-center justify-between mb-4">
                         <div>
                           <h3 className="font-semibold">{workflow.name}</h3>

@@ -12,6 +12,7 @@ import { Checkbox } from './ui/checkbox';
 import { Alert, AlertDescription } from './ui/alert';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from './ui/sheet';
 import { DatePicker } from './ui/date-picker';
+import { Separator } from './ui/separator';
 import { 
   Building2,
   FileText,
@@ -358,8 +359,8 @@ export function RegistrationReview() {
   const [selectedRegistration, setSelectedRegistration] = useState<any>(registrationsPendingReview[0]);
   const [activeStage, setActiveStage] = useState('registration');
   const [reviewComments, setReviewComments] = useState('');
-  const [documentReviewNotes, setDocumentReviewNotes] = useState({});
-  const [verificationDecisions, setVerificationDecisions] = useState({});
+  const [documentReviewNotes, setDocumentReviewNotes] = useState('');
+  const [verificationDecisions, setVerificationDecisions] = useState('');
   const [finalDecision, setFinalDecision] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
@@ -579,118 +580,122 @@ export function RegistrationReview() {
   });
 
   const renderRegistrationReview = () => (
-    <div className="space-y-6">
-      <Card className="p-6">
-        <h3 className="mb-4">Company Information Review</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div className="space-y-4">
+    <div className="space-y-4 text-xs">
+      <Card className="p-4 sm:p-5 shadow-sm border-slate-200">
+        <h3 className="text-sm font-bold text-foreground">Company Information Review</h3>
+        <Separator className="my-3" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="space-y-3">
             <div>
-              <Label className="text-sm text-muted-foreground">Company Name</Label>
-              <p className="font-medium">{selectedRegistration.companyName}</p>
+              <Label className="text-xs text-muted-foreground">Company Name</Label>
+              <p className="font-semibold text-foreground text-xs mt-0.5">{selectedRegistration.companyName}</p>
             </div>
             <div>
-              <Label className="text-sm text-muted-foreground">Business Type</Label>
-              <p className="font-medium">{selectedRegistration.businessType}</p>
+              <Label className="text-xs text-muted-foreground">Business Type</Label>
+              <p className="font-medium text-xs mt-0.5">{selectedRegistration.businessType}</p>
             </div>
             <div>
-              <Label className="text-sm text-muted-foreground">Year Established</Label>
-              <p className="font-medium">{selectedRegistration.yearEstablished}</p>
-            </div>
-          </div>
-          
-          <div className="space-y-4">
-            <div>
-              <Label className="text-sm text-muted-foreground">Category</Label>
-              <p className="font-medium">{selectedRegistration.category} - {selectedRegistration.subcategory}</p>
-            </div>
-            <div>
-              <Label className="text-sm text-muted-foreground">Annual Turnover</Label>
-              <p className="font-medium">₹{selectedRegistration.annualTurnover}</p>
-            </div>
-            <div>
-              <Label className="text-sm text-muted-foreground">Employee Count</Label>
-              <p className="font-medium">{selectedRegistration.employeeCount}</p>
+              <Label className="text-xs text-muted-foreground">Year Established</Label>
+              <p className="font-medium text-xs mt-0.5">{selectedRegistration.yearEstablished}</p>
             </div>
           </div>
           
-          <div className="space-y-4">
+          <div className="space-y-3">
             <div>
-              <Label className="text-sm text-muted-foreground">GSTIN</Label>
-              <div className="flex items-center gap-2">
-                <p className="font-medium">{selectedRegistration.gstin}</p>
-                <CheckCircle className="w-4 h-4 text-green-600" />
+              <Label className="text-xs text-muted-foreground">Category</Label>
+              <p className="font-medium text-xs mt-0.5">{selectedRegistration.category} - {selectedRegistration.subcategory}</p>
+            </div>
+            <div>
+              <Label className="text-xs text-muted-foreground">Annual Turnover</Label>
+              <p className="font-medium text-xs mt-0.5">₹{selectedRegistration.annualTurnover}</p>
+            </div>
+            <div>
+              <Label className="text-xs text-muted-foreground">Employee Count</Label>
+              <p className="font-medium text-xs mt-0.5">{selectedRegistration.employeeCount}</p>
+            </div>
+          </div>
+          
+          <div className="space-y-3">
+            <div>
+              <Label className="text-xs text-muted-foreground">GSTIN</Label>
+              <div className="flex items-center gap-2 mt-0.5">
+                <p className="font-mono font-bold text-xs">{selectedRegistration.gstin}</p>
+                <CheckCircle className="w-3.5 h-3.5 text-emerald-600" />
               </div>
             </div>
             <div>
-              <Label className="text-sm text-muted-foreground">PAN</Label>
-              <div className="flex items-center gap-2">
-                <p className="font-medium">{selectedRegistration.pan}</p>
-                <CheckCircle className="w-4 h-4 text-green-600" />
+              <Label className="text-xs text-muted-foreground">PAN</Label>
+              <div className="flex items-center gap-2 mt-0.5">
+                <p className="font-mono font-bold text-xs">{selectedRegistration.pan}</p>
+                <CheckCircle className="w-3.5 h-3.5 text-emerald-600" />
               </div>
             </div>
             <div>
-              <Label className="text-sm text-muted-foreground">Submission Date</Label>
-              <p className="font-medium">{selectedRegistration.submissionDate}</p>
+              <Label className="text-xs text-muted-foreground">Submission Date</Label>
+              <p className="font-medium text-xs mt-0.5">{selectedRegistration.submissionDate}</p>
             </div>
           </div>
         </div>
       </Card>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="p-6">
-          <h3 className="mb-4">Contact Information</h3>
-          <div className="space-y-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <Card className="p-4 sm:p-5 shadow-sm border-slate-200">
+          <h3 className="text-sm font-bold text-foreground">Contact Information</h3>
+          <Separator className="my-3" />
+          <div className="space-y-3">
             <div>
-              <Label className="text-sm text-muted-foreground">Contact Person</Label>
-              <p className="font-medium">{selectedRegistration.contactPerson}</p>
-              <p className="text-sm text-muted-foreground">{selectedRegistration.designation}</p>
+              <Label className="text-xs text-muted-foreground">Contact Person</Label>
+              <p className="font-semibold text-xs mt-0.5">{selectedRegistration.contactPerson}</p>
+              <p className="text-xs text-muted-foreground">{selectedRegistration.designation}</p>
             </div>
             <div className="flex items-center gap-2">
-              <Mail className="w-4 h-4 text-muted-foreground" />
-              <span className="text-sm">{selectedRegistration.email}</span>
+              <Mail className="w-3.5 h-3.5 text-muted-foreground" />
+              <span className="text-xs">{selectedRegistration.email}</span>
             </div>
             <div className="flex items-center gap-2">
-              <Phone className="w-4 h-4 text-muted-foreground" />
-              <span className="text-sm">{selectedRegistration.phone}</span>
+              <Phone className="w-3.5 h-3.5 text-muted-foreground" />
+              <span className="text-xs">{selectedRegistration.phone}</span>
             </div>
           </div>
         </Card>
 
-        <Card className="p-6">
-          <h3 className="mb-4">Address Information</h3>
-          <div className="space-y-4">
+        <Card className="p-4 sm:p-5 shadow-sm border-slate-200">
+          <h3 className="text-sm font-bold text-foreground">Address Information</h3>
+          <Separator className="my-3" />
+          <div className="space-y-3">
             <div>
-              <Label className="text-sm text-muted-foreground">Registered Address</Label>
-              <p className="text-sm">{selectedRegistration.address.registered}</p>
+              <Label className="text-xs text-muted-foreground">Registered Address</Label>
+              <p className="text-xs mt-0.5">{selectedRegistration.address.registered}</p>
             </div>
             {!selectedRegistration.address.sameAsRegistered && (
               <div>
-                <Label className="text-sm text-muted-foreground">Operational Address</Label>
-                <p className="text-sm">{selectedRegistration.address.operational}</p>
+                <Label className="text-xs text-muted-foreground">Operational Address</Label>
+                <p className="text-xs mt-0.5">{selectedRegistration.address.operational}</p>
               </div>
             )}
           </div>
         </Card>
       </div>
 
-      <Card className="p-6">
-        <h3 className="mb-4">Banking Information</h3>
+      <Card className="p-4 sm:p-5 shadow-sm border-slate-200">
+        <h3 className="text-sm font-bold text-foreground">Banking Information</h3>
+        <Separator className="my-3" />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div>
-            <Label className="text-sm text-muted-foreground">Bank Name</Label>
-            <p className="font-medium">{selectedRegistration.banking.bankName}</p>
+            <Label className="text-xs text-muted-foreground">Bank Name</Label>
+            <p className="font-semibold text-xs mt-0.5">{selectedRegistration.banking.bankName}</p>
           </div>
           <div>
-            <Label className="text-sm text-muted-foreground">Account Number</Label>
-            <p className="font-medium">{selectedRegistration.banking.accountNumber}</p>
+            <Label className="text-xs text-muted-foreground">Account Number</Label>
+            <p className="font-mono font-medium text-xs mt-0.5">{selectedRegistration.banking.accountNumber}</p>
           </div>
           <div>
-            <Label className="text-sm text-muted-foreground">IFSC Code</Label>
-            <p className="font-medium">{selectedRegistration.banking.ifscCode}</p>
+            <Label className="text-xs text-muted-foreground">IFSC Code</Label>
+            <p className="font-mono font-medium text-xs mt-0.5">{selectedRegistration.banking.ifscCode}</p>
           </div>
           <div>
-            <Label className="text-sm text-muted-foreground">Account Type</Label>
-            <p className="font-medium">{selectedRegistration.banking.accountType}</p>
+            <Label className="text-xs text-muted-foreground">Account Type</Label>
+            <p className="font-medium text-xs mt-0.5">{selectedRegistration.banking.accountType}</p>
           </div>
         </div>
       </Card>
@@ -1374,81 +1379,91 @@ export function RegistrationReview() {
   );
 
   return (
-    <div className="p-6">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+    <div className="p-3 sm:p-5 space-y-4 w-full max-w-full overflow-x-hidden">
+      {/* Top Header with Horizontal Divider Line */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-200 dark:border-slate-800">
         <div>
-          <h1>Registration Review Workflow</h1>
+          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">
+            Registration Review Workflow
+          </h1>
         </div>
-        <div className="flex items-center gap-3">
-          <Badge variant="secondary">{filteredRegistrations.length} Pending Reviews</Badge>
-          <Button variant="outline">Export Report</Button>
+        <div className="flex items-center gap-2.5">
+          <Badge variant="secondary" className="px-2.5 py-1 text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">
+            {filteredRegistrations.length} Pending Reviews
+          </Badge>
+          <Button variant="outline" size="sm" className="h-8 gap-1.5 text-xs">
+            <Download className="w-3.5 h-3.5" />
+            Export Report
+          </Button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {/* Registration List */}
-        <div className="lg:col-span-1">
-          <Card className="p-4 mb-4">
-            <div className="space-y-3">
+      {/* Main Content Grid with Vertical Column Divider */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+        {/* Left Panel: Registration Search & List Sidebar (3 cols with Vertical Border Divider) */}
+        <div className="lg:col-span-3 lg:pr-5 lg:border-r border-slate-200 dark:border-slate-800 space-y-3">
+          <Card className="p-3 shadow-sm border-slate-200">
+            <div className="space-y-2.5">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Search className="absolute left-2.5 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
                   placeholder="Search registrations..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
+                  className="pl-9 h-8 text-xs"
                 />
               </div>
               <div className="grid grid-cols-2 gap-2">
                 <Select value={filterStatus} onValueChange={setFilterStatus}>
-                  <SelectTrigger className="text-xs">
+                  <SelectTrigger className="h-8 text-xs">
                     <SelectValue placeholder="Status" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All Status</SelectItem>
-                    <SelectItem value="pending">Pending</SelectItem>
-                    <SelectItem value="document">Document Review</SelectItem>
-                    <SelectItem value="verification">Verification</SelectItem>
+                    <SelectItem value="all" className="text-xs">All Status</SelectItem>
+                    <SelectItem value="pending" className="text-xs">Pending</SelectItem>
+                    <SelectItem value="document" className="text-xs">Document Review</SelectItem>
+                    <SelectItem value="verification" className="text-xs">Verification</SelectItem>
                   </SelectContent>
                 </Select>
                 <Select value={filterPriority} onValueChange={setFilterPriority}>
-                  <SelectTrigger className="text-xs">
+                  <SelectTrigger className="h-8 text-xs">
                     <SelectValue placeholder="Priority" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All Priority</SelectItem>
-                    <SelectItem value="high">High</SelectItem>
-                    <SelectItem value="medium">Medium</SelectItem>
-                    <SelectItem value="low">Low</SelectItem>
+                    <SelectItem value="all" className="text-xs">All Priority</SelectItem>
+                    <SelectItem value="high" className="text-xs">High</SelectItem>
+                    <SelectItem value="medium" className="text-xs">Medium</SelectItem>
+                    <SelectItem value="low" className="text-xs">Low</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             </div>
           </Card>
 
-          <div className="space-y-3">
+          <div className="space-y-2.5 max-h-[calc(100vh-210px)] overflow-y-auto pr-1">
             {filteredRegistrations.map((registration) => (
               <Card 
                 key={registration.id} 
-                className={`p-4 cursor-pointer transition-colors ${
-                  selectedRegistration?.id === registration.id ? 'ring-2 ring-primary' : 'hover:bg-muted/50'
+                className={`p-3 cursor-pointer transition-all border ${
+                  selectedRegistration?.id === registration.id 
+                    ? 'border-primary ring-2 ring-primary/20 bg-primary/5 shadow-sm' 
+                    : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50/50 dark:hover:bg-slate-900/50'
                 }`}
                 onClick={() => setSelectedRegistration(registration)}
               >
-                <div className="space-y-2">
-                  <div className="flex items-start justify-between">
-                    <p className="font-medium text-sm leading-tight">{registration.companyName}</p>
-                    <Badge variant={getStatusColor(registration.status)} className="text-xs">
+                <div className="space-y-1.5">
+                  <div className="flex items-start justify-between gap-1">
+                    <p className="font-semibold text-xs text-foreground leading-tight">{registration.companyName}</p>
+                    <Badge variant={getStatusColor(registration.status)} className="text-[10px] px-1.5 py-0">
                       {registration.status.split(' ')[0]}
                     </Badge>
                   </div>
-                  <p className="text-xs text-muted-foreground">{registration.id}</p>
-                  <div className="flex items-center justify-between">
-                    <span className={`text-xs ${getPriorityColor(registration.priority)}`}>
+                  <p className="text-[11px] font-mono text-muted-foreground">{registration.id}</p>
+                  <div className="flex items-center justify-between text-xs pt-0.5">
+                    <span className={`text-[11px] font-medium ${getPriorityColor(registration.priority)}`}>
                       {registration.priority} Priority
                     </span>
-                    <span className="text-xs text-muted-foreground">
+                    <span className="text-[11px] font-mono font-semibold text-muted-foreground">
                       {registration.completionPercentage}%
                     </span>
                   </div>
@@ -1459,45 +1474,47 @@ export function RegistrationReview() {
           </div>
         </div>
 
-        {/* Review Content */}
-        <div className="lg:col-span-3">
+        {/* Right Panel: Review Content (9 cols) */}
+        <div className="lg:col-span-9 lg:pl-1 space-y-4">
           {selectedRegistration && (
             <>
-              {/* Stage Navigation */}
-              <Card className="p-6 mb-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h2>{selectedRegistration.companyName}</h2>
+              {/* Stage Navigation Header */}
+              <Card className="p-4 sm:p-5 shadow-sm border-slate-200">
+                <div className="flex items-center justify-between mb-3 pb-3 border-b border-slate-200 dark:border-slate-800">
+                  <h2 className="text-lg font-bold text-foreground">{selectedRegistration.companyName}</h2>
                   <div className="flex items-center gap-2">
-                    <Badge variant={getStatusColor(selectedRegistration.status)}>
+                    <Badge variant={getStatusColor(selectedRegistration.status)} className="text-xs">
                       {selectedRegistration.status}
                     </Badge>
-                    <Badge variant="outline" className={getPriorityColor(selectedRegistration.priority)}>
+                    <Badge variant="outline" className={`text-xs ${getPriorityColor(selectedRegistration.priority)}`}>
                       {selectedRegistration.priority} Priority
                     </Badge>
                   </div>
                 </div>
                 
-                <div className="flex items-center justify-between">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
                   {reviewStages.map((stage, index) => (
-                    <div key={stage.id} className="flex items-center">
+                    <div key={stage.id} className="flex items-center gap-2">
                       <div 
-                        className={`flex items-center gap-2 cursor-pointer ${
-                          activeStage === stage.id ? 'text-primary' : 'text-muted-foreground'
+                        className={`flex-1 p-2.5 rounded-lg border transition-all cursor-pointer flex items-center gap-2.5 ${
+                          activeStage === stage.id 
+                            ? 'border-primary bg-primary/5 ring-1 ring-primary/20' 
+                            : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50 dark:hover:bg-slate-900/50'
                         }`}
                         onClick={() => setActiveStage(stage.id)}
                       >
-                        <div className={`p-2 rounded-lg ${
-                          activeStage === stage.id ? 'bg-primary text-primary-foreground' : 'bg-muted'
+                        <div className={`p-1.5 rounded-md shrink-0 ${
+                          activeStage === stage.id ? 'bg-primary text-primary-foreground' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
                         }`}>
-                          <stage.icon className="w-4 h-4" />
+                          <stage.icon className="w-3.5 h-3.5" />
                         </div>
-                        <div>
-                          <p className="text-sm font-medium">{stage.title}</p>
-                          <p className="text-xs text-muted-foreground">{stage.description}</p>
+                        <div className="min-w-0">
+                          <p className="text-xs font-semibold truncate leading-tight">{stage.title}</p>
+                          <p className="text-[10px] text-muted-foreground truncate mt-0.5">{stage.description}</p>
                         </div>
                       </div>
                       {index < reviewStages.length - 1 && (
-                        <ArrowRight className="w-4 h-4 mx-4 text-muted-foreground" />
+                        <ArrowRight className="w-3.5 h-3.5 text-slate-300 shrink-0 hidden md:block" />
                       )}
                     </div>
                   ))}

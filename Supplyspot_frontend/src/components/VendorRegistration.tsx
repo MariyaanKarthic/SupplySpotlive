@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card } from './ui/card';
+import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Badge } from './ui/badge';
@@ -232,7 +232,7 @@ export function VendorRegistration() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Vendor Registration Management</h1>
+          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">Vendor Registration Management</h1>
         </div>
         <div className="flex gap-3">
           <Button variant="outline" onClick={() => setCurrentView('review-pending')}>
@@ -246,53 +246,57 @@ export function VendorRegistration() {
       </div>
 
       {/* Registration Statistics */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card className="p-6">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <UserCheck className="w-6 h-6 text-blue-600" />
-            </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+        <Card className="border-l-4 border-l-blue-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Total Registrations</p>
-              <p className="text-2xl font-semibold">156</p>
+              <p className="text-xs text-muted-foreground font-semibold">Total Registrations</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">156</p>
+              <p className="text-[11px] text-blue-600 font-medium">All applications</p>
             </div>
-          </div>
+            <div className="p-2.5 bg-blue-50 rounded-lg">
+              <UserCheck className="w-5 h-5 text-blue-600" />
+            </div>
+          </CardContent>
         </Card>
 
-        <Card className="p-6">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-green-100 rounded-lg">
-              <CheckCircle className="w-6 h-6 text-green-600" />
-            </div>
+        <Card className="border-l-4 border-l-emerald-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Approved</p>
-              <p className="text-2xl font-semibold">142</p>
+              <p className="text-xs text-muted-foreground font-semibold">Approved</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">142</p>
+              <p className="text-[11px] text-emerald-600 font-medium">Active vendors</p>
             </div>
-          </div>
+            <div className="p-2.5 bg-emerald-50 rounded-lg">
+              <CheckCircle className="w-5 h-5 text-emerald-600" />
+            </div>
+          </CardContent>
         </Card>
 
-        <Card className="p-6">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-yellow-100 rounded-lg">
-              <Clock className="w-6 h-6 text-yellow-600" />
-            </div>
+        <Card className="border-l-4 border-l-amber-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Pending</p>
-              <p className="text-2xl font-semibold">12</p>
+              <p className="text-xs text-muted-foreground font-semibold">Pending</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">12</p>
+              <p className="text-[11px] text-amber-600 font-medium">Awaiting review</p>
             </div>
-          </div>
+            <div className="p-2.5 bg-amber-50 rounded-lg">
+              <Clock className="w-5 h-5 text-amber-600" />
+            </div>
+          </CardContent>
         </Card>
 
-        <Card className="p-6">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-red-100 rounded-lg">
-              <XCircle className="w-6 h-6 text-red-600" />
-            </div>
+        <Card className="border-l-4 border-l-rose-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Rejected</p>
-              <p className="text-2xl font-semibold">2</p>
+              <p className="text-xs text-muted-foreground font-semibold">Rejected</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">2</p>
+              <p className="text-[11px] text-rose-600 font-medium">Declined applications</p>
             </div>
-          </div>
+            <div className="p-2.5 bg-rose-50 rounded-lg">
+              <XCircle className="w-5 h-5 text-rose-600" />
+            </div>
+          </CardContent>
         </Card>
       </div>
 

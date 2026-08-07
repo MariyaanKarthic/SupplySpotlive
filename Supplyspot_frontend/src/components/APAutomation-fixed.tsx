@@ -310,7 +310,7 @@ export function APAutomation() {
 
       {/* Tabs Navigation */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4 max-w-2xl">
+        <TabsList className="w-fit">
           <TabsTrigger value="dashboard" className="gap-2">
             <BarChart3 className="w-4 h-4" />
             AP Dashboard

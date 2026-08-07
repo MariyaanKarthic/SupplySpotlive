@@ -30,7 +30,7 @@ export function useDragAndSelect<T extends { id: string | number }>({
 
   const handleSelectAll = useCallback((selectAll: boolean, allIds: (string | number)[]) => {
     setSelectedIds((prev) => {
-      const newSet = selectAll ? new Set(allIds) : new Set();
+      const newSet = selectAll ? new Set<string | number>(allIds) : new Set<string | number>();
       onSelectionChange?.(newSet);
       return newSet;
     });

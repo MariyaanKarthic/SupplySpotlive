@@ -41,6 +41,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import {
   Sidebar as ShadcnSidebar,
+  useSidebar,
   SidebarHeader,
   SidebarContent,
   SidebarFooter,
@@ -136,7 +137,8 @@ const navigationGroups: NavigationGroup[] = [
 
 export function Sidebar({ activeSection, onSectionChange }: SidebarProps) {
   const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(new Set());
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const { state, toggleSidebar } = useSidebar();
+  const isCollapsed = state === "collapsed";
   const navigate = useNavigate();
   const { logout } = useAuth();
 
@@ -154,10 +156,7 @@ export function Sidebar({ activeSection, onSectionChange }: SidebarProps) {
     <TooltipProvider>
       <ShadcnSidebar 
         collapsible="icon"
-        className={cn(
-          "bg-[#32343e] text-white border-r border-white/10 flex flex-col transition-all duration-300 h-screen shrink-0",
-          isCollapsed ? "w-16" : "w-64"
-        )}
+        className="bg-[#32343e] text-white border-r border-white/10 flex flex-col h-screen shrink-0"
       >
           {/* Sidebar Header */}
           <SidebarHeader className="p-4 border-b border-white/10">
@@ -167,7 +166,7 @@ export function Sidebar({ activeSection, onSectionChange }: SidebarProps) {
                 variant="ghost"
                 size="sm"
                 className="h-8 w-8 p-0 text-white hover:bg-white/10"
-                onClick={() => setIsCollapsed(!isCollapsed)}
+                onClick={toggleSidebar}
                 title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
               >
                 <PanelLeft className={cn("w-4 h-4 transition-transform duration-300", isCollapsed && "rotate-180")} />
@@ -176,7 +175,7 @@ export function Sidebar({ activeSection, onSectionChange }: SidebarProps) {
           </SidebarHeader>
 
           {/* Sidebar Content */}
-          <SidebarContent className="flex-1 overflow-y-auto p-2 scrollbar-thin">
+          <SidebarContent className="flex-1 overflow-y-auto p-2 scrollbar-none [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             {navigationGroups.map((group, groupIndex) => (
               <SidebarGroup key={group.title} className={cn("mb-2", groupIndex === 0 && "mt-1")}>
                 {!isCollapsed && (

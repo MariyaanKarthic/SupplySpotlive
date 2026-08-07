@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card } from './ui/card';
+import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Badge } from './ui/badge';
@@ -166,7 +166,7 @@ export function PaymentManagement() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-semibold">Payment Management</h1>
+          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">Payment Management</h1>
         </div>
         <Sheet open={isAddPaymentOpen} onOpenChange={setIsAddPaymentOpen}>
           <SheetTrigger asChild>
@@ -240,42 +240,57 @@ export function PaymentManagement() {
       </div>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="p-4">
-          <div className="flex items-center justify-between">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+        <Card className="border-l-4 border-l-emerald-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Completed</p>
-              <p className="text-2xl font-semibold">${totalCompleted.toLocaleString()}</p>
+              <p className="text-xs text-muted-foreground font-semibold">Completed</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">${totalCompleted.toLocaleString()}</p>
+              <p className="text-[11px] text-emerald-600 font-medium">Fully paid & settled</p>
             </div>
-            <CheckCircle className="w-8 h-8 text-green-500" />
-          </div>
+            <div className="p-2.5 bg-emerald-50 rounded-lg">
+              <CheckCircle className="w-5 h-5 text-emerald-600" />
+            </div>
+          </CardContent>
         </Card>
-        <Card className="p-4">
-          <div className="flex items-center justify-between">
+
+        <Card className="border-l-4 border-l-amber-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Pending</p>
-              <p className="text-2xl font-semibold">${totalPending.toLocaleString()}</p>
+              <p className="text-xs text-muted-foreground font-semibold">Pending</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">${totalPending.toLocaleString()}</p>
+              <p className="text-[11px] text-amber-600 font-medium">Awaiting processing</p>
             </div>
-            <Clock className="w-8 h-8 text-yellow-500" />
-          </div>
+            <div className="p-2.5 bg-amber-50 rounded-lg">
+              <Clock className="w-5 h-5 text-amber-600" />
+            </div>
+          </CardContent>
         </Card>
-        <Card className="p-4">
-          <div className="flex items-center justify-between">
+
+        <Card className="border-l-4 border-l-blue-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Scheduled</p>
-              <p className="text-2xl font-semibold">${totalScheduled.toLocaleString()}</p>
+              <p className="text-xs text-muted-foreground font-semibold">Scheduled</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">${totalScheduled.toLocaleString()}</p>
+              <p className="text-[11px] text-blue-600 font-medium">Queued disbursement</p>
             </div>
-            <Clock className="w-8 h-8 text-blue-500" />
-          </div>
+            <div className="p-2.5 bg-blue-50 rounded-lg">
+              <Clock className="w-5 h-5 text-blue-600" />
+            </div>
+          </CardContent>
         </Card>
-        <Card className="p-4">
-          <div className="flex items-center justify-between">
+
+        <Card className="border-l-4 border-l-rose-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Failed</p>
-              <p className="text-2xl font-semibold">${totalFailed.toLocaleString()}</p>
+              <p className="text-xs text-muted-foreground font-semibold">Failed</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">${totalFailed.toLocaleString()}</p>
+              <p className="text-[11px] text-rose-600 font-medium">Requires investigation</p>
             </div>
-            <XCircle className="w-8 h-8 text-red-500" />
-          </div>
+            <div className="p-2.5 bg-rose-50 rounded-lg">
+              <XCircle className="w-5 h-5 text-rose-600" />
+            </div>
+          </CardContent>
         </Card>
       </div>
 

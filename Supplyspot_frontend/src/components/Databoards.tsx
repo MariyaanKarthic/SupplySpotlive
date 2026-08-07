@@ -1239,15 +1239,7 @@ export const Databoards: React.FC = () => {
       {/* Header */}
       <div className="flex justify-between items-start">
         <div>
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
-              <Database className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold">Databoards</h1>
-              <p className="text-lg text-muted-foreground">Comprehensive data management and analytics</p>
-            </div>
-          </div>
+          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">Databoards</h1>
         </div>
         <div className="flex items-center gap-3">
           <Button variant="outline" onClick={() => setShowExportDialog(true)}>
@@ -1266,99 +1258,107 @@ export const Databoards: React.FC = () => {
       </div>
 
       {/* Summary Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-muted-foreground">Vendors</p>
-                <p className="text-2xl font-bold text-blue-600">{mockVendors.length}</p>
-              </div>
-              <Users className="w-6 h-6 text-blue-500" />
+      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
+        <Card className="border-l-4 border-l-blue-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
+            <div>
+              <p className="text-xs text-muted-foreground font-semibold">Vendors</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">{mockVendors.length}</p>
+              <p className="text-[11px] text-blue-600 font-medium">Registered</p>
+            </div>
+            <div className="p-2 bg-blue-50 rounded-lg">
+              <Users className="w-4 h-4 text-blue-600" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-muted-foreground">Contracts</p>
-                <p className="text-2xl font-bold text-green-600">{mockContracts.length}</p>
-              </div>
-              <FileText className="w-6 h-6 text-green-500" />
+        <Card className="border-l-4 border-l-emerald-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
+            <div>
+              <p className="text-xs text-muted-foreground font-semibold">Contracts</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">{mockContracts.length}</p>
+              <p className="text-[11px] text-emerald-600 font-medium">Active master</p>
+            </div>
+            <div className="p-2 bg-emerald-50 rounded-lg">
+              <FileText className="w-4 h-4 text-emerald-600" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-muted-foreground">RFQs</p>
-                <p className="text-2xl font-bold text-purple-600">{mockRFQs.length}</p>
-              </div>
-              <Target className="w-6 h-6 text-purple-500" />
+        <Card className="border-l-4 border-l-purple-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
+            <div>
+              <p className="text-xs text-muted-foreground font-semibold">RFQs</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">{mockRFQs.length}</p>
+              <p className="text-[11px] text-purple-600 font-medium">Bidding active</p>
+            </div>
+            <div className="p-2 bg-purple-50 rounded-lg">
+              <Target className="w-4 h-4 text-purple-600" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-muted-foreground">Purchase Orders</p>
-                <p className="text-2xl font-bold text-orange-600">{mockPurchaseOrders.length}</p>
-              </div>
-              <ShoppingCart className="w-6 h-6 text-orange-500" />
+        <Card className="border-l-4 border-l-amber-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
+            <div>
+              <p className="text-xs text-muted-foreground font-semibold">Orders</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">{mockPurchaseOrders.length}</p>
+              <p className="text-[11px] text-amber-600 font-medium">Issued POs</p>
+            </div>
+            <div className="p-2 bg-amber-50 rounded-lg">
+              <ShoppingCart className="w-4 h-4 text-amber-600" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-muted-foreground">Invoices</p>
-                <p className="text-2xl font-bold text-red-600">{mockInvoices.length}</p>
-              </div>
-              <Receipt className="w-6 h-6 text-red-500" />
+        <Card className="border-l-4 border-l-rose-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
+            <div>
+              <p className="text-xs text-muted-foreground font-semibold">Invoices</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">{mockInvoices.length}</p>
+              <p className="text-[11px] text-rose-600 font-medium">Processing</p>
+            </div>
+            <div className="p-2 bg-rose-50 rounded-lg">
+              <Receipt className="w-4 h-4 text-rose-600" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-muted-foreground">Payments</p>
-                <p className="text-2xl font-bold text-indigo-600">{mockPayments.length}</p>
-              </div>
-              <CreditCard className="w-6 h-6 text-indigo-500" />
+        <Card className="border-l-4 border-l-indigo-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
+            <div>
+              <p className="text-xs text-muted-foreground font-semibold">Payments</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">{mockPayments.length}</p>
+              <p className="text-[11px] text-indigo-600 font-medium">Settled</p>
+            </div>
+            <div className="p-2 bg-indigo-50 rounded-lg">
+              <CreditCard className="w-4 h-4 text-indigo-600" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-muted-foreground">Documents</p>
-                <p className="text-2xl font-bold text-teal-600">{mockDocuments.length}</p>
-              </div>
-              <FileCheck className="w-6 h-6 text-teal-500" />
+        <Card className="border-l-4 border-l-teal-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
+            <div>
+              <p className="text-xs text-muted-foreground font-semibold">Documents</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">{mockDocuments.length}</p>
+              <p className="text-[11px] text-teal-600 font-medium">Verified</p>
+            </div>
+            <div className="p-2 bg-teal-50 rounded-lg">
+              <FileCheck className="w-4 h-4 text-teal-600" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-muted-foreground">Deliveries</p>
-                <p className="text-2xl font-bold text-cyan-600">{mockDeliveries.length}</p>
-              </div>
-              <Truck className="w-6 h-6 text-cyan-500" />
+        <Card className="border-l-4 border-l-cyan-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
+            <div>
+              <p className="text-xs text-muted-foreground font-semibold">Deliveries</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">{mockDeliveries.length}</p>
+              <p className="text-[11px] text-cyan-600 font-medium">Recorded</p>
+            </div>
+            <div className="p-2 bg-cyan-50 rounded-lg">
+              <Truck className="w-4 h-4 text-cyan-600" />
             </div>
           </CardContent>
         </Card>
@@ -1406,7 +1406,7 @@ export const Databoards: React.FC = () => {
         <CardContent className="space-y-4">
           {/* Tabs */}
           <Tabs value={activeTab} onValueChange={(value: string) => setActiveTab(value as DataType)}>
-            <TabsList className="grid w-full grid-cols-8">
+            <TabsList className="w-fit">
               <TabsTrigger value="vendors">Vendors</TabsTrigger>
               <TabsTrigger value="contracts">Contracts</TabsTrigger>
               <TabsTrigger value="rfqs">RFQs</TabsTrigger>

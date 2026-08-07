@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card } from './ui/card';
+import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Badge } from './ui/badge';
@@ -625,7 +625,7 @@ export function VendorManagement({ onNavigateToRegistration }: VendorManagementP
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-semibold">Vendor Management</h1>
+          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">Vendor Management</h1>
         </div>
         <div className="flex items-center gap-2">
           <Button
@@ -669,7 +669,7 @@ export function VendorManagement({ onNavigateToRegistration }: VendorManagementP
       {/* Rest of the component remains the same... */}
       {/* Tabs Navigation */}
       <Tabs defaultValue="vendors" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4 max-w-2xl">
+        <TabsList className="w-fit">
           <TabsTrigger value="vendors" className="gap-2">
             <Building className="w-4 h-4" />
             Vendor List
@@ -802,65 +802,57 @@ export function VendorManagement({ onNavigateToRegistration }: VendorManagementP
         {/* Other tab contents would continue here... */}
         <TabsContent value="performance" className="space-y-6">
           {/* Summary Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <Card className="p-0 border-none shadow-none bg-blue-50/80 dark:bg-blue-950/20">
-              <div className="p-5 flex items-center gap-4">
-                <div className="h-12 w-12 rounded-lg bg-blue-500/90 flex items-center justify-center text-white shrink-0">
-                  <Award className="w-6 h-6" />
-                </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+            <Card className="border-l-4 border-l-blue-500 shadow-sm hover:shadow-md transition-all">
+              <CardContent className="p-3.5 flex items-center justify-between">
                 <div>
-                  <p className="text-xs font-medium text-muted-foreground mb-1 uppercase tracking-wider">Avg On-Time Delivery</p>
-                  <div className="flex items-baseline gap-2">
-                    <h3 className="text-2xl font-bold">86%</h3>
-                    <span className="text-[10px] text-muted-foreground font-normal">Across All Vendors</span>
-                  </div>
+                  <p className="text-xs text-muted-foreground font-semibold">Avg On-Time Delivery</p>
+                  <p className="text-xl font-bold text-foreground mt-0.5">86%</p>
+                  <p className="text-[11px] text-blue-600 font-medium">Across All Vendors</p>
                 </div>
-              </div>
+                <div className="p-2.5 bg-blue-50 rounded-lg">
+                  <Award className="w-5 h-5 text-blue-600" />
+                </div>
+              </CardContent>
             </Card>
 
-            <Card className="p-0 border-none shadow-none bg-pink-50/50 dark:bg-pink-950/20">
-              <div className="p-5 flex items-center gap-4">
-                <div className="h-12 w-12 rounded-lg bg-pink-500 flex items-center justify-center text-white shrink-0">
-                  <Activity className="w-6 h-6" />
-                </div>
+            <Card className="border-l-4 border-l-rose-500 shadow-sm hover:shadow-md transition-all">
+              <CardContent className="p-3.5 flex items-center justify-between">
                 <div>
-                  <p className="text-xs font-medium text-muted-foreground mb-1 uppercase tracking-wider">Avg Quality Score</p>
-                  <div className="flex items-baseline gap-2">
-                    <h3 className="text-2xl font-bold">88.2%</h3>
-                    <span className="text-[10px] text-muted-foreground font-normal">Across All Vendors</span>
-                  </div>
+                  <p className="text-xs text-muted-foreground font-semibold">Avg Quality Score</p>
+                  <p className="text-xl font-bold text-foreground mt-0.5">88.2%</p>
+                  <p className="text-[11px] text-rose-600 font-medium">Across All Vendors</p>
                 </div>
-              </div>
+                <div className="p-2.5 bg-rose-50 rounded-lg">
+                  <Activity className="w-5 h-5 text-rose-600" />
+                </div>
+              </CardContent>
             </Card>
 
-            <Card className="p-0 border-none shadow-none bg-green-50/50 dark:bg-green-950/20">
-              <div className="p-5 flex items-center gap-4">
-                <div className="h-12 w-12 rounded-lg bg-green-600 flex items-center justify-center text-white shrink-0">
-                  <Clock className="w-6 h-6" />
-                </div>
+            <Card className="border-l-4 border-l-emerald-500 shadow-sm hover:shadow-md transition-all">
+              <CardContent className="p-3.5 flex items-center justify-between">
                 <div>
-                  <p className="text-xs font-medium text-muted-foreground mb-1 uppercase tracking-wider">Avg Cost Compliance</p>
-                  <div className="flex items-baseline gap-2">
-                    <h3 className="text-2xl font-bold">94.2%</h3>
-                    <span className="text-[10px] text-muted-foreground font-normal">Budget adherence</span>
-                  </div>
+                  <p className="text-xs text-muted-foreground font-semibold">Avg Cost Compliance</p>
+                  <p className="text-xl font-bold text-foreground mt-0.5">94.2%</p>
+                  <p className="text-[11px] text-emerald-600 font-medium">Budget adherence</p>
                 </div>
-              </div>
+                <div className="p-2.5 bg-emerald-50 rounded-lg">
+                  <Clock className="w-5 h-5 text-emerald-600" />
+                </div>
+              </CardContent>
             </Card>
 
-            <Card className="p-0 border-none shadow-none bg-orange-50/50 dark:bg-orange-950/20">
-              <div className="p-5 flex items-center gap-4">
-                <div className="h-12 w-12 rounded-lg bg-orange-500/80 flex items-center justify-center text-white shrink-0">
-                  <Target className="w-6 h-6" />
-                </div>
+            <Card className="border-l-4 border-l-amber-500 shadow-sm hover:shadow-md transition-all">
+              <CardContent className="p-3.5 flex items-center justify-between">
                 <div>
-                  <p className="text-xs font-medium text-muted-foreground mb-1 uppercase tracking-wider">Innovation Score</p>
-                  <div className="flex items-baseline gap-2">
-                    <h3 className="text-2xl font-bold">76.2%</h3>
-                    <span className="text-[10px] text-muted-foreground font-normal">Value-add contributions</span>
-                  </div>
+                  <p className="text-xs text-muted-foreground font-semibold">Innovation Score</p>
+                  <p className="text-xl font-bold text-foreground mt-0.5">76.2%</p>
+                  <p className="text-[11px] text-amber-600 font-medium">Value-add contributions</p>
                 </div>
-              </div>
+                <div className="p-2.5 bg-amber-50 rounded-lg">
+                  <Target className="w-5 h-5 text-amber-600" />
+                </div>
+              </CardContent>
             </Card>
           </div>
 

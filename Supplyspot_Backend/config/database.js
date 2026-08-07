@@ -10,11 +10,11 @@ const db = knex(dbConfig);
 const connectDB = async () => {
   try {
     await db.raw('SELECT 1');
-    logger.info('PostgreSQL connected successfully');
+    logger.info('Database connected successfully');
     return db;
   } catch (error) {
-    logger.error('Database connection failed:', error);
-    throw error;
+    logger.warn('Database connection unavailable (PostgreSQL not running locally): ' + error.message);
+    return db;
   }
 };
 

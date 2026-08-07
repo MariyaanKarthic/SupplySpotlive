@@ -467,7 +467,7 @@ export function PurchaseOrderManagement() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1>Purchase Order Management</h1>
+          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">Purchase Order Management</h1>
         </div>
         <div className="flex gap-3">
           <Button variant="outline" className="gap-2 relative">
@@ -491,49 +491,57 @@ export function PurchaseOrderManagement() {
       </div>
 
       {/* Key Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="p-4">
-          <div className="flex items-center justify-between">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+        <Card className="border-l-4 border-l-blue-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Active POs</p>
-              <p className="text-2xl font-semibold">{purchaseOrderData.filter(po => ['New', 'Acknowledged', 'In Progress'].includes(po.status)).length}</p>
-              <p className="text-xs text-muted-foreground">Requiring attention</p>
+              <p className="text-xs text-muted-foreground font-semibold">Active POs</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">{purchaseOrderData.filter(po => ['New', 'Acknowledged', 'In Progress'].includes(po.status)).length}</p>
+              <p className="text-[11px] text-blue-600 font-medium">Requiring attention</p>
             </div>
-            <ShoppingCart className="w-8 h-8 text-blue-500" />
-          </div>
+            <div className="p-2.5 bg-blue-50 rounded-lg">
+              <ShoppingCart className="w-5 h-5 text-blue-600" />
+            </div>
+          </CardContent>
         </Card>
 
-        <Card className="p-4">
-          <div className="flex items-center justify-between">
+        <Card className="border-l-4 border-l-amber-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Pending Acknowledgment</p>
-              <p className="text-2xl font-semibold">{purchaseOrderData.filter(po => po.acknowledgmentStatus === 'Pending').length}</p>
-              <p className="text-xs text-orange-500">Action required</p>
+              <p className="text-xs text-muted-foreground font-semibold">Pending Acknowledgment</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">{purchaseOrderData.filter(po => po.acknowledgmentStatus === 'Pending').length}</p>
+              <p className="text-[11px] text-amber-600 font-medium">Action required</p>
             </div>
-            <ClipboardCheck className="w-8 h-8 text-orange-500" />
-          </div>
+            <div className="p-2.5 bg-amber-50 rounded-lg">
+              <ClipboardCheck className="w-5 h-5 text-amber-600" />
+            </div>
+          </CardContent>
         </Card>
 
-        <Card className="p-4">
-          <div className="flex items-center justify-between">
+        <Card className="border-l-4 border-l-purple-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Change Requests</p>
-              <p className="text-2xl font-semibold">{purchaseOrderData.reduce((acc, po) => acc + po.changeRequests.length, 0)}</p>
-              <p className="text-xs text-muted-foreground">Active requests</p>
+              <p className="text-xs text-muted-foreground font-semibold">Change Requests</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">{purchaseOrderData.reduce((acc, po) => acc + po.changeRequests.length, 0)}</p>
+              <p className="text-[11px] text-purple-600 font-medium">Active requests</p>
             </div>
-            <Edit3 className="w-8 h-8 text-purple-500" />
-          </div>
+            <div className="p-2.5 bg-purple-50 rounded-lg">
+              <Edit3 className="w-5 h-5 text-purple-600" />
+            </div>
+          </CardContent>
         </Card>
 
-        <Card className="p-4">
-          <div className="flex items-center justify-between">
+        <Card className="border-l-4 border-l-emerald-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Total Value</p>
-              <p className="text-2xl font-semibold">$150K</p>
-              <p className="text-xs text-green-500">Active POs</p>
+              <p className="text-xs text-muted-foreground font-semibold">Total Value</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">$150K</p>
+              <p className="text-[11px] text-emerald-600 font-medium">Active POs</p>
             </div>
-            <Calculator className="w-8 h-8 text-green-500" />
-          </div>
+            <div className="p-2.5 bg-emerald-50 rounded-lg">
+              <Calculator className="w-5 h-5 text-emerald-600" />
+            </div>
+          </CardContent>
         </Card>
       </div>
 
@@ -549,7 +557,7 @@ export function PurchaseOrderManagement() {
 
       {/* Tabs Navigation */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4 max-w-2xl">
+        <TabsList className="w-fit">
           <TabsTrigger value="purchase-orders" className="gap-2">
             <ShoppingCart className="w-4 h-4" />
             Purchase Orders
@@ -699,7 +707,7 @@ export function PurchaseOrderManagement() {
                   </Button>
                 </div>
 
-                <DropdownMenu dropDown={false}>
+                <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline" size="sm" className="h-10 px-3 flex items-center gap-2 bg-slate-50/50 border-slate-200">
                       <Download className="w-4 h-4 text-slate-600" />

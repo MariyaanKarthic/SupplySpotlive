@@ -1088,17 +1088,13 @@ export function DisputeManagement() {
   const escalatedDisputes = mockDisputes.filter(d => d.status === 'escalated').length;
 
   return (
-    <div className="p-6 space-y-6 max-w-7xl mx-auto">
+    <div className="p-4 sm:p-6 space-y-6 w-full max-w-full overflow-x-hidden">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold flex items-center gap-3">
-            <MessageSquare className="w-8 h-8 text-primary" />
+          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">
             Dispute & Query Management
           </h1>
-          <p className="text-muted-foreground mt-2">
-            Comprehensive dispute resolution with automated workflows and SLA management
-          </p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" className="gap-2">
@@ -1422,57 +1418,57 @@ export function DisputeManagement() {
       </div>
 
       {/* Key Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Open Disputes</p>
-                <p className="text-2xl font-bold">{mockAnalytics.openDisputes}</p>
-                <p className="text-xs text-red-600">{overdueDisputes} overdue</p>
-              </div>
-              <MessageSquare className="w-8 h-8 text-blue-500" />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+        <Card className="border-l-4 border-l-blue-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
+            <div>
+              <p className="text-xs text-muted-foreground font-semibold">Open Disputes</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">{mockAnalytics.openDisputes}</p>
+              <p className="text-[11px] text-rose-600 font-medium">{overdueDisputes} overdue</p>
+            </div>
+            <div className="p-2.5 bg-blue-50 rounded-lg">
+              <MessageSquare className="w-5 h-5 text-blue-600" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Avg Resolution Time</p>
-                <p className="text-2xl font-bold">{mockAnalytics.avgResolutionTime} days</p>
-                <p className="text-xs text-green-600">-0.3 vs last month</p>
-              </div>
-              <Timer className="w-8 h-8 text-green-500" />
+        <Card className="border-l-4 border-l-emerald-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
+            <div>
+              <p className="text-xs text-muted-foreground font-semibold">Avg Resolution Time</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">{mockAnalytics.avgResolutionTime} Days</p>
+              <p className="text-[11px] text-emerald-600 font-medium">-0.3 vs last month</p>
+            </div>
+            <div className="p-2.5 bg-emerald-50 rounded-lg">
+              <Timer className="w-5 h-5 text-emerald-600" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Resolution Rate</p>
-                <p className="text-2xl font-bold">{mockAnalytics.resolutionRate}%</p>
-                <p className="text-xs text-green-600">+2.1% vs last month</p>
-              </div>
-              <CheckCircle className="w-8 h-8 text-green-500" />
+        <Card className="border-l-4 border-l-indigo-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
+            <div>
+              <p className="text-xs text-muted-foreground font-semibold">Resolution Rate</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">{mockAnalytics.resolutionRate}%</p>
+              <p className="text-[11px] text-indigo-600 font-medium">+2.1% vs last month</p>
+            </div>
+            <div className="p-2.5 bg-indigo-50 rounded-lg">
+              <CheckCircle className="w-5 h-5 text-indigo-600" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Invoice Discrepancies</p>
-                <p className="text-2xl font-bold">{mockDisputes.filter(d => d.category === 'invoice-discrepancy').length}</p>
-                <p className="text-xs text-orange-600">
-                  {mockDisputes.filter(d => d.category === 'invoice-discrepancy' && (d.tags.includes('amount-mismatch') || d.tags.includes('pricing-discrepancy'))).length} amount mismatches
-                </p>
-              </div>
-              <DollarSign className="w-8 h-8 text-orange-500" />
+        <Card className="border-l-4 border-l-amber-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
+            <div>
+              <p className="text-xs text-muted-foreground font-semibold">Invoice Discrepancies</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">{mockDisputes.filter(d => d.category === 'invoice-discrepancy').length}</p>
+              <p className="text-[11px] text-amber-600 font-medium">
+                {mockDisputes.filter(d => d.category === 'invoice-discrepancy' && (d.tags.includes('amount-mismatch') || d.tags.includes('pricing-discrepancy'))).length} amount mismatches
+              </p>
+            </div>
+            <div className="p-2.5 bg-amber-50 rounded-lg">
+              <DollarSign className="w-5 h-5 text-amber-600" />
             </div>
           </CardContent>
         </Card>
@@ -1526,7 +1522,7 @@ export function DisputeManagement() {
 
       {/* Main Content */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="w-fit">
           <TabsTrigger value="disputes">Active Disputes</TabsTrigger>
           <TabsTrigger value="workflow">Workflow & Routing</TabsTrigger>
           <TabsTrigger value="communication">Communication Hub</TabsTrigger>
@@ -1630,7 +1626,7 @@ export function DisputeManagement() {
               const CategoryIcon = getCategoryIcon(dispute.category);
               return (
                 <Card key={dispute.id} className="hover:shadow-md transition-shadow">
-                  <CardContent className="p-6">
+                  <CardContent className="p-3.5">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-3">

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card } from './ui/card';
+import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Badge } from './ui/badge';
@@ -593,8 +593,7 @@ export function APAutomation() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1>AP Automation</h1>
-          <p className="text-muted-foreground">Automated validation, approval workflows, and AP analytics</p>
+          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">AP Automation</h1>
         </div>
         <div className="flex gap-3">
           <Button 
@@ -617,7 +616,7 @@ export function APAutomation() {
 
       {/* Tabs Navigation */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4 max-w-2xl">
+        <TabsList className="w-fit">
           <TabsTrigger value="dashboard" className="gap-2">
             <BarChart3 className="w-4 h-4" />
             AP Dashboard
@@ -638,51 +637,59 @@ export function APAutomation() {
 
         <TabsContent value="dashboard" className="space-y-6">
           {/* Key Metrics */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <Card className="p-4">
-              <div className="flex items-center justify-between">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+            <Card className="border-l-4 border-l-amber-500 shadow-sm hover:shadow-md transition-all">
+              <CardContent className="p-3.5 flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground">Pending Approvals</p>
-                  <p className="text-2xl font-semibold">{pendingApprovals.length}</p>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-xs text-muted-foreground font-semibold">Pending Approvals</p>
+                  <p className="text-xl font-bold text-foreground mt-0.5">{pendingApprovals.length}</p>
+                  <p className="text-[11px] text-amber-600 font-medium">
                     ${pendingApprovals.reduce((sum, p) => sum + p.amount, 0).toLocaleString()}
                   </p>
                 </div>
-                <Clock className="w-8 h-8 text-yellow-500" />
-              </div>
+                <div className="p-2.5 bg-amber-50 rounded-lg">
+                  <Clock className="w-5 h-5 text-amber-600" />
+                </div>
+              </CardContent>
             </Card>
 
-            <Card className="p-4">
-              <div className="flex items-center justify-between">
+            <Card className="border-l-4 border-l-rose-500 shadow-sm hover:shadow-md transition-all">
+              <CardContent className="p-3.5 flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground">Due Today</p>
-                  <p className="text-2xl font-semibold">12</p>
-                  <p className="text-xs text-muted-foreground">$45,000</p>
+                  <p className="text-xs text-muted-foreground font-semibold">Due Today</p>
+                  <p className="text-xl font-bold text-foreground mt-0.5">12</p>
+                  <p className="text-[11px] text-rose-600 font-medium">$45,000 pending</p>
                 </div>
-                <Calendar className="w-8 h-8 text-red-500" />
-              </div>
+                <div className="p-2.5 bg-rose-50 rounded-lg">
+                  <Calendar className="w-5 h-5 text-rose-600" />
+                </div>
+              </CardContent>
             </Card>
 
-            <Card className="p-4">
-              <div className="flex items-center justify-between">
+            <Card className="border-l-4 border-l-purple-500 shadow-sm hover:shadow-md transition-all">
+              <CardContent className="p-3.5 flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground">Exceptions</p>
-                  <p className="text-2xl font-semibold">{exceptionReports.length}</p>
-                  <p className="text-xs text-red-500">3 High Priority</p>
+                  <p className="text-xs text-muted-foreground font-semibold">Exceptions</p>
+                  <p className="text-xl font-bold text-foreground mt-0.5">{exceptionReports.length}</p>
+                  <p className="text-[11px] text-purple-600 font-medium">3 High Priority</p>
                 </div>
-                <AlertTriangle className="w-8 h-8 text-red-500" />
-              </div>
+                <div className="p-2.5 bg-purple-50 rounded-lg">
+                  <AlertTriangle className="w-5 h-5 text-purple-600" />
+                </div>
+              </CardContent>
             </Card>
 
-            <Card className="p-4">
-              <div className="flex items-center justify-between">
+            <Card className="border-l-4 border-l-emerald-500 shadow-sm hover:shadow-md transition-all">
+              <CardContent className="p-3.5 flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground">Avg Processing Time</p>
-                  <p className="text-2xl font-semibold">2.4</p>
-                  <p className="text-xs text-green-500">-0.3 days</p>
+                  <p className="text-xs text-muted-foreground font-semibold">Avg Processing Time</p>
+                  <p className="text-xl font-bold text-foreground mt-0.5">2.4 Days</p>
+                  <p className="text-[11px] text-emerald-600 font-medium">-0.3 days improve</p>
                 </div>
-                <TrendingDown className="w-8 h-8 text-green-500" />
-              </div>
+                <div className="p-2.5 bg-emerald-50 rounded-lg">
+                  <TrendingDown className="w-5 h-5 text-emerald-600" />
+                </div>
+              </CardContent>
             </Card>
           </div>
 

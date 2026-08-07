@@ -16,7 +16,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '.
 import { 
   Bell,
   Search, 
-  Filter, 
+  Filter,
+  Columns,
+  Printer,
   MoreHorizontal, 
   Edit, 
   Eye,
@@ -498,6 +500,482 @@ const mockGoodsReceipts = [
       { id: 4, action: 'Items Rejected', user: 'Sarah Johnson', timestamp: '2024-02-12 13:00', details: 'All items rejected - Specification mismatch' },
       { id: 5, action: 'Return Initiated', user: 'Robert Taylor', timestamp: '2024-02-12 15:00', details: 'Return to vendor process initiated' }
     ]
+  },
+  {
+    id: 6,
+    grNumber: 'GR-2024-006',
+    poNumber: 'PO-2023-006',
+    poId: 6,
+    vendor: 'Apex Hardware Supplies',
+    vendorCode: 'VEN006',
+    receiptDate: '2024-02-17',
+    expectedDate: '2024-02-17',
+    status: 'Completed',
+    receivedBy: 'Alex Turner',
+    inspectedBy: 'Sarah Johnson',
+    location: 'Warehouse A - Bay 14',
+    warehouse: 'Central Warehouse',
+    totalItems: 4,
+    itemsReceived: 4,
+    itemsAccepted: 4,
+    itemsRejected: 0,
+    qualityStatus: 'Passed',
+    matchingStatus: '3-Way Matched',
+    invoiceMatched: true,
+    poMatched: true,
+    notes: 'Fast delivery, all fasteners and structural bolts passed stress testing.',
+    lineItems: [],
+    documents: [],
+    images: [],
+    history: []
+  },
+  {
+    id: 7,
+    grNumber: 'GR-2024-007',
+    poNumber: 'PO-2023-007',
+    poId: 7,
+    vendor: 'Global Logistics & Packaging',
+    vendorCode: 'VEN007',
+    receiptDate: '2024-02-18',
+    expectedDate: '2024-02-18',
+    status: 'Pending Inspection',
+    receivedBy: 'David Miller',
+    inspectedBy: null,
+    location: 'Dock 2 - Receiving',
+    warehouse: 'North Distribution Hub',
+    totalItems: 12,
+    itemsReceived: 12,
+    itemsAccepted: 0,
+    itemsRejected: 0,
+    qualityStatus: 'Pending',
+    matchingStatus: 'PO Matched',
+    invoiceMatched: false,
+    poMatched: true,
+    notes: 'Pallets received intact. Awaiting QA barcode scan.',
+    lineItems: [],
+    documents: [],
+    images: [],
+    history: []
+  },
+  {
+    id: 8,
+    grNumber: 'GR-2024-008',
+    poNumber: 'PO-2023-008',
+    poId: 8,
+    vendor: 'Titan Steel & Metals',
+    vendorCode: 'VEN008',
+    receiptDate: '2024-02-19',
+    expectedDate: '2024-02-20',
+    status: 'Completed',
+    receivedBy: 'John Smith',
+    inspectedBy: 'Sarah Johnson',
+    location: 'Warehouse B - Yard 3',
+    warehouse: 'Central Warehouse',
+    totalItems: 8,
+    itemsReceived: 8,
+    itemsAccepted: 8,
+    itemsRejected: 0,
+    qualityStatus: 'Passed',
+    matchingStatus: '3-Way Matched',
+    invoiceMatched: true,
+    poMatched: true,
+    notes: 'Heavy metal beams received 1 day early. Mill test cert verified.',
+    lineItems: [],
+    documents: [],
+    images: [],
+    history: []
+  },
+  {
+    id: 9,
+    grNumber: 'GR-2024-009',
+    poNumber: 'PO-2023-009',
+    poId: 9,
+    vendor: 'Precision Dynamics Corp',
+    vendorCode: 'VEN009',
+    receiptDate: '2024-02-20',
+    expectedDate: '2024-02-20',
+    status: 'Partial',
+    receivedBy: 'Emily Davis',
+    inspectedBy: 'Sarah Johnson',
+    location: 'Warehouse A - Bay 02',
+    warehouse: 'Central Warehouse',
+    totalItems: 20,
+    itemsReceived: 15,
+    itemsAccepted: 15,
+    itemsRejected: 0,
+    qualityStatus: 'Passed',
+    matchingStatus: 'Variance',
+    invoiceMatched: false,
+    poMatched: true,
+    notes: 'Partial shipment of 15 motors. Remaining 5 backordered for next week.',
+    lineItems: [],
+    documents: [],
+    images: [],
+    history: []
+  },
+  {
+    id: 10,
+    grNumber: 'GR-2024-010',
+    poNumber: 'PO-2023-010',
+    poId: 10,
+    vendor: 'Polymer Synthetics Tech',
+    vendorCode: 'VEN010',
+    receiptDate: '2024-02-21',
+    expectedDate: '2024-02-21',
+    status: 'Draft',
+    receivedBy: 'Robert Taylor',
+    inspectedBy: null,
+    location: 'Dock 4 - Receiving',
+    warehouse: 'South Plant Warehouse',
+    totalItems: 6,
+    itemsReceived: 0,
+    itemsAccepted: 0,
+    itemsRejected: 0,
+    qualityStatus: 'Not Started',
+    matchingStatus: 'Not Matched',
+    invoiceMatched: false,
+    poMatched: false,
+    notes: 'Truck arrived at gate. Unloading in progress.',
+    lineItems: [],
+    documents: [],
+    images: [],
+    history: []
+  },
+  {
+    id: 11,
+    grNumber: 'GR-2024-011',
+    poNumber: 'PO-2023-011',
+    poId: 11,
+    vendor: 'Solaris Energy Solutions',
+    vendorCode: 'VEN011',
+    receiptDate: '2024-02-22',
+    expectedDate: '2024-02-22',
+    status: 'Completed',
+    receivedBy: 'Alex Turner',
+    inspectedBy: 'Sarah Johnson',
+    location: 'Warehouse C - Solar Bay',
+    warehouse: 'North Distribution Hub',
+    totalItems: 15,
+    itemsReceived: 15,
+    itemsAccepted: 15,
+    itemsRejected: 0,
+    qualityStatus: 'Passed',
+    matchingStatus: '3-Way Matched',
+    invoiceMatched: true,
+    poMatched: true,
+    notes: 'Solar panels and inverters passed voltage efficiency test.',
+    lineItems: [],
+    documents: [],
+    images: [],
+    history: []
+  },
+  {
+    id: 12,
+    grNumber: 'GR-2024-012',
+    poNumber: 'PO-2023-012',
+    poId: 12,
+    vendor: 'Quantum Microcircuits',
+    vendorCode: 'VEN012',
+    receiptDate: '2024-02-23',
+    expectedDate: '2024-02-23',
+    status: 'Pending Inspection',
+    receivedBy: 'David Miller',
+    inspectedBy: null,
+    location: 'Cleanroom Storage - Bay 1',
+    warehouse: 'Central Warehouse',
+    totalItems: 50,
+    itemsReceived: 50,
+    itemsAccepted: 0,
+    itemsRejected: 0,
+    qualityStatus: 'Pending',
+    matchingStatus: 'PO Matched',
+    invoiceMatched: false,
+    poMatched: true,
+    notes: 'Microchips batch in ESD packaging. Cleanroom QA required.',
+    lineItems: [],
+    documents: [],
+    images: [],
+    history: []
+  },
+  {
+    id: 13,
+    grNumber: 'GR-2024-013',
+    poNumber: 'PO-2023-013',
+    poId: 13,
+    vendor: 'Cascade Hydraulics',
+    vendorCode: 'VEN013',
+    receiptDate: '2024-02-24',
+    expectedDate: '2024-02-25',
+    status: 'Completed',
+    receivedBy: 'John Smith',
+    inspectedBy: 'Sarah Johnson',
+    location: 'Warehouse A - Heavy Equipment',
+    warehouse: 'Central Warehouse',
+    totalItems: 9,
+    itemsReceived: 9,
+    itemsAccepted: 9,
+    itemsRejected: 0,
+    qualityStatus: 'Passed',
+    matchingStatus: '3-Way Matched',
+    invoiceMatched: true,
+    poMatched: true,
+    notes: 'Hydraulic pumps pressure tested with zero leakage.',
+    lineItems: [],
+    documents: [],
+    images: [],
+    history: []
+  },
+  {
+    id: 14,
+    grNumber: 'GR-2024-014',
+    poNumber: 'PO-2023-014',
+    poId: 14,
+    vendor: 'Vanguard Industrial Tools',
+    vendorCode: 'VEN014',
+    receiptDate: '2024-02-25',
+    expectedDate: '2024-02-25',
+    status: 'Completed',
+    receivedBy: 'Emily Davis',
+    inspectedBy: 'Sarah Johnson',
+    location: 'Tool Crib - Locker 4',
+    warehouse: 'South Plant Warehouse',
+    totalItems: 30,
+    itemsReceived: 30,
+    itemsAccepted: 30,
+    itemsRejected: 0,
+    qualityStatus: 'Passed',
+    matchingStatus: '3-Way Matched',
+    invoiceMatched: true,
+    poMatched: true,
+    notes: 'Pneumatic drill kits verified and added to plant inventory.',
+    lineItems: [],
+    documents: [],
+    images: [],
+    history: []
+  },
+  {
+    id: 15,
+    grNumber: 'GR-2024-015',
+    poNumber: 'PO-2023-015',
+    poId: 15,
+    vendor: 'Pinnacle Chemical Corp',
+    vendorCode: 'VEN015',
+    receiptDate: '2024-02-26',
+    expectedDate: '2024-02-26',
+    status: 'Rejected',
+    receivedBy: 'Robert Taylor',
+    inspectedBy: 'Sarah Johnson',
+    location: 'Hazmat Storage - Tank 2',
+    warehouse: 'Central Warehouse',
+    totalItems: 4,
+    itemsReceived: 4,
+    itemsAccepted: 0,
+    itemsRejected: 4,
+    qualityStatus: 'Failed',
+    matchingStatus: 'Not Matched',
+    invoiceMatched: false,
+    poMatched: false,
+    notes: 'Coolant barrels failed viscosity & purity lab testing. Damaged seals.',
+    lineItems: [],
+    documents: [],
+    images: [],
+    history: []
+  },
+  {
+    id: 16,
+    grNumber: 'GR-2024-016',
+    poNumber: 'PO-2023-016',
+    poId: 16,
+    vendor: 'Horizon Office Supplies',
+    vendorCode: 'VEN016',
+    receiptDate: '2024-02-27',
+    expectedDate: '2024-02-27',
+    status: 'Completed',
+    receivedBy: 'Alex Turner',
+    inspectedBy: 'Sarah Johnson',
+    location: 'Admin Building - Supply Room',
+    warehouse: 'Central Warehouse',
+    totalItems: 18,
+    itemsReceived: 18,
+    itemsAccepted: 18,
+    itemsRejected: 0,
+    qualityStatus: 'Passed',
+    matchingStatus: '3-Way Matched',
+    invoiceMatched: true,
+    poMatched: true,
+    notes: 'Printer cartridges and ergonomic desks delivered intact.',
+    lineItems: [],
+    documents: [],
+    images: [],
+    history: []
+  },
+  {
+    id: 17,
+    grNumber: 'GR-2024-017',
+    poNumber: 'PO-2023-017',
+    poId: 17,
+    vendor: 'Matrix Automation Systems',
+    vendorCode: 'VEN017',
+    receiptDate: '2024-02-28',
+    expectedDate: '2024-02-28',
+    status: 'Pending Inspection',
+    receivedBy: 'David Miller',
+    inspectedBy: null,
+    location: 'Dock 1 - Receiving',
+    warehouse: 'North Distribution Hub',
+    totalItems: 8,
+    itemsReceived: 8,
+    itemsAccepted: 0,
+    itemsRejected: 0,
+    qualityStatus: 'Pending',
+    matchingStatus: 'PO Matched',
+    invoiceMatched: false,
+    poMatched: true,
+    notes: 'PLC controller cabinets received. Scheduled for firmware check.',
+    lineItems: [],
+    documents: [],
+    images: [],
+    history: []
+  },
+  {
+    id: 18,
+    grNumber: 'GR-2024-018',
+    poNumber: 'PO-2023-018',
+    poId: 18,
+    vendor: 'Delta Cable & Wiring',
+    vendorCode: 'VEN018',
+    receiptDate: '2024-03-01',
+    expectedDate: '2024-03-01',
+    status: 'Completed',
+    receivedBy: 'John Smith',
+    inspectedBy: 'Sarah Johnson',
+    location: 'Warehouse B - Rack 11',
+    warehouse: 'Central Warehouse',
+    totalItems: 25,
+    itemsReceived: 25,
+    itemsAccepted: 25,
+    itemsRejected: 0,
+    qualityStatus: 'Passed',
+    matchingStatus: '3-Way Matched',
+    invoiceMatched: true,
+    poMatched: true,
+    notes: 'Armored fiber optic spools continuity verified.',
+    lineItems: [],
+    documents: [],
+    images: [],
+    history: []
+  },
+  {
+    id: 19,
+    grNumber: 'GR-2024-019',
+    poNumber: 'PO-2023-019',
+    poId: 19,
+    vendor: 'Echo Precision Bearings',
+    vendorCode: 'VEN019',
+    receiptDate: '2024-03-02',
+    expectedDate: '2024-03-02',
+    status: 'Completed',
+    receivedBy: 'Emily Davis',
+    inspectedBy: 'Sarah Johnson',
+    location: 'Warehouse A - Bay 05',
+    warehouse: 'Central Warehouse',
+    totalItems: 40,
+    itemsReceived: 40,
+    itemsAccepted: 40,
+    itemsRejected: 0,
+    qualityStatus: 'Passed',
+    matchingStatus: '3-Way Matched',
+    invoiceMatched: true,
+    poMatched: true,
+    notes: 'Heavy duty ceramic roller bearings fully inspected and logged.',
+    lineItems: [],
+    documents: [],
+    images: [],
+    history: []
+  },
+  {
+    id: 20,
+    grNumber: 'GR-2024-020',
+    poNumber: 'PO-2023-020',
+    poId: 20,
+    vendor: 'Nordic Refrigeration Systems',
+    vendorCode: 'VEN020',
+    receiptDate: '2024-03-03',
+    expectedDate: '2024-03-03',
+    status: 'Partial',
+    receivedBy: 'Robert Taylor',
+    inspectedBy: 'Sarah Johnson',
+    location: 'Cold Storage - Bay 1',
+    warehouse: 'South Plant Warehouse',
+    totalItems: 10,
+    itemsReceived: 7,
+    itemsAccepted: 7,
+    itemsRejected: 0,
+    qualityStatus: 'Passed',
+    matchingStatus: 'Variance',
+    invoiceMatched: false,
+    poMatched: true,
+    notes: '7 cooling compressor units accepted. 3 units pending freight arrival.',
+    lineItems: [],
+    documents: [],
+    images: [],
+    history: []
+  },
+  {
+    id: 21,
+    grNumber: 'GR-2024-021',
+    poNumber: 'PO-2023-021',
+    poId: 21,
+    vendor: 'Starlight Safety Gear',
+    vendorCode: 'VEN021',
+    receiptDate: '2024-03-04',
+    expectedDate: '2024-03-04',
+    status: 'Completed',
+    receivedBy: 'Alex Turner',
+    inspectedBy: 'Sarah Johnson',
+    location: 'Safety Depot - Locker 1',
+    warehouse: 'Central Warehouse',
+    totalItems: 60,
+    itemsReceived: 60,
+    itemsAccepted: 60,
+    itemsRejected: 0,
+    qualityStatus: 'Passed',
+    matchingStatus: '3-Way Matched',
+    invoiceMatched: true,
+    poMatched: true,
+    notes: 'Kevlar gloves and hard hats batch ANSI certified.',
+    lineItems: [],
+    documents: [],
+    images: [],
+    history: []
+  },
+  {
+    id: 22,
+    grNumber: 'GR-2024-022',
+    poNumber: 'PO-2023-022',
+    poId: 22,
+    vendor: 'Zephyr Pneumatic Solutions',
+    vendorCode: 'VEN022',
+    receiptDate: '2024-03-05',
+    expectedDate: '2024-03-05',
+    status: 'Pending Inspection',
+    receivedBy: 'David Miller',
+    inspectedBy: null,
+    location: 'Dock 3 - Receiving',
+    warehouse: 'North Distribution Hub',
+    totalItems: 14,
+    itemsReceived: 14,
+    itemsAccepted: 0,
+    itemsRejected: 0,
+    qualityStatus: 'Pending',
+    matchingStatus: 'PO Matched',
+    invoiceMatched: false,
+    poMatched: true,
+    notes: 'Air compression valves received. Scheduled for pressure check.',
+    lineItems: [],
+    documents: [],
+    images: [],
+    history: []
   }
 ];
 
@@ -573,8 +1051,18 @@ export function GoodsReceipts() {
   const handleExportCSV = () => {
     const dataToExport = goodsReceipts;
     if (dataToExport.length === 0) return;
-    const headers = Object.keys(dataToExport[0]).join(',');
-    const rows = dataToExport.map(item => Object.values(item).map(val => `"${val}"`).join(','));
+    const headers = ['GR Number', 'PO Reference', 'Vendor', 'Vendor Code', 'Receipt Date', 'Status', 'Quality Status', 'Matching Status', 'Warehouse'].join(',');
+    const rows = dataToExport.map(item => [
+      item.grNumber,
+      item.poNumber,
+      `"${item.vendor}"`,
+      item.vendorCode,
+      item.receiptDate,
+      item.status,
+      item.qualityStatus,
+      item.matchingStatus,
+      `"${item.warehouse}"`
+    ].join(','));
     const csvContent = [headers, ...rows].join('\n');
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
@@ -583,10 +1071,40 @@ export function GoodsReceipts() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    toast.success('CSV Report Exported', { description: 'goods_receipts_export.csv has been downloaded.' });
   };
 
   const handleExportExcel = () => {
-    handleExportCSV(); // Mock Excel export using CSV
+    const dataToExport = goodsReceipts;
+    if (dataToExport.length === 0) return;
+    const headers = ['GR Number\tPO Reference\tVendor\tVendor Code\tReceipt Date\tStatus\tQuality Status\tMatching Status\tWarehouse'].join('\n');
+    const rows = dataToExport.map(item => [
+      item.grNumber,
+      item.poNumber,
+      item.vendor,
+      item.vendorCode,
+      item.receiptDate,
+      item.status,
+      item.qualityStatus,
+      item.matchingStatus,
+      item.warehouse
+    ].join('\t')).join('\n');
+    const excelContent = `${headers}\n${rows}`;
+    const blob = new Blob([excelContent], { type: 'application/vnd.ms-excel;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.setAttribute('download', `goods_receipts_export_${new Date().toISOString().split('T')[0]}.xls`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast.success('Excel Report Exported', { description: 'goods_receipts_export.xls has been downloaded.' });
+  };
+
+  const handleExportPDF = () => {
+    toast.info('Preparing PDF document...', { description: 'Opening system print preview.' });
+    setTimeout(() => {
+      window.print();
+    }, 300);
   };
 
   const MaterialPagination = ({
@@ -613,7 +1131,7 @@ export function GoodsReceipts() {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {[5, 10, 25, 50].map(v => (
+              {[10, 20, 25, 50].map(v => (
                 <SelectItem key={v} value={v.toString()}>{v}</SelectItem>
               ))}
             </SelectContent>
@@ -718,23 +1236,27 @@ export function GoodsReceipts() {
   };
 
   const getStatusBadge = (status: string) => {
-    const variants: any = {
-      'Completed': 'default',
-      'Pending Inspection': 'secondary',
-      'Partial': 'outline',
-      'Draft': 'outline',
-      'Rejected': 'destructive'
+    const styles: any = {
+      'Completed': 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800',
+      'Pending Inspection': 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800',
+      'Partial': 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/40 dark:text-blue-300 dark:border-blue-800',
+      'Draft': 'bg-slate-100 text-slate-700 border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700',
+      'Rejected': 'bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/40 dark:text-rose-300 dark:border-rose-800'
     };
-    return <Badge variant={variants[status] || 'default'}>{status}</Badge>;
+    return (
+      <Badge variant="outline" className={`font-semibold text-[11px] px-2.5 py-0.5 rounded-full ${styles[status] || styles['Draft']}`}>
+        {status}
+      </Badge>
+    );
   };
 
   const getQualityBadge = (status: string) => {
-    const variants: any = {
-      'Passed': 'default',
-      'Failed': 'destructive',
-      'Issues Found': 'destructive',
-      'Pending': 'secondary',
-      'Not Started': 'outline'
+    const styles: any = {
+      'Passed': 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800',
+      'Failed': 'bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/40 dark:text-rose-300 dark:border-rose-800',
+      'Issues Found': 'bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/40 dark:text-rose-300 dark:border-rose-800',
+      'Pending': 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800',
+      'Not Started': 'bg-slate-100 text-slate-600 border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700'
     };
     const icons: any = {
       'Passed': CheckCircle,
@@ -745,7 +1267,7 @@ export function GoodsReceipts() {
     };
     const Icon = icons[status] || Clock;
     return (
-      <Badge variant={variants[status] || 'default'} className="gap-1">
+      <Badge variant="outline" className={`gap-1 font-semibold text-[11px] px-2.5 py-0.5 rounded-full ${styles[status] || styles['Not Started']}`}>
         <Icon className="w-3 h-3" />
         {status}
       </Badge>
@@ -753,11 +1275,11 @@ export function GoodsReceipts() {
   };
 
   const getMatchingBadge = (status: string) => {
-    const variants: any = {
-      '3-Way Matched': 'default',
-      'PO Matched': 'secondary',
-      'Variance': 'destructive',
-      'Not Matched': 'outline'
+    const styles: any = {
+      '3-Way Matched': 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800',
+      'PO Matched': 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/40 dark:text-blue-300 dark:border-blue-800',
+      'Variance': 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800',
+      'Not Matched': 'bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/40 dark:text-rose-300 dark:border-rose-800'
     };
     const icons: any = {
       '3-Way Matched': CheckCheck,
@@ -767,7 +1289,7 @@ export function GoodsReceipts() {
     };
     const Icon = icons[status] || Clock;
     return (
-      <Badge variant={variants[status] || 'default'} className="gap-1">
+      <Badge variant="outline" className={`gap-1 font-semibold text-[11px] px-2.5 py-0.5 rounded-full ${styles[status] || styles['Not Matched']}`}>
         <Icon className="w-3 h-3" />
         {status}
       </Badge>
@@ -878,10 +1400,10 @@ export function GoodsReceipts() {
   };
 
   return (
-    <div className="h-full flex flex-col bg-slate-50/50 p-6 space-y-6 overflow-auto">
+    <div className="p-4 sm:p-6 space-y-6 w-full max-w-full overflow-x-hidden">
       {/* Header */}
       <div className="flex items-center justify-between no-print">
-        <h1 className="text-2xl font-bold text-slate-900">Goods Receipts</h1>
+        <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">Goods Receipts</h1>
         <div className="flex items-center gap-3">
           <Button 
             variant="outline" 
@@ -890,12 +1412,12 @@ export function GoodsReceipts() {
           >
             <BarChart3 className="w-5 h-5" />
           </Button>
-          <Button variant="outline" className="h-11 px-4 border-slate-200 hover:bg-slate-100 text-slate-700 font-bold gap-2 relative bg-white shadow-sm">
+          <Button variant="outline" className="h-11 px-4 border-slate-200 hover:bg-slate-100 text-slate-700 font-bold gap-2 relative bg-white">
             <Bell className="w-4 h-4 text-slate-500" />
             Alerts
             <span className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-blue-500 text-[10px] flex items-center justify-center rounded-full border-2 border-white text-white font-black">2</span>
           </Button>
-          <Button className="h-11 px-6 shadow-md shadow-blue-500/10 bg-blue-600 hover:bg-blue-700 font-bold gap-2 transform transition-all active:scale-95 text-white" onClick={() => setShowCreateDialog(true)}>
+          <Button className="h-11 px-6 bg-blue-600 hover:bg-blue-700 font-bold gap-2 transform transition-all active:scale-95 text-white" onClick={() => setShowCreateDialog(true)}>
             <Plus className="w-5 h-5" />
             Create Entry
           </Button>
@@ -904,26 +1426,27 @@ export function GoodsReceipts() {
 
       {/* High Density Metric Summary */}
       {showMetrics && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-4 bg-transparent no-print">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-3 bg-transparent no-print">
           {[
-            { label: 'Total GRs', value: stats.total, icon: Package, color: 'text-slate-600', bg: 'bg-white' },
-            { label: 'Completed', value: stats.completed, icon: CheckCircle, color: 'text-green-600', bg: 'bg-green-50' },
-            { label: 'Pending Insp.', value: stats.pendingInspection, icon: Clock, color: 'text-blue-600', bg: 'bg-blue-50' },
-            { label: 'Partial/Short', value: stats.partial, icon: AlertCircle, color: 'text-amber-600', bg: 'bg-amber-50' },
-            { label: 'Draft Mode', value: stats.draft, icon: FileText, color: 'text-slate-400', bg: 'bg-slate-100' },
-            { label: 'Rejected', value: stats.rejected, icon: XCircle, color: 'text-red-500', bg: 'bg-red-50' },
-            { label: '3-Way Match', value: stats.threeWayMatched, icon: CheckCheck, color: 'text-emerald-500', bg: 'bg-emerald-50' }
+            { label: 'Total GRs', value: stats.total, icon: Package, border: 'border-l-primary', iconBg: 'bg-primary/10', iconColor: 'text-primary', sub: 'Total Received' },
+            { label: 'Completed', value: stats.completed, icon: CheckCircle, border: 'border-l-emerald-500', iconBg: 'bg-emerald-50', iconColor: 'text-emerald-600', sub: 'Fully Inspected' },
+            { label: 'Pending Insp.', value: stats.pendingInspection, icon: Clock, border: 'border-l-blue-500', iconBg: 'bg-blue-50', iconColor: 'text-blue-600', sub: 'In QC Queue' },
+            { label: 'Partial/Short', value: stats.partial, icon: AlertCircle, border: 'border-l-amber-500', iconBg: 'bg-amber-50', iconColor: 'text-amber-600', sub: 'Quantity Discrepancy' },
+            { label: 'Draft Mode', value: stats.draft, icon: FileText, border: 'border-l-slate-400', iconBg: 'bg-slate-100', iconColor: 'text-slate-600', sub: 'Unsubmitted Drafts' },
+            { label: 'Rejected', value: stats.rejected, icon: XCircle, border: 'border-l-rose-500', iconBg: 'bg-rose-50', iconColor: 'text-rose-600', sub: 'Failed QC Intake' },
+            { label: '3-Way Match', value: stats.threeWayMatched, icon: CheckCheck, border: 'border-l-indigo-500', iconBg: 'bg-indigo-50', iconColor: 'text-indigo-600', sub: 'PO & Invoice Matched' }
           ].map((stat, i) => (
-            <Card key={i} className={`${stat.bg} border-slate-200/60 shadow-sm hover:shadow-md transition-all duration-300 group`}>
-              <div className="p-4 flex items-center justify-between">
+            <Card key={i} className={`border-l-4 ${stat.border} shadow-sm hover:shadow-md transition-all duration-300`}>
+              <CardContent className="p-3.5 flex items-center justify-between">
                 <div>
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">{stat.label}</p>
-                  <p className={`text-2xl font-black ${stat.color}`}>{stat.value}</p>
+                  <p className="text-xs text-muted-foreground font-semibold">{stat.label}</p>
+                  <p className="text-xl font-bold text-foreground mt-0.5">{stat.value}</p>
+                  <p className={`text-[11px] font-medium ${stat.iconColor}`}>{stat.sub}</p>
                 </div>
-                <div className={`p-2.5 rounded-xl ${stat.bg.replace('50', '100')} group-hover:scale-110 transition-transform`}>
-                  <stat.icon className={`w-5 h-5 ${stat.color}`} />
+                <div className={`p-2.5 ${stat.iconBg} rounded-lg`}>
+                  <stat.icon className={`w-5 h-5 ${stat.iconColor}`} />
                 </div>
-              </div>
+              </CardContent>
             </Card>
           ))}
         </div>
@@ -931,111 +1454,64 @@ export function GoodsReceipts() {
 
       {/* Combined Unified Toolbar */}
       {/* Consolidated Management Container */}
-      <Card className="overflow-hidden border-slate-200/60 shadow-md mb-6">
-        <div className="p-3.5 border-b flex flex-col lg:flex-row items-center justify-between gap-4 bg-white no-print">
-          <h3 className="font-bold text-lg text-slate-800 shrink-0">Goods Intake</h3>
+      <Card className="overflow-hidden border border-slate-200 dark:border-slate-800 mb-6">
+        <div className="p-3.5 border-b flex flex-col lg:flex-row items-center justify-between gap-4 bg-white dark:bg-slate-950 no-print">
+          <h3 className="font-semibold text-lg text-foreground shrink-0">Goods Intake</h3>
 
-          <div className="flex flex-1 items-center gap-3 w-full max-w-4xl">
-            <div className="relative flex-1">
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="relative w-72 sm:w-80">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
                 placeholder="Search by GR, PO, or vendor..."
                 value={grSearchTerm}
                 onChange={(e) => setGrSearchTerm(e.target.value)}
-                className="pl-10 h-10 bg-slate-50/50 border-slate-200 focus:bg-white transition-all"
+                className="pl-9 h-9 bg-slate-50/50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-800 focus:bg-white transition-all text-xs sm:text-sm"
               />
             </div>
-            <div className="flex items-center gap-2">
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="outline" className="h-10 px-3 flex items-center gap-2 bg-slate-50/50 border-slate-200 hover:bg-slate-100 transition-colors">
-                    <Filter className="w-4 h-4 text-slate-600" />
-                    <span className="text-sm font-medium text-slate-700">Filters</span>
-                    {(grStatusFilter !== 'all' || grSearchTerm !== '') && (
-                      <Badge variant="secondary" className="ml-1 h-5 px-1.5 min-w-5 justify-center bg-primary/10 text-primary border-none text-[10px]">
-                        {[grStatusFilter !== 'all', grSearchTerm !== ''].filter(Boolean).length}
-                      </Badge>
-                    )}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-80 p-4" align="end">
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <h4 className="font-semibold text-slate-900">Compliance Filters</h4>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => {
-                          setGrStatusFilter('all');
-                          setGrSearchTerm('');
-                        }}
-                        className="h-8 text-xs text-muted-foreground hover:text-primary"
-                      >
-                        Reset all
-                      </Button>
-                    </div>
 
-                    <div className="space-y-2">
-                      <Label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Status</Label>
-                      <Select value={grStatusFilter} onValueChange={setGrStatusFilter}>
-                        <SelectTrigger className="w-full h-10 border-slate-200">
-                          <SelectValue placeholder="All Status" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="all">All Status</SelectItem>
-                          <SelectItem value="Completed">Completed</SelectItem>
-                          <SelectItem value="Pending Inspection">Pending Inspection</SelectItem>
-                          <SelectItem value="Partial">Partial</SelectItem>
-                          <SelectItem value="Draft">Draft</SelectItem>
-                          <SelectItem value="Rejected">Rejected</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                </PopoverContent>
-              </Popover>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="h-10 px-3 flex items-center gap-2 bg-slate-50/50 border-slate-200">
-                  <Settings2 className="w-4 h-4 text-slate-600" />
-                  <span className="text-sm font-medium">Columns</span>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" size="sm" className="h-9 px-3 flex items-center gap-2 bg-slate-50/50 border-slate-200 dark:border-slate-800">
+                  <Columns className="w-4 h-4 text-slate-600 dark:text-slate-400" />
+                  <span className="text-xs font-medium">Columns</span>
                 </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-52">
-                <DropdownMenuLabel>Manage Columns</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                {[
-                  { id: 'grNumber', label: 'GR Number' },
-                  { id: 'poNumber', label: 'PO Reference' },
-                  { id: 'vendor', label: 'Vendor' },
-                  { id: 'receiptDate', label: 'Receipt Date' },
-                  { id: 'status', label: 'Status' },
-                  { id: 'quality', label: 'Quality' },
-                  { id: 'matching', label: 'Match' },
-                  { id: 'progress', label: 'Intake Progress' }
-                ].map(col => (
-                  <div key={col.id} className="flex items-center space-x-2 px-3 py-2 cursor-pointer hover:bg-slate-50 transition-colors" onClick={(e) => { e.preventDefault(); toggleColumn(col.id); }}>
-                    <Checkbox
-                      id={`col-${col.id}`}
-                      checked={visibleGrColumns.includes(col.id)}
-                      onCheckedChange={() => toggleColumn(col.id)}
-                    />
-                    <Label htmlFor={`col-${col.id}`} className="text-sm cursor-pointer flex-1">{col.label}</Label>
-                  </div>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
+              </PopoverTrigger>
+              <PopoverContent align="end" className="w-52 p-2">
+                <p className="text-xs font-semibold text-slate-500 px-2 py-1.5 mb-1 border-b border-slate-100 dark:border-slate-800 pb-2">Manage Columns</p>
+                <div className="mt-1 space-y-0.5">
+                  {[
+                    { id: 'grNumber', label: 'GR Number' },
+                    { id: 'poNumber', label: 'PO Reference' },
+                    { id: 'vendor', label: 'Vendor' },
+                    { id: 'receiptDate', label: 'Receipt Date' },
+                    { id: 'status', label: 'Status' },
+                    { id: 'quality', label: 'Quality' },
+                    { id: 'matching', label: 'Match' },
+                    { id: 'progress', label: 'Intake Progress' }
+                  ].map(col => (
+                    <div
+                      key={col.id}
+                      className="flex items-center gap-2.5 px-2 py-1.5 rounded-md hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer transition-colors"
+                      onClick={() => toggleColumn(col.id)}
+                    >
+                      <Checkbox
+                        checked={visibleGrColumns.includes(col.id)}
+                        onCheckedChange={() => toggleColumn(col.id)}
+                        className="pointer-events-none"
+                      />
+                      <span className="text-xs text-slate-700 dark:text-slate-300 select-none">{col.label}</span>
+                    </div>
+                  ))}
+                </div>
+              </PopoverContent>
+            </Popover>
 
-            <div className="flex items-center border border-slate-200 rounded-lg p-1 bg-slate-50 shrink-0 h-10">
+            <div className="flex items-center border border-slate-200 dark:border-slate-800 rounded-lg p-0.5 bg-slate-50 dark:bg-slate-900 shrink-0 h-9">
               <Button
                 variant={grViewMode === 'card' ? 'secondary' : 'ghost'}
                 size="sm"
                 onClick={() => setGrViewMode('card')}
-                className="rounded-md h-8 px-3"
+                className="rounded-md h-8 px-2.5"
               >
                 <Grid className="w-4 h-4" />
               </Button>
@@ -1043,7 +1519,7 @@ export function GoodsReceipts() {
                 variant={grViewMode === 'list' ? 'secondary' : 'ghost'}
                 size="sm"
                 onClick={() => setGrViewMode('list')}
-                className="rounded-md h-8 px-3"
+                className="rounded-md h-8 px-2.5"
               >
                 <List className="w-4 h-4" />
               </Button>
@@ -1051,7 +1527,7 @@ export function GoodsReceipts() {
                 variant={grViewMode === 'table' ? 'secondary' : 'ghost'}
                 size="sm"
                 onClick={() => setGrViewMode('table')}
-                className="rounded-md h-8 px-3"
+                className="rounded-md h-8 px-2.5"
               >
                 <TableIcon className="w-4 h-4" />
               </Button>
@@ -1059,19 +1535,23 @@ export function GoodsReceipts() {
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="h-10 px-3 flex items-center gap-2 bg-slate-50/50 border-slate-200">
-                  <Download className="w-4 h-4 text-slate-600" />
-                  <span className="text-sm font-medium text-slate-700">Export</span>
+                <Button variant="outline" size="sm" className="h-9 px-3 flex items-center gap-2 bg-slate-50/50 border-slate-200 dark:border-slate-800">
+                  <Download className="w-4 h-4 text-slate-600 dark:text-slate-400" />
+                  <span className="text-xs font-medium text-slate-700 dark:text-slate-300">Export</span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48 shadow-xl">
-                <DropdownMenuItem onClick={handleExportExcel} className="gap-2 cursor-pointer">
-                  <FileSpreadsheet className="w-4 h-4 text-green-600" />
-                  Export to Excel
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem onSelect={handleExportExcel} className="gap-2 cursor-pointer text-xs">
+                  <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
+                  Export to Excel (.xls)
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleExportCSV} className="gap-2 cursor-pointer">
+                <DropdownMenuItem onSelect={handleExportCSV} className="gap-2 cursor-pointer text-xs">
                   <FileText className="w-4 h-4 text-blue-600" />
-                  Export to CSV
+                  Export to CSV (.csv)
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={handleExportPDF} className="gap-2 cursor-pointer text-xs">
+                  <Printer className="w-4 h-4 text-rose-600" />
+                  Export to PDF / Print
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -1081,172 +1561,172 @@ export function GoodsReceipts() {
         {grViewMode === 'table' && (
           <div className="flex-1 overflow-hidden">
             <div className="overflow-x-auto h-full overflow-y-auto">
-              <table className="w-full">
-                <thead>
-                  <DraggableTableHeader>
-                    <th className="p-4 w-10 sticky left-0 z-30 bg-[#f8fafc] border-b">
-                      <Checkbox
-                        checked={selectedRows.size === filteredGRs.length && filteredGRs.length > 0}
-                        onCheckedChange={handleSelectAll}
-                      />
-                    </th>
-                    {visibleGrColumns.includes('grNumber') && (
-                      <th className="text-left p-4 font-semibold text-slate-600 text-sm sticky left-10 z-30 bg-[#f8fafc] border-b shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)] whitespace-nowrap min-w-[180px]">
-                        <button onClick={() => requestSort('grNumber')} className="flex items-center gap-1 hover:text-primary transition-all">
-                          GR Number
-                          <ArrowUpDown className={`w-3.5 h-3.5 ${grSortConfig.key === 'grNumber' ? 'text-primary' : 'text-slate-400'}`} />
-                        </button>
-                      </th>
-                    )}
-                    {visibleGrColumns.includes('poNumber') && (
-                      <th className="text-left p-4 font-semibold text-slate-600 text-sm whitespace-nowrap">
-                        <button onClick={() => requestSort('poNumber')} className="flex items-center gap-1 hover:text-primary transition-all">
-                          PO Reference
-                          <ArrowUpDown className={`w-3.5 h-3.5 ${grSortConfig.key === 'poNumber' ? 'text-primary' : 'text-slate-400'}`} />
-                        </button>
-                      </th>
-                    )}
-                    {visibleGrColumns.includes('vendor') && (
-                      <th className="text-left p-4 font-semibold text-slate-600 text-sm whitespace-nowrap min-w-[200px]">
-                        <button onClick={() => requestSort('vendor')} className="flex items-center gap-1 hover:text-primary transition-all">
-                          Vendor
-                          <ArrowUpDown className={`w-3.5 h-3.5 ${grSortConfig.key === 'vendor' ? 'text-primary' : 'text-slate-400'}`} />
-                        </button>
-                      </th>
-                    )}
-                    {visibleGrColumns.includes('receiptDate') && (
-                      <th className="text-left p-4 font-semibold text-slate-600 text-sm whitespace-nowrap">
-                        <button onClick={() => requestSort('receiptDate')} className="flex items-center gap-1 hover:text-primary transition-all">
-                          Receipt Date
-                          <ArrowUpDown className={`w-3.5 h-3.5 ${grSortConfig.key === 'receiptDate' ? 'text-primary' : 'text-slate-400'}`} />
-                        </button>
-                      </th>
-                    )}
-                    {visibleGrColumns.includes('status') && (
-                      <th className="text-left p-4 font-semibold text-slate-600 text-sm whitespace-nowrap">
-                        <button onClick={() => requestSort('status')} className="flex items-center gap-1 hover:text-primary transition-all">
-                          Status
-                          <ArrowUpDown className={`w-3.5 h-3.5 ${grSortConfig.key === 'status' ? 'text-primary' : 'text-slate-400'}`} />
-                        </button>
-                      </th>
-                    )}
-                    {visibleGrColumns.includes('quality') && (
-                      <th className="text-left p-4 font-semibold text-slate-600 text-sm whitespace-nowrap">
-                        <button onClick={() => requestSort('qualityStatus')} className="flex items-center gap-1 hover:text-primary transition-all">
-                          Quality
-                          <ArrowUpDown className={`w-3.5 h-3.5 ${grSortConfig.key === 'qualityStatus' ? 'text-primary' : 'text-slate-400'}`} />
-                        </button>
-                      </th>
-                    )}
-                    {visibleGrColumns.includes('matching') && (
-                      <th className="text-left p-4 font-semibold text-slate-600 text-sm whitespace-nowrap">
-                        <button onClick={() => requestSort('matchingStatus')} className="flex items-center gap-1 hover:text-primary transition-all">
-                          Matching
-                          <ArrowUpDown className={`w-3.5 h-3.5 ${grSortConfig.key === 'matchingStatus' ? 'text-primary' : 'text-slate-400'}`} />
-                        </button>
-                      </th>
-                    )}
-                    {visibleGrColumns.includes('progress') && (
-                      <th className="text-left p-4 font-semibold text-slate-600 text-sm whitespace-nowrap min-w-[140px]">
-                        <button onClick={() => requestSort('itemsAccepted')} className="flex items-center gap-1 hover:text-primary transition-all">
-                          Progress
-                          <ArrowUpDown className={`w-3.5 h-3.5 ${grSortConfig.key === 'itemsAccepted' ? 'text-primary' : 'text-slate-400'}`} />
-                        </button>
-                      </th>
-                    )}
-                    <th className="p-4 font-semibold text-slate-600 text-sm sticky right-0 z-30 bg-[#f8fafc] border-b shadow-[-2px_0_5px_-2px_rgba(0,0,0,0.1)] text-center w-24">
-                      Actions
-                    </th>
-                  </DraggableTableHeader>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
-                  <DndContext
-                    sensors={sensors}
-                    collisionDetection={closestCenter}
-                    onDragEnd={handleDragEnd}
-                  >
-                    <SortableContext
-                      items={pagedGRs.map((p) => p.id)}
-                      strategy={verticalListSortingStrategy}
-                    >
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+              >
+                <SortableContext
+                  items={pagedGRs.map((p) => p.id)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  <Table className="w-full">
+                    <TableHeader className="bg-slate-100/80 dark:bg-slate-900/80">
+                      <DraggableTableHeader>
+                        <TableHead className="w-10 min-w-[40px] max-w-[40px] p-2 text-center sticky left-10 z-30 bg-slate-100 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
+                          <Checkbox
+                            checked={selectedRows.size === filteredGRs.length && filteredGRs.length > 0}
+                            onCheckedChange={handleSelectAll}
+                          />
+                        </TableHead>
+                        {visibleGrColumns.includes('grNumber') && (
+                          <TableHead className="text-left p-3.5 font-semibold text-slate-600 dark:text-slate-300 text-xs sticky left-20 z-30 bg-slate-100 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)] whitespace-nowrap min-w-[180px]">
+                            <button onClick={() => requestSort('grNumber')} className="flex items-center gap-1 hover:text-primary transition-all">
+                              GR Number
+                              <ArrowUpDown className={`w-3.5 h-3.5 ${grSortConfig.key === 'grNumber' ? 'text-primary' : 'text-slate-400'}`} />
+                            </button>
+                          </TableHead>
+                        )}
+                        {visibleGrColumns.includes('poNumber') && (
+                          <TableHead className="text-left p-3.5 font-semibold text-slate-600 dark:text-slate-300 text-xs whitespace-nowrap">
+                            <button onClick={() => requestSort('poNumber')} className="flex items-center gap-1 hover:text-primary transition-all">
+                              PO Reference
+                              <ArrowUpDown className={`w-3.5 h-3.5 ${grSortConfig.key === 'poNumber' ? 'text-primary' : 'text-slate-400'}`} />
+                            </button>
+                          </TableHead>
+                        )}
+                        {visibleGrColumns.includes('vendor') && (
+                          <TableHead className="text-left p-3.5 font-semibold text-slate-600 dark:text-slate-300 text-xs whitespace-nowrap min-w-[200px]">
+                            <button onClick={() => requestSort('vendor')} className="flex items-center gap-1 hover:text-primary transition-all">
+                              Vendor
+                              <ArrowUpDown className={`w-3.5 h-3.5 ${grSortConfig.key === 'vendor' ? 'text-primary' : 'text-slate-400'}`} />
+                            </button>
+                          </TableHead>
+                        )}
+                        {visibleGrColumns.includes('receiptDate') && (
+                          <TableHead className="text-left p-3.5 font-semibold text-slate-600 dark:text-slate-300 text-xs whitespace-nowrap">
+                            <button onClick={() => requestSort('receiptDate')} className="flex items-center gap-1 hover:text-primary transition-all">
+                              Receipt Date
+                              <ArrowUpDown className={`w-3.5 h-3.5 ${grSortConfig.key === 'receiptDate' ? 'text-primary' : 'text-slate-400'}`} />
+                            </button>
+                          </TableHead>
+                        )}
+                        {visibleGrColumns.includes('status') && (
+                          <TableHead className="text-left p-3.5 font-semibold text-slate-600 dark:text-slate-300 text-xs whitespace-nowrap">
+                            <button onClick={() => requestSort('status')} className="flex items-center gap-1 hover:text-primary transition-all">
+                              Status
+                              <ArrowUpDown className={`w-3.5 h-3.5 ${grSortConfig.key === 'status' ? 'text-primary' : 'text-slate-400'}`} />
+                            </button>
+                          </TableHead>
+                        )}
+                        {visibleGrColumns.includes('quality') && (
+                          <TableHead className="text-left p-3.5 font-semibold text-slate-600 dark:text-slate-300 text-xs whitespace-nowrap">
+                            <button onClick={() => requestSort('qualityStatus')} className="flex items-center gap-1 hover:text-primary transition-all">
+                              Quality
+                              <ArrowUpDown className={`w-3.5 h-3.5 ${grSortConfig.key === 'qualityStatus' ? 'text-primary' : 'text-slate-400'}`} />
+                            </button>
+                          </TableHead>
+                        )}
+                        {visibleGrColumns.includes('matching') && (
+                          <TableHead className="text-left p-3.5 font-semibold text-slate-600 dark:text-slate-300 text-xs whitespace-nowrap">
+                            <button onClick={() => requestSort('matchingStatus')} className="flex items-center gap-1 hover:text-primary transition-all">
+                              Matching
+                              <ArrowUpDown className={`w-3.5 h-3.5 ${grSortConfig.key === 'matchingStatus' ? 'text-primary' : 'text-slate-400'}`} />
+                            </button>
+                          </TableHead>
+                        )}
+                        {visibleGrColumns.includes('progress') && (
+                          <TableHead className="text-left p-3.5 font-semibold text-slate-600 dark:text-slate-300 text-xs whitespace-nowrap min-w-[140px]">
+                            <button onClick={() => requestSort('itemsAccepted')} className="flex items-center gap-1 hover:text-primary transition-all">
+                              Progress
+                              <ArrowUpDown className={`w-3.5 h-3.5 ${grSortConfig.key === 'itemsAccepted' ? 'text-primary' : 'text-slate-400'}`} />
+                            </button>
+                          </TableHead>
+                        )}
+                        <TableHead className="p-3.5 font-semibold text-slate-600 dark:text-slate-300 text-xs sticky right-0 z-30 bg-slate-100 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-[-2px_0_5px_-2px_rgba(0,0,0,0.1)] text-center w-24">
+                          Actions
+                        </TableHead>
+                      </DraggableTableHeader>
+                    </TableHeader>
+                    <TableBody>
                       {pagedGRs.map((gr) => (
                         <DraggableTableRow key={gr.id} id={gr.id}>
-                          <td className="p-4 sticky left-0 z-20 bg-white group-hover:bg-slate-50 transition-colors">
+                          <TableCell className="w-10 min-w-[40px] max-w-[40px] p-2 text-center sticky left-10 z-20 bg-white dark:bg-slate-950 group-hover:bg-slate-50 dark:group-hover:bg-slate-900 transition-colors">
                             <Checkbox
                               checked={selectedRows.has(gr.id)}
                               onCheckedChange={() => handleSelectRow(gr.id)}
                             />
-                          </td>
+                          </TableCell>
                           {visibleGrColumns.includes('grNumber') && (
-                            <td className="p-4 sticky left-10 z-20 bg-white shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)] group-hover:bg-slate-50 transition-colors whitespace-nowrap">
+                            <TableCell className="p-3.5 sticky left-20 z-20 bg-white dark:bg-slate-950 group-hover:bg-slate-50 dark:group-hover:bg-slate-900 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)] transition-colors whitespace-nowrap">
                               <div>
-                                <p className="font-bold text-slate-900 leading-tight">{gr.grNumber}</p>
-                                <p className="text-[11px] text-slate-400 font-medium tracking-wide uppercase">Location: {gr.warehouse}</p>
+                                <p className="font-semibold text-slate-900 dark:text-slate-100 leading-tight">{gr.grNumber}</p>
+                                <p className="text-[11px] text-slate-400 font-medium">Location: {gr.warehouse}</p>
                               </div>
-                            </td>
+                            </TableCell>
                           )}
                           {visibleGrColumns.includes('poNumber') && (
-                            <td className="p-4 whitespace-nowrap">
-                              <Badge variant="outline" className="font-bold text-xs border-slate-200 text-slate-600 h-7">
-                                <ShoppingCart className="w-3 h-3 mr-1.5 text-slate-400" />
+                            <TableCell className="p-3.5 whitespace-nowrap">
+                              <Badge variant="outline" className="font-medium text-xs border-slate-200 text-slate-600 h-6">
+                                <ShoppingCart className="w-3 h-3 mr-1 text-slate-400" />
                                 {gr.poNumber}
                               </Badge>
-                            </td>
+                            </TableCell>
                           )}
                           {visibleGrColumns.includes('vendor') && (
-                            <td className="p-4 whitespace-nowrap">
-                              <div className="flex items-center gap-3">
-                                <div className="h-8 w-8 rounded-lg bg-slate-50 flex items-center justify-center text-slate-400">
-                                  <Building className="w-4 h-4" />
+                            <TableCell className="p-3.5 whitespace-nowrap">
+                              <div className="flex items-center gap-2.5">
+                                <div className="h-7 w-7 rounded-lg bg-slate-50 flex items-center justify-center text-slate-400">
+                                  <Building className="w-3.5 h-3.5" />
                                 </div>
                                 <div>
-                                  <p className="text-sm font-semibold text-slate-700">{gr.vendor}</p>
-                                  <p className="text-[11px] text-slate-400 font-medium uppercase tracking-tighter">{gr.vendorCode}</p>
+                                  <p className="text-xs font-semibold text-slate-700">{gr.vendor}</p>
+                                  <p className="text-[10px] text-slate-400 font-medium">{gr.vendorCode}</p>
                                 </div>
                               </div>
-                            </td>
+                            </TableCell>
                           )}
                           {visibleGrColumns.includes('receiptDate') && (
-                            <td className="p-4 whitespace-nowrap">
-                              <div className="flex items-center gap-2 text-slate-600 font-medium h-9 px-3 bg-slate-50/50 rounded-lg group-hover:bg-white transition-colors w-fit">
-                                <Calendar className="w-4 h-4 text-slate-400" />
+                            <TableCell className="p-3.5 whitespace-nowrap">
+                              <div className="flex items-center gap-1.5 text-slate-600 font-medium h-7 px-2.5 bg-slate-50/60 rounded-md group-hover:bg-white transition-colors w-fit">
+                                <Calendar className="w-3.5 h-3.5 text-slate-400" />
                                 <span className="text-xs">{gr.receiptDate}</span>
                               </div>
-                            </td>
+                            </TableCell>
                           )}
                           {visibleGrColumns.includes('status') && (
-                            <td className="p-4 whitespace-nowrap">
+                            <TableCell className="p-3.5 whitespace-nowrap">
                               {getStatusBadge(gr.status)}
-                            </td>
+                            </TableCell>
                           )}
                           {visibleGrColumns.includes('quality') && (
-                            <td className="p-4 whitespace-nowrap">
+                            <TableCell className="p-3.5 whitespace-nowrap">
                               {getQualityBadge(gr.qualityStatus)}
-                            </td>
+                            </TableCell>
                           )}
                           {visibleGrColumns.includes('matching') && (
-                            <td className="p-4 whitespace-nowrap">
+                            <TableCell className="p-3.5 whitespace-nowrap">
                               {getMatchingBadge(gr.matchingStatus)}
-                            </td>
+                            </TableCell>
                           )}
                           {visibleGrColumns.includes('progress') && (
-                            <td className="p-4 whitespace-nowrap min-w-[140px]">
-                              <div className="flex flex-col gap-1.5">
+                            <TableCell className="p-3.5 whitespace-nowrap min-w-[140px]">
+                              <div className="flex flex-col gap-1">
                                 <div className="flex justify-between items-center text-[10px] font-bold text-slate-500">
                                   <span>{Math.round((gr.itemsAccepted / gr.totalItems) * 100)}%</span>
                                   <span className="text-slate-300">Intake</span>
                                 </div>
                                 <Progress value={(gr.itemsAccepted / gr.totalItems) * 100} className="h-1 bg-slate-100" />
                               </div>
-                            </td>
+                            </TableCell>
                           )}
-                          <td className="p-4 sticky right-0 z-20 bg-white shadow-[-2px_0_5px_-2px_rgba(0,0,0,0.1)] group-hover:bg-slate-50 transition-colors whitespace-nowrap text-center">
+                          <TableCell className="p-3.5 sticky right-0 z-20 bg-white shadow-[-2px_0_5px_-2px_rgba(0,0,0,0.1)] group-hover:bg-slate-50 transition-colors whitespace-nowrap text-center">
                             <div className="flex items-center justify-center gap-2">
                               <Button
                                 variant="outline"
                                 size="sm"
                                 onClick={() => handleViewGR(gr)}
-                                className="h-8 w-8 p-0 bg-white hover:bg-slate-50 rounded-full border-slate-200"
+                                className="h-7 w-7 p-0 bg-white hover:bg-slate-50 rounded-full border-slate-200"
                               >
                                 <Eye className="w-3.5 h-3.5 text-slate-600" />
                               </Button>
@@ -1257,7 +1737,7 @@ export function GoodsReceipts() {
                                   </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end" className="w-48 shadow-xl border-slate-200/60 p-1.5">
-                                  <DropdownMenuLabel className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-2 py-1.5 font-bold">Actions</DropdownMenuLabel>
+                                  <DropdownMenuLabel className="text-xs font-semibold text-slate-500 px-2 py-1.5">Actions</DropdownMenuLabel>
                                   <DropdownMenuItem className="gap-2.5 py-2.5 cursor-pointer rounded-md">
                                     <Edit className="w-4 h-4 text-blue-500" />
                                     <span className="font-semibold text-sm">Update GR</span>
@@ -1274,13 +1754,13 @@ export function GoodsReceipts() {
                                 </DropdownMenuContent>
                               </DropdownMenu>
                             </div>
-                          </td>
+                          </TableCell>
                         </DraggableTableRow>
                       ))}
-                    </SortableContext>
-                  </DndContext>
-                </tbody>
-              </table>
+                    </TableBody>
+                  </Table>
+                </SortableContext>
+              </DndContext>
             </div>
 
             {/* Consolidated Material Pagination */}
@@ -1305,22 +1785,22 @@ export function GoodsReceipts() {
                   </div>
                   <div>
                     <h4 className="font-bold text-slate-900 group-hover:text-primary transition-colors">{gr.grNumber}</h4>
-                    <p className="text-[11px] text-slate-400 font-bold uppercase tracking-wider">REF: {gr.poNumber}</p>
+                    <p className="text-[11px] text-slate-400 font-medium">Ref: {gr.poNumber}</p>
                   </div>
                   <div className="hidden md:flex items-center gap-10 ml-6">
                     <div>
-                      <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.15em] mb-1">Vendor</p>
+                      <p className="text-xs font-semibold text-slate-500 mb-1">Vendor</p>
                       <p className="text-sm font-bold text-slate-700">{gr.vendor}</p>
                     </div>
                     <div>
-                      <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.15em] mb-1">Receipt Date</p>
+                      <p className="text-xs font-semibold text-slate-500 mb-1">Receipt Date</p>
                       <div className="flex items-center gap-1.5 text-sm font-bold text-slate-600">
                         <Calendar className="w-3.5 h-3.5 text-slate-400" />
                         {gr.receiptDate}
                       </div>
                     </div>
                     <div>
-                      <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.15em] mb-1">Items</p>
+                      <p className="text-xs font-semibold text-slate-500 mb-1">Items</p>
                       <p className="text-sm font-black text-slate-900">{gr.itemsReceived} / {gr.totalItems}</p>
                     </div>
                   </div>
@@ -1368,7 +1848,7 @@ export function GoodsReceipts() {
                   
                   <div className="mb-4">
                     <h4 className="font-bold text-slate-900 group-hover:text-primary transition-colors text-lg">{gr.grNumber}</h4>
-                    <p className="text-[11px] text-slate-400 font-bold uppercase tracking-wider">Ref: {gr.poNumber}</p>
+                    <p className="text-[11px] text-slate-400 font-medium">Ref: {gr.poNumber}</p>
                   </div>
 
                   <div className="space-y-3 mb-5">
@@ -1553,7 +2033,7 @@ export function GoodsReceipts() {
                         <h2 className="text-2xl font-black text-slate-900 tracking-tight">{selectedGR.grNumber}</h2>
                         {getStatusBadge(selectedGR.status)}
                       </div>
-                      <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-widest">
+                      <div className="flex items-center gap-2 text-xs font-semibold text-slate-500">
                         <span>PO Ref: {selectedGR.poNumber}</span>
                         <span className="h-1 w-1 rounded-full bg-slate-300"></span>
                         <span>{selectedGR.vendor}</span>
@@ -1574,10 +2054,10 @@ export function GoodsReceipts() {
                 <div className="p-8">
                   <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
                     <div className="flex items-center justify-between">
-                      <TabsList className="bg-slate-100/50 p-1 rounded-xl h-11 border border-slate-200/60">
-                        <TabsTrigger value="overview" className="rounded-lg px-6 font-bold text-xs uppercase tracking-widest data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm transition-all capitalize">Details</TabsTrigger>
-                        <TabsTrigger value="items" className="rounded-lg px-6 font-bold text-xs uppercase tracking-widest data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm transition-all capitalize">Line Items</TabsTrigger>
-                        <TabsTrigger value="documents" className="rounded-lg px-6 font-bold text-xs uppercase tracking-widest data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm transition-all capitalize">Documents</TabsTrigger>
+                      <TabsList className="w-fit">
+                        <TabsTrigger value="overview" className="rounded-lg px-6 font-semibold text-xs data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm transition-all">Details</TabsTrigger>
+                        <TabsTrigger value="items" className="rounded-lg px-6 font-semibold text-xs data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm transition-all">Line Items</TabsTrigger>
+                        <TabsTrigger value="documents" className="rounded-lg px-6 font-semibold text-xs data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm transition-all">Documents</TabsTrigger>
                       </TabsList>
                     </div>
 
@@ -1586,25 +2066,25 @@ export function GoodsReceipts() {
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         <div className="space-y-6">
                           <div className="space-y-1">
-                            <Label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 leading-none">Logistics Details</Label>
+                            <Label className="text-xs font-semibold text-slate-500 mb-2 leading-none">Logistics Details</Label>
                             <Card className="p-4 border-slate-200/60 bg-white shadow-sm space-y-4">
                               <div className="flex items-center justify-between group">
-                                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2">
+                                <span className="text-xs font-semibold text-slate-500 flex items-center gap-2">
                                   <Building className="w-3.5 h-3.5 text-slate-400" /> Warehouse
                                 </span>
-                                <span className="text-sm font-black text-slate-900">{selectedGR.warehouse}</span>
+                                <span className="text-sm font-bold text-slate-900">{selectedGR.warehouse}</span>
                               </div>
                               <div className="flex items-center justify-between group">
-                                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2">
+                                <span className="text-xs font-semibold text-slate-500 flex items-center gap-2">
                                   <MapPin className="w-3.5 h-3.5 text-slate-400" /> Bin Location
                                 </span>
-                                <span className="text-sm font-black text-slate-900">{selectedGR.location}</span>
+                                <span className="text-sm font-bold text-slate-900">{selectedGR.location}</span>
                               </div>
                               <div className="flex items-center justify-between group pt-2 border-t border-slate-50">
-                                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2">
+                                <span className="text-xs font-semibold text-slate-500 flex items-center gap-2">
                                   <User className="w-3.5 h-3.5 text-slate-400" /> Intake By
                                 </span>
-                                <span className="text-sm font-black text-slate-900">{selectedGR.receivedBy}</span>
+                                <span className="text-sm font-bold text-slate-900">{selectedGR.receivedBy}</span>
                               </div>
                             </Card>
                           </div>
@@ -1612,25 +2092,25 @@ export function GoodsReceipts() {
 
                         <div className="space-y-6">
                           <div className="space-y-1">
-                            <Label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 leading-none">Timeline Tracking</Label>
+                            <Label className="text-xs font-semibold text-slate-500 mb-2 leading-none">Timeline Tracking</Label>
                             <Card className="p-4 border-slate-200/60 bg-white shadow-sm space-y-4">
                               <div className="flex items-center justify-between group">
-                                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2">
+                                <span className="text-xs font-semibold text-slate-500 flex items-center gap-2">
                                   <Calendar className="w-3.5 h-3.5 text-slate-400" /> Receipt Date
                                 </span>
-                                <span className="text-sm font-black text-slate-900">{selectedGR.receiptDate}</span>
+                                <span className="text-sm font-bold text-slate-900">{selectedGR.receiptDate}</span>
                               </div>
                               <div className="flex items-center justify-between group">
-                                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2">
+                                <span className="text-xs font-semibold text-slate-500 flex items-center gap-2">
                                   <Clock className="w-3.5 h-3.5 text-slate-400" /> Expected
                                 </span>
-                                <span className="text-sm font-black text-slate-900">{selectedGR.expectedDate}</span>
+                                <span className="text-sm font-bold text-slate-900">{selectedGR.expectedDate}</span>
                               </div>
                               <div className="flex items-center justify-between group pt-2 border-t border-slate-50">
-                                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2">
+                                <span className="text-xs font-semibold text-slate-500 flex items-center gap-2">
                                   <TrendingUp className="w-3.5 h-3.5 text-slate-400" /> SLA Status
                                 </span>
-                                <Badge className="bg-emerald-500/10 text-emerald-600 border-none font-bold text-[10px] uppercase">On Time</Badge>
+                                <Badge className="bg-emerald-500/10 text-emerald-600 border-none font-bold text-xs">On Time</Badge>
                               </div>
                             </Card>
                           </div>
@@ -1638,22 +2118,22 @@ export function GoodsReceipts() {
 
                         <div className="space-y-6">
                           <div className="space-y-1">
-                            <Label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 leading-none">Quality Verification</Label>
+                            <Label className="text-xs font-semibold text-slate-500 mb-2 leading-none">Quality Verification</Label>
                             <Card className="p-4 border-slate-200/60 bg-white shadow-sm space-y-4">
                               <div className="flex items-center justify-between group">
-                                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2">
+                                <span className="text-xs font-semibold text-slate-500 flex items-center gap-2">
                                   <ClipboardCheck className="w-3.5 h-3.5 text-slate-400" /> Quality Pass
                                 </span>
                                 {getQualityBadge(selectedGR.qualityStatus)}
                               </div>
                               <div className="flex items-center justify-between group">
-                                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2">
+                                <span className="text-xs font-semibold text-slate-500 flex items-center gap-2">
                                   <CheckCheck className="w-3.5 h-3.5 text-slate-400" /> 3-Way Match
                                 </span>
                                 {getMatchingBadge(selectedGR.matchingStatus)}
                               </div>
                               <div className="flex flex-col gap-2 pt-2 border-t border-slate-50">
-                                <div className="flex justify-between text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                                <div className="flex justify-between text-xs font-semibold text-slate-500">
                                   <span>Intake Progress</span>
                                   <span>{Math.round((selectedGR.itemsAccepted / selectedGR.totalItems) * 100)}%</span>
                                 </div>
@@ -1671,7 +2151,7 @@ export function GoodsReceipts() {
                         <div className="flex items-center justify-between px-1">
                           <div className="flex items-center gap-2">
                             <div className="w-1.5 h-6 bg-slate-900 rounded-full"></div>
-                            <h3 className="text-lg font-black text-slate-900 tracking-tight uppercase">Received Manifest ({selectedGR.lineItems.length})</h3>
+                            <h3 className="text-lg font-bold text-slate-900 tracking-tight">Received Manifest ({selectedGR.lineItems.length})</h3>
                           </div>
                           <div className="flex gap-2">
                             <Button variant="outline" size="sm" className="h-8 text-xs font-bold gap-2">
@@ -1681,46 +2161,46 @@ export function GoodsReceipts() {
                         </div>
 
                         <div className="border border-slate-200 rounded-2xl overflow-hidden bg-white shadow-sm">
-                          <table className="w-full text-left">
-                            <thead>
-                              <tr className="bg-slate-50 border-b border-slate-200">
-                                <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Received Item Details</th>
-                                <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Quantity Check</th>
-                                <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Unit Match</th>
-                                <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Verification</th>
-                                <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Condition</th>
-                              </tr>
-                            </thead>
-                            <tbody className="divide-y divide-slate-100">
+                          <Table className="w-full text-left">
+                            <TableHeader className="bg-slate-50 border-b border-slate-200">
+                              <TableRow>
+                                <TableHead className="p-4 text-xs font-semibold text-slate-500">Received Item Details</TableHead>
+                                <TableHead className="p-4 text-xs font-semibold text-slate-500">Quantity Check</TableHead>
+                                <TableHead className="p-4 text-xs font-semibold text-slate-500">Unit Match</TableHead>
+                                <TableHead className="p-4 text-xs font-semibold text-slate-500">Verification</TableHead>
+                                <TableHead className="p-4 text-xs font-semibold text-slate-500">Condition</TableHead>
+                              </TableRow>
+                            </TableHeader>
+                            <TableBody className="divide-y divide-slate-100">
                               {selectedGR.lineItems.map((item: any) => (
-                                <tr key={item.id} className="group hover:bg-slate-50/50 transition-colors">
-                                  <td className="p-4">
+                                <TableRow key={item.id} className="group hover:bg-slate-50/50 transition-colors">
+                                  <TableCell className="p-4">
                                     <div className="space-y-0.5">
                                       <p className="text-sm font-black text-slate-900 group-hover:text-blue-600 transition-colors">{item.item}</p>
-                                      <p className="text-[10px] text-slate-400 font-bold tracking-wide uppercase">Batch: {item.batchNumber || 'N/A'}</p>
+                                      <p className="text-[10px] text-slate-400 font-bold tracking-wide">Batch: {item.batchNumber || 'N/A'}</p>
                                     </div>
-                                  </td>
-                                  <td className="p-4">
+                                  </TableCell>
+                                  <TableCell className="p-4">
                                     <div className="flex items-center gap-2">
                                       <span className="text-sm font-black text-slate-900">{item.receivedQty}</span>
-                                      <span className="text-[10px] font-bold text-slate-400 uppercase">/ {item.poQty}</span>
+                                      <span className="text-[10px] font-bold text-slate-400">/ {item.poQty}</span>
                                     </div>
-                                  </td>
-                                  <td className="p-4">
+                                  </TableCell>
+                                  <TableCell className="p-4">
                                     <Badge variant="secondary" className="bg-slate-100 text-slate-600 border-none font-bold text-[10px]">
                                       {item.uom}
                                     </Badge>
-                                  </td>
-                                  <td className="p-4">
+                                  </TableCell>
+                                  <TableCell className="p-4">
                                     {getQualityBadge(item.inspectionStatus)}
-                                  </td>
-                                  <td className="p-4">
+                                  </TableCell>
+                                  <TableCell className="p-4">
                                     <span className="text-xs font-bold text-slate-600">{item.inspectionNotes || 'Intake successful'}</span>
-                                  </td>
-                                </tr>
+                                  </TableCell>
+                                </TableRow>
                               ))}
-                            </tbody>
-                          </table>
+                            </TableBody>
+                          </Table>
                         </div>
                       </div>
                     </TabsContent>
@@ -1731,7 +2211,7 @@ export function GoodsReceipts() {
                         <div className="space-y-4">
                           <div className="flex items-center gap-2 px-1">
                             <FileCheck className="w-5 h-5 text-slate-900" />
-                            <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest">Related Artifacts</h3>
+                            <h3 className="text-sm font-bold text-slate-900">Related Artifacts</h3>
                           </div>
                           <div className="space-y-2">
                             {selectedGR.documents.map((doc: any) => (
@@ -1742,7 +2222,7 @@ export function GoodsReceipts() {
                                   </div>
                                   <div>
                                     <p className="text-sm font-bold text-slate-900">{doc.name}</p>
-                                    <p className="text-[10px] text-slate-400 font-bold uppercase">{doc.type} • {doc.size}</p>
+                                    <p className="text-xs text-slate-400 font-medium">{doc.type} • {doc.size}</p>
                                   </div>
                                 </div>
                                 <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-full">
@@ -1756,7 +2236,7 @@ export function GoodsReceipts() {
                         <div className="space-y-4">
                           <div className="flex items-center gap-2 px-1">
                             <Camera className="w-5 h-5 text-slate-900" />
-                            <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest">Visual Evidence</h3>
+                            <h3 className="text-sm font-bold text-slate-900">Visual Evidence</h3>
                           </div>
                           <div className="grid grid-cols-2 gap-3">
                             {selectedGR.images.map((img: any) => (
@@ -1764,14 +2244,14 @@ export function GoodsReceipts() {
                                 <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity z-10">
                                   <Eye className="w-5 h-5 text-white" />
                                 </div>
-                                <div className="absolute bottom-2 left-2 right-2 text-[10px] font-bold text-white z-20 truncate drop-shadow-md">
+                                <div className="absolute bottom-2 left-2 right-2 text-xs font-medium text-white z-20 truncate drop-shadow-md">
                                   {img.name}
                                 </div>
                               </div>
                             ))}
                             <button className="aspect-video rounded-xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center text-slate-400 hover:border-blue-400 hover:text-blue-500 hover:bg-blue-50/30 transition-all gap-2">
                               <Upload className="w-5 h-5" />
-                              <span className="text-[10px] font-black uppercase tracking-widest leading-none">Upload Proof</span>
+                              <span className="text-xs font-semibold leading-none">Upload Proof</span>
                             </button>
                           </div>
                         </div>
@@ -1783,7 +2263,7 @@ export function GoodsReceipts() {
                 {/* Footer Actions Context-Aware */}
                 <div className="sticky bottom-0 z-50 bg-white/80 backdrop-blur-md border-t border-slate-200 p-6 flex flex-col sm:flex-row items-center gap-4 shadow-[0_-5px_15px_-10px_rgba(0,0,0,0.1)]">
                   {selectedGR.status === 'Pending Inspection' && (
-                    <Button onClick={() => handleCompleteInspection(selectedGR.id)} className="w-full sm:flex-1 h-12 bg-slate-900 hover:bg-slate-800 text-white font-black uppercase tracking-widest gap-2 shadow-lg shadow-slate-900/20">
+                    <Button onClick={() => handleCompleteInspection(selectedGR.id)} className="w-full sm:flex-1 h-12 bg-slate-900 hover:bg-slate-800 text-white font-bold gap-2 shadow-lg shadow-slate-900/20">
                       <ClipboardCheck className="w-5 h-5" />
                       Finalize Compliance Check
                     </Button>
@@ -1803,16 +2283,16 @@ export function GoodsReceipts() {
                 <div className="p-6 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <MessageSquare className="w-5 h-5 text-slate-900" />
-                    <h3 className="font-black text-slate-900 uppercase tracking-widest text-sm">Collaboration Log</h3>
+                    <h3 className="font-bold text-slate-900 text-sm">Collaboration Log</h3>
                   </div>
-                  <Badge className="bg-slate-900 text-white border-none font-bold text-[10px]">{selectedGR.history.length}</Badge>
+                  <Badge className="bg-slate-900 text-white border-none font-bold text-xs">{selectedGR.history.length}</Badge>
                 </div>
                 
                 <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar">
                   {selectedGR.history.map((entry: any, idx: number) => (
                     <div key={entry.id} className="relative pl-6 border-l-2 border-slate-100 space-y-2">
                       <div className={`absolute -left-[5px] top-0 h-2 w-2 rounded-full ${idx === 0 ? 'bg-blue-500 ring-4 ring-blue-500/20' : 'bg-slate-300'}`}></div>
-                      <div className="flex items-center justify-between text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                      <div className="flex items-center justify-between text-xs font-semibold text-slate-400">
                         <span>{entry.user}</span>
                         <div className="flex items-center gap-1">
                           <Clock className="w-3 h-3" />
@@ -1839,7 +2319,7 @@ export function GoodsReceipts() {
                       <ArrowRight className="w-5 h-5" />
                     </Button>
                   </div>
-                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tighter mt-3 text-center">Press Shift+Enter for new line</p>
+                  <p className="text-xs text-slate-400 font-medium mt-3 text-center">Press Shift+Enter for new line</p>
                 </div>
               </div>
             </div>

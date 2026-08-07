@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card } from './ui/card';
+import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Badge } from './ui/badge';
@@ -1142,7 +1142,7 @@ export function RFQManagement() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1>RFQ Management</h1>
+          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">RFQ Management</h1>
         </div>
         <div className="flex gap-3">
           <Button variant="outline" className="gap-2 h-10 border-slate-200" onClick={() => window.location.reload()}>
@@ -1153,55 +1153,63 @@ export function RFQManagement() {
       </div>
 
       {/* Key Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-3.5">
-        <Card className="p-3.5">
-          <div className="flex items-center justify-between">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+        <Card className="border-l-4 border-l-blue-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Active RFQs</p>
-              <p className="text-2xl font-semibold">{rfqData.filter(r => r.status === 'Open').length}</p>
-              <p className="text-xs text-muted-foreground">Open for bidding</p>
+              <p className="text-xs text-muted-foreground font-semibold">Active RFQs</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">{rfqData.filter(r => r.status === 'Open').length}</p>
+              <p className="text-[11px] text-blue-600 font-medium">Open for bidding</p>
             </div>
-            <Quote className="w-8 h-8 text-blue-500" />
-          </div>
+            <div className="p-2.5 bg-blue-50 rounded-lg">
+              <Quote className="w-5 h-5 text-blue-600" />
+            </div>
+          </CardContent>
         </Card>
 
-        <Card className="p-3.5">
-          <div className="flex items-center justify-between">
+        <Card className="border-l-4 border-l-amber-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Pending Quotations</p>
-              <p className="text-2xl font-semibold">{quotationData.filter(q => q.status === 'Submitted').length}</p>
-              <p className="text-xs text-muted-foreground">Awaiting review</p>
+              <p className="text-xs text-muted-foreground font-semibold">Pending Quotations</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">{quotationData.filter(q => q.status === 'Submitted').length}</p>
+              <p className="text-[11px] text-amber-600 font-medium">Awaiting review</p>
             </div>
-            <FileText className="w-8 h-8 text-orange-500" />
-          </div>
+            <div className="p-2.5 bg-amber-50 rounded-lg">
+              <FileText className="w-5 h-5 text-amber-600" />
+            </div>
+          </CardContent>
         </Card>
 
-        <Card className="p-3.5">
-          <div className="flex items-center justify-between">
+        <Card className="border-l-4 border-l-emerald-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Awards Won</p>
-              <p className="text-2xl font-semibold">{rfqData.filter(r => r.status === 'Awarded').length}</p>
-              <p className="text-xs text-green-500">This month</p>
+              <p className="text-xs text-muted-foreground font-semibold">Awards Won</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">{rfqData.filter(r => r.status === 'Awarded').length}</p>
+              <p className="text-[11px] text-emerald-600 font-medium">This month</p>
             </div>
-            <Award className="w-8 h-8 text-green-500" />
-          </div>
+            <div className="p-2.5 bg-emerald-50 rounded-lg">
+              <Award className="w-5 h-5 text-emerald-600" />
+            </div>
+          </CardContent>
         </Card>
 
-        <Card className="p-3.5">
-          <div className="flex items-center justify-between">
+        <Card className="border-l-4 border-l-purple-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Success Rate</p>
-              <p className="text-2xl font-semibold">67%</p>
-              <p className="text-xs text-green-500">+5% from last month</p>
+              <p className="text-xs text-muted-foreground font-semibold">Success Rate</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">67%</p>
+              <p className="text-[11px] text-purple-600 font-medium">+5% from last month</p>
             </div>
-            <TrendingUp className="w-8 h-8 text-green-500" />
-          </div>
+            <div className="p-2.5 bg-purple-50 rounded-lg">
+              <TrendingUp className="w-5 h-5 text-purple-600" />
+            </div>
+          </CardContent>
         </Card>
       </div>
 
       {/* Tabs Navigation */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList className="grid w-full grid-cols-4 max-w-2xl bg-slate-100/50 p-1 rounded-full">
+        <TabsList className="w-fit">
           <TabsTrigger value="rfqs" className="gap-2 rounded-full data-[state=active]:bg-white data-[state=active]:shadow-sm">
             <Quote className="w-4 h-4" />
             RFQs

@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -6,6 +8,7 @@ import { Label } from './ui/label';
 import { Badge } from './ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from './ui/sheet';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from './ui/dialog';
 import { Alert, AlertDescription, AlertTitle } from './ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Textarea } from './ui/textarea';
@@ -501,6 +504,67 @@ const mockPerformanceMetrics: PerformanceMetric[] = [
 ];
 
 export const SupplierDashboard: React.FC = () => {
+  const navigate = useNavigate();
+  const { logout } = useAuth();
+
+  const [supplierProfile, setSupplierProfile] = useState<SupplierProfile>(mockSupplierProfile);
+  const [notificationsList, setNotificationsList] = useState<Notification[]>(mockNotifications);
+  const [showSupportModal, setShowSupportModal] = useState(false);
+  const [showEditProfileModal, setShowEditProfileModal] = useState(false);
+
+  const [editProfileForm, setEditProfileForm] = useState({
+    companyName: mockSupplierProfile.companyName,
+    contactPerson: mockSupplierProfile.contactPerson,
+    email: mockSupplierProfile.email,
+    phone: mockSupplierProfile.phone,
+    address: mockSupplierProfile.address,
+  });
+
+  const [supportSubject, setSupportSubject] = useState('');
+  const [supportMessage, setSupportMessage] = useState('');
+  const [supportSentSuccess, setSupportSentSuccess] = useState(false);
+
+  const [settingsState, setSettingsState] = useState({
+    emailAlerts: true,
+    smsAlerts: false,
+    autoAckPO: false,
+    currency: 'USD',
+  });
+
+  const handleDownloadReports = () => {
+    const csvHeader = "RFQ Number,Title,Category,Status\n";
+    const csvRows = rfqs.map(r => `${r.rfqNumber},"${r.title}",${r.category},${r.status}`).join("\n");
+    const blob = new Blob([csvHeader + csvRows], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", "supplier_portal_reports.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handleSaveProfile = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSupplierProfile(prev => ({
+      ...prev,
+      ...editProfileForm
+    }));
+    setShowEditProfileModal(false);
+  };
+
+  const handleSendSupportMessage = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!supportMessage.trim()) return;
+    setSupportSentSuccess(true);
+    setTimeout(() => {
+      setSupportSentSuccess(false);
+      setSupportSubject('');
+      setSupportMessage('');
+      setShowSupportModal(false);
+    }, 1500);
+  };
+
   const [activeTab, setActiveTab] = useState('overview');
   const [selectedRFQ, setSelectedRFQ] = useState<RFQ | null>(null);
   const [selectedPO, setSelectedPO] = useState<PurchaseOrder | null>(null);
@@ -802,50 +866,81 @@ export const SupplierDashboard: React.FC = () => {
       {/* Header */}
       <div className="flex justify-between items-center bg-transparent py-2 px-0">
         <div className="flex items-center gap-4">
-          <h1 className="text-2xl font-bold tracking-tight bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">Supplier Portal</h1>
+          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">Supplier Portal</h1>
         </div>
         <div className="flex items-center gap-3">
+          {/* Notifications Popover */}
           <Popover>
             <PopoverTrigger asChild>
-              <Button variant="outline" size="icon" className="relative">
-                <Bell className="w-5 h-5" />
-                {unreadNotifications > 0 && (
-                  <Badge variant="destructive" className="absolute -top-2 -right-2 h-5 min-w-5 flex items-center justify-center p-0 rounded-full">
-                    {unreadNotifications}
+              <Button variant="outline" size="icon" className="relative hover:bg-slate-100">
+                <Bell className="w-5 h-5 text-slate-700" />
+                {notificationsList.filter(n => !n.read).length > 0 && (
+                  <Badge variant="destructive" className="absolute -top-2 -right-2 h-5 min-w-5 flex items-center justify-center p-0 rounded-full text-[10px] animate-pulse">
+                    {notificationsList.filter(n => !n.read).length}
                   </Badge>
                 )}
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-80" align="end">
-              <div className="flex justify-between items-center mb-4">
-                <h4 className="font-semibold text-sm">Notifications & Alerts</h4>
+            <PopoverContent className="w-80 p-4" align="end">
+              <div className="flex justify-between items-center mb-3 pb-2 border-b">
+                <div className="flex items-center gap-2">
+                  <Bell className="w-4 h-4 text-primary" />
+                  <h4 className="font-semibold text-sm">Notifications & Alerts</h4>
+                </div>
+                {notificationsList.some(n => !n.read) && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-xs text-primary hover:text-primary/80 h-7 px-2"
+                    onClick={() => setNotificationsList(prev => prev.map(n => ({ ...n, read: true })))}
+                  >
+                    <Check className="w-3 h-3 mr-1" /> Mark read
+                  </Button>
+                )}
               </div>
-              <div className="space-y-3 max-h-[300px] overflow-y-auto pr-1 text-sm">
-                {mockNotifications.length > 0 ? mockNotifications.map((notif) => (
-                  <div key={notif.id} className={`p-3 border rounded-lg flex items-start gap-3 ${!notif.read ? 'bg-muted/50 border-primary/20' : ''}`}>
-                    <div className={`mt-0.5 p-1.5 rounded-full ${getPriorityColor(notif.priority)}`}>
-                      {notif.priority === 'urgent' ? <AlertTriangle className="w-4 h-4" /> : <Bell className="w-4 h-4" />}
+              <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1 text-sm">
+                {notificationsList.length > 0 ? (
+                  notificationsList.map((notif) => (
+                    <div
+                      key={notif.id}
+                      onClick={() => {
+                        setNotificationsList(prev => prev.map(n => n.id === notif.id ? { ...n, read: true } : n));
+                        if (notif.type === 'rfq') setActiveTab('rfq');
+                        else if (notif.type === 'po') setActiveTab('orders');
+                        else if (notif.type === 'invoice' || notif.type === 'payment') setActiveTab('invoices');
+                        else if (notif.type === 'document') setActiveTab('documents');
+                      }}
+                      className={`p-2.5 border rounded-lg flex items-start gap-3 cursor-pointer hover:bg-slate-100/70 transition-colors ${!notif.read ? 'bg-blue-50/60 border-blue-200' : 'bg-card'}`}
+                    >
+                      <div className={`mt-0.5 p-1.5 rounded-full shrink-0 ${getPriorityColor(notif.priority)}`}>
+                        {notif.priority === 'urgent' ? <AlertTriangle className="w-4 h-4" /> : <Bell className="w-4 h-4" />}
+                      </div>
+                      <div className="flex-1 space-y-1 overflow-hidden">
+                        <div className="flex justify-between items-center">
+                          <p className="font-semibold text-xs text-foreground truncate">{notif.title}</p>
+                          {!notif.read && <span className="w-2 h-2 rounded-full bg-blue-600 shrink-0" />}
+                        </div>
+                        <p className="text-muted-foreground text-xs line-clamp-2 leading-relaxed">{notif.message}</p>
+                        <p className="text-[10px] text-muted-foreground">{format(notif.timestamp, 'MMM dd, HH:mm')}</p>
+                      </div>
                     </div>
-                    <div className="flex-1 space-y-1">
-                      <p className="font-semibold text-sm leading-none">{notif.title}</p>
-                      <p className="text-muted-foreground text-xs">{notif.message}</p>
-                      <p className="text-[10px] text-muted-foreground">{format(notif.timestamp, 'MMM dd, HH:mm')}</p>
-                    </div>
-                  </div>
-                )) : (
+                  ))
+                ) : (
                   <p className="text-center text-muted-foreground text-sm py-4">No notifications</p>
                 )}
               </div>
             </PopoverContent>
           </Popover>
+
+          {/* Quick Actions Popover */}
           <Popover>
             <PopoverTrigger asChild>
-              <Button variant="outline" size="icon" className="relative hover:bg-yellow-50 hover:text-yellow-600 hover:border-yellow-200">
+              <Button variant="outline" size="icon" className="relative hover:bg-yellow-50 hover:text-yellow-600 hover:border-yellow-200" title="Quick Actions">
                 <Zap className="w-5 h-5 text-yellow-500" />
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-72" align="end">
-              <div className="mb-4 flex items-center gap-2">
+            <PopoverContent className="w-72 p-4" align="end">
+              <div className="mb-3 flex items-center gap-2 pb-2 border-b">
                 <Zap className="w-4 h-4 text-yellow-500" />
                 <h4 className="font-semibold text-sm">Quick Actions</h4>
               </div>
@@ -855,7 +950,7 @@ export const SupplierDashboard: React.FC = () => {
                   className="h-auto flex-col gap-2 p-3 text-xs hover:border-primary hover:text-primary transition-colors"
                   onClick={() => setShowSubmitQuotation(true)}
                 >
-                  <Send className="w-4 h-4" />
+                  <Send className="w-4 h-4 text-blue-500" />
                   Submit Quote
                 </Button>
                 <Button
@@ -863,7 +958,7 @@ export const SupplierDashboard: React.FC = () => {
                   className="h-auto flex-col gap-2 p-3 text-xs hover:border-primary hover:text-primary transition-colors"
                   onClick={() => setShowCreateInvoice(true)}
                 >
-                  <Receipt className="w-4 h-4" />
+                  <Receipt className="w-4 h-4 text-green-500" />
                   Create Invoice
                 </Button>
                 <Button
@@ -871,7 +966,7 @@ export const SupplierDashboard: React.FC = () => {
                   className="h-auto flex-col gap-2 p-3 text-xs hover:border-primary hover:text-primary transition-colors"
                   onClick={() => setShowShipmentNotification(true)}
                 >
-                  <Truck className="w-4 h-4" />
+                  <Truck className="w-4 h-4 text-orange-500" />
                   Update Shipment
                 </Button>
                 <Button
@@ -879,98 +974,252 @@ export const SupplierDashboard: React.FC = () => {
                   className="h-auto flex-col gap-2 p-3 text-xs hover:border-primary hover:text-primary transition-colors"
                   onClick={() => setShowUploadDocument(true)}
                 >
-                  <Upload className="w-4 h-4" />
+                  <Upload className="w-4 h-4 text-purple-500" />
                   Upload Document
                 </Button>
-                <Button variant="outline" className="h-auto flex-col gap-2 p-3 text-xs hover:border-primary hover:text-primary transition-colors">
-                  <Download className="w-4 h-4" />
+                <Button
+                  variant="outline"
+                  className="h-auto flex-col gap-2 p-3 text-xs hover:border-primary hover:text-primary transition-colors"
+                  onClick={handleDownloadReports}
+                >
+                  <Download className="w-4 h-4 text-emerald-500" />
                   Download Reports
                 </Button>
-                <Button variant="outline" className="h-auto flex-col gap-2 p-3 text-xs hover:border-primary hover:text-primary transition-colors">
-                  <MessageSquare className="w-4 h-4" />
+                <Button
+                  variant="outline"
+                  className="h-auto flex-col gap-2 p-3 text-xs hover:border-primary hover:text-primary transition-colors"
+                  onClick={() => setShowSupportModal(true)}
+                >
+                  <MessageSquare className="w-4 h-4 text-indigo-500" />
                   Contact Support
                 </Button>
               </div>
             </PopoverContent>
           </Popover>
+
+          {/* Business Metrics Popover */}
           <Popover>
             <PopoverTrigger asChild>
-              <Button variant="outline" size="icon" className="relative hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200">
+              <Button variant="outline" size="icon" className="relative hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200" title="Key Metrics">
                 <BarChart3 className="w-5 h-5 text-blue-500" />
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-[340px]" align="end">
-              <div className="mb-4 flex items-center gap-2">
-                <BarChart3 className="w-4 h-4 text-blue-500" />
-                <h4 className="font-semibold text-sm">Key Business Metrics</h4>
+            <PopoverContent className="w-[340px] p-4" align="end">
+              <div className="mb-3 flex items-center justify-between pb-2 border-b">
+                <div className="flex items-center gap-2">
+                  <BarChart3 className="w-4 h-4 text-blue-500" />
+                  <h4 className="font-semibold text-sm">Key Business Metrics</h4>
+                </div>
+                <span className="text-[10px] text-muted-foreground">Click to navigate</span>
               </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="p-3 border rounded-lg bg-slate-50">
-                  <div className="flex justify-between items-start mb-2">
-                    <p className="text-xs text-muted-foreground font-medium">Open RFQs</p>
+              <div className="grid grid-cols-2 gap-2.5">
+                <div
+                  onClick={() => setActiveTab('rfq')}
+                  className="p-3 border rounded-lg bg-slate-50 hover:bg-blue-50/50 hover:border-blue-300 transition-all cursor-pointer group"
+                >
+                  <div className="flex justify-between items-start mb-1">
+                    <p className="text-xs text-muted-foreground font-medium group-hover:text-blue-700">Open RFQs</p>
                     <Target className="w-4 h-4 text-blue-500" />
                   </div>
                   <p className="text-xl font-bold text-blue-600">{mockRFQs.filter(rfq => rfq.status === 'open').length}</p>
-                  <p className="text-[10px] text-blue-600">Awaiting response</p>
+                  <p className="text-[10px] text-blue-600 flex items-center gap-1">Awaiting response <ChevronRight className="w-3 h-3 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" /></p>
                 </div>
-                <div className="p-3 border rounded-lg bg-slate-50">
-                  <div className="flex justify-between items-start mb-2">
-                    <p className="text-xs text-muted-foreground font-medium">Active POs</p>
+                <div
+                  onClick={() => setActiveTab('orders')}
+                  className="p-3 border rounded-lg bg-slate-50 hover:bg-green-50/50 hover:border-green-300 transition-all cursor-pointer group"
+                >
+                  <div className="flex justify-between items-start mb-1">
+                    <p className="text-xs text-muted-foreground font-medium group-hover:text-green-700">Active POs</p>
                     <Package className="w-4 h-4 text-green-500" />
                   </div>
                   <p className="text-xl font-bold text-green-600">{mockPurchaseOrders.filter(po => ['acknowledged', 'in-progress', 'shipped'].includes(po.status)).length}</p>
-                  <p className="text-[10px] text-green-600">In progress</p>
+                  <p className="text-[10px] text-green-600 flex items-center gap-1">In progress <ChevronRight className="w-3 h-3 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" /></p>
                 </div>
-                <div className="p-3 border rounded-lg bg-slate-50">
-                  <div className="flex justify-between items-start mb-2">
-                    <p className="text-xs text-muted-foreground font-medium">Pending Invoices</p>
+                <div
+                  onClick={() => setActiveTab('invoices')}
+                  className="p-3 border rounded-lg bg-slate-50 hover:bg-orange-50/50 hover:border-orange-300 transition-all cursor-pointer group"
+                >
+                  <div className="flex justify-between items-start mb-1">
+                    <p className="text-xs text-muted-foreground font-medium group-hover:text-orange-700">Pending Invoices</p>
                     <Receipt className="w-4 h-4 text-orange-500" />
                   </div>
                   <p className="text-xl font-bold text-orange-600">{mockInvoices.filter(inv => ['submitted', 'in-review', 'approved'].includes(inv.status)).length}</p>
-                  <p className="text-[10px] text-orange-600">Processing</p>
+                  <p className="text-[10px] text-orange-600 flex items-center gap-1">Processing <ChevronRight className="w-3 h-3 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" /></p>
                 </div>
-                <div className="p-3 border rounded-lg bg-slate-50">
-                  <div className="flex justify-between items-start mb-2">
-                    <p className="text-xs text-muted-foreground font-medium">Payment Status</p>
+                <div
+                  onClick={() => setActiveTab('payments')}
+                  className="p-3 border rounded-lg bg-slate-50 hover:bg-purple-50/50 hover:border-purple-300 transition-all cursor-pointer group"
+                >
+                  <div className="flex justify-between items-start mb-1">
+                    <p className="text-xs text-muted-foreground font-medium group-hover:text-purple-700">Payment Status</p>
                     <CreditCard className="w-4 h-4 text-purple-500" />
                   </div>
                   <p className="text-xl font-bold text-purple-600">$98.2K</p>
-                  <p className="text-[10px] text-purple-600">Outstanding</p>
+                  <p className="text-[10px] text-purple-600 flex items-center gap-1">Outstanding <ChevronRight className="w-3 h-3 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" /></p>
                 </div>
-                <div className="p-3 border rounded-lg bg-slate-50">
-                  <div className="flex justify-between items-start mb-2">
-                    <p className="text-xs text-muted-foreground font-medium">Performance</p>
-                    <Award className="w-4 h-4 text-green-500" />
+                <div
+                  onClick={() => setActiveTab('analytics')}
+                  className="p-3 border rounded-lg bg-slate-50 hover:bg-emerald-50/50 hover:border-emerald-300 transition-all cursor-pointer group"
+                >
+                  <div className="flex justify-between items-start mb-1">
+                    <p className="text-xs text-muted-foreground font-medium group-hover:text-emerald-700">Performance</p>
+                    <Award className="w-4 h-4 text-emerald-500" />
                   </div>
-                  <p className="text-xl font-bold text-green-600">96.5%</p>
-                  <p className="text-[10px] text-green-600 flex items-center gap-1"><TrendingUp className="w-3 h-3" /> Fulfillment rate</p>
+                  <p className="text-xl font-bold text-emerald-600">96.5%</p>
+                  <p className="text-[10px] text-emerald-600 flex items-center gap-1"><TrendingUp className="w-3 h-3" /> Fulfillment <ChevronRight className="w-3 h-3 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" /></p>
                 </div>
-                <div className="p-3 border rounded-lg bg-slate-50">
-                  <div className="flex justify-between items-start mb-2">
-                    <p className="text-xs text-muted-foreground font-medium">Compliance</p>
+                <div
+                  onClick={() => setActiveTab('documents')}
+                  className="p-3 border rounded-lg bg-slate-50 hover:bg-yellow-50/50 hover:border-yellow-300 transition-all cursor-pointer group"
+                >
+                  <div className="flex justify-between items-start mb-1">
+                    <p className="text-xs text-muted-foreground font-medium group-hover:text-yellow-700">Compliance</p>
                     <Shield className="w-4 h-4 text-yellow-500" />
                   </div>
                   <p className="text-xl font-bold text-yellow-600">1</p>
-                  <p className="text-[10px] text-yellow-600">Expiring soon</p>
+                  <p className="text-[10px] text-yellow-600 flex items-center gap-1">Expiring soon <ChevronRight className="w-3 h-3 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" /></p>
                 </div>
               </div>
             </PopoverContent>
           </Popover>
-          <Button variant="outline" size="icon">
-            <HelpCircle className="w-5 h-5" />
-          </Button>
-          <Button variant="outline" size="icon">
-            <Settings className="w-5 h-5" />
-          </Button>
 
+          {/* Help & Support Popover */}
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" size="icon" className="hover:bg-slate-100" title="Help & Support">
+                <HelpCircle className="w-5 h-5 text-slate-700" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-80 p-4" align="end">
+              <div className="flex items-center gap-2 mb-3 pb-2 border-b">
+                <HelpCircle className="w-4 h-4 text-primary" />
+                <h4 className="font-semibold text-sm">Help & Support Center</h4>
+              </div>
+              <div className="space-y-3">
+                <div className="relative">
+                  <Search className="absolute left-2.5 top-2.5 w-3.5 h-3.5 text-muted-foreground" />
+                  <Input placeholder="Search help topics..." className="pl-8 h-8 text-xs" />
+                </div>
+                <div className="space-y-1 text-xs">
+                  <p className="font-semibold text-slate-700 mb-1.5">Frequent Help Topics:</p>
+                  <button
+                    onClick={() => setActiveTab('rfq')}
+                    className="w-full text-left p-2 rounded hover:bg-slate-100 flex items-center justify-between transition-colors text-slate-600"
+                  >
+                    <span>How to respond to RFQs & Submit Quotes</span>
+                    <ExternalLink className="w-3 h-3 text-muted-foreground" />
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('invoices')}
+                    className="w-full text-left p-2 rounded hover:bg-slate-100 flex items-center justify-between transition-colors text-slate-600"
+                  >
+                    <span>Submitting Invoices & Payment Tracking</span>
+                    <ExternalLink className="w-3 h-3 text-muted-foreground" />
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('documents')}
+                    className="w-full text-left p-2 rounded hover:bg-slate-100 flex items-center justify-between transition-colors text-slate-600"
+                  >
+                    <span>Uploading Compliance Certificates</span>
+                    <ExternalLink className="w-3 h-3 text-muted-foreground" />
+                  </button>
+                </div>
+                <div className="pt-2 border-t flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full text-xs"
+                    onClick={() => setShowSupportModal(true)}
+                  >
+                    <MessageSquare className="w-3.5 h-3.5 mr-1.5 text-primary" />
+                    Contact Support Team
+                  </Button>
+                </div>
+              </div>
+            </PopoverContent>
+          </Popover>
+
+          {/* Settings Popover */}
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" size="icon" className="hover:bg-slate-100" title="Settings & Preferences">
+                <Settings className="w-5 h-5 text-slate-700" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-80 p-4" align="end">
+              <div className="flex items-center gap-2 mb-3 pb-2 border-b">
+                <Settings className="w-4 h-4 text-primary" />
+                <h4 className="font-semibold text-sm">Dashboard Settings</h4>
+              </div>
+              <div className="space-y-3 text-xs">
+                <div className="flex items-center justify-between py-1">
+                  <div>
+                    <p className="font-semibold text-slate-800">Email Notifications</p>
+                    <p className="text-[10px] text-muted-foreground">Receive email alerts for RFQs & POs</p>
+                  </div>
+                  <Checkbox
+                    checked={settingsState.emailAlerts}
+                    onCheckedChange={(checked) => setSettingsState(s => ({ ...s, emailAlerts: !!checked }))}
+                  />
+                </div>
+                <div className="flex items-center justify-between py-1 border-t pt-2">
+                  <div>
+                    <p className="font-semibold text-slate-800">SMS Alerts</p>
+                    <p className="text-[10px] text-muted-foreground">Instant SMS for urgent payments</p>
+                  </div>
+                  <Checkbox
+                    checked={settingsState.smsAlerts}
+                    onCheckedChange={(checked) => setSettingsState(s => ({ ...s, smsAlerts: !!checked }))}
+                  />
+                </div>
+                <div className="flex items-center justify-between py-1 border-t pt-2">
+                  <div>
+                    <p className="font-semibold text-slate-800">Auto-Acknowledge POs</p>
+                    <p className="text-[10px] text-muted-foreground">Automatically acknowledge new POs</p>
+                  </div>
+                  <Checkbox
+                    checked={settingsState.autoAckPO}
+                    onCheckedChange={(checked) => setSettingsState(s => ({ ...s, autoAckPO: !!checked }))}
+                  />
+                </div>
+                <div className="border-t pt-2 space-y-1">
+                  <label className="font-semibold text-[10px] uppercase text-muted-foreground">Default Currency</label>
+                  <Select value={settingsState.currency} onValueChange={(val) => setSettingsState(s => ({ ...s, currency: val }))}>
+                    <SelectTrigger className="h-8 text-xs">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="USD">USD ($) - US Dollar</SelectItem>
+                      <SelectItem value="EUR">EUR (€) - Euro</SelectItem>
+                      <SelectItem value="GBP">GBP (£) - British Pound</SelectItem>
+                      <SelectItem value="INR">INR (₹) - Indian Rupee</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="pt-2 border-t">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full text-xs"
+                    onClick={() => setShowEditProfileModal(true)}
+                  >
+                    <Settings2 className="w-3.5 h-3.5 mr-1.5" />
+                    Edit Profile Details
+                  </Button>
+                </div>
+              </div>
+            </PopoverContent>
+          </Popover>
+
+          {/* Profile Menu Popover */}
           <Popover>
             <PopoverTrigger asChild>
               <Button variant="ghost" size="icon" className="rounded-full h-9 w-9 p-0 hover:bg-slate-100 transition-all overflow-hidden ring-1 ring-slate-200">
-                {mockSupplierProfile.avatar ? (
-                  <img src={mockSupplierProfile.avatar} alt="User Avatar" className="w-full h-full object-cover" />
+                {supplierProfile.avatar ? (
+                  <img src={supplierProfile.avatar} alt="User Avatar" className="w-full h-full object-cover" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center bg-primary/10 text-primary font-bold text-xs">
-                    {mockSupplierProfile.contactPerson.charAt(0)}
+                    {supplierProfile.contactPerson.charAt(0)}
                   </div>
                 )}
               </Button>
@@ -979,11 +1228,11 @@ export const SupplierDashboard: React.FC = () => {
               <div className="relative h-20 bg-gradient-to-r from-blue-600 to-indigo-700 rounded-t-lg">
                 <div className="absolute -bottom-6 left-6">
                   <div className="w-16 h-16 rounded-xl bg-white p-1 shadow-lg border border-slate-100 overflow-hidden">
-                    {mockSupplierProfile.logo ? (
-                      <img src={mockSupplierProfile.logo} alt="Company Logo" className="w-full h-full object-cover rounded-lg" />
+                    {supplierProfile.logo ? (
+                      <img src={supplierProfile.logo} alt="Company Logo" className="w-full h-full object-cover rounded-lg" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center bg-slate-100 rounded-lg text-slate-400 font-bold text-xl">
-                        {mockSupplierProfile.companyName.charAt(0)}
+                        {supplierProfile.companyName.charAt(0)}
                       </div>
                     )}
                   </div>
@@ -991,22 +1240,22 @@ export const SupplierDashboard: React.FC = () => {
               </div>
               <div className="pt-8 pb-4 px-6">
                 <div className="mb-4">
-                  <h3 className="font-bold text-lg leading-none mb-1">{mockSupplierProfile.companyName}</h3>
-                  <p className="text-xs text-muted-foreground font-mono">{mockSupplierProfile.supplierCode}</p>
+                  <h3 className="font-bold text-lg leading-none mb-1">{supplierProfile.companyName}</h3>
+                  <p className="text-xs text-muted-foreground font-mono">{supplierProfile.supplierCode}</p>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4 mb-6">
                   <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-100">
                     <p className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider mb-1">Tier Level</p>
-                    <Badge className={`${getTierColor(mockSupplierProfile.tier)} w-full justify-center text-[10px] py-0`}>
-                      {mockSupplierProfile.tier.toUpperCase()}
+                    <Badge className={`${getTierColor(supplierProfile.tier)} w-full justify-center text-[10px] py-0`}>
+                      {supplierProfile.tier.toUpperCase()}
                     </Badge>
                   </div>
                   <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-100">
                     <p className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider mb-1">Supplier Rating</p>
                     <div className="flex items-center justify-center gap-1">
                       <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />
-                      <span className="font-bold text-sm">{mockSupplierProfile.rating}</span>
+                      <span className="font-bold text-sm">{supplierProfile.rating}</span>
                       <span className="text-[10px] text-muted-foreground">/5.0</span>
                     </div>
                   </div>
@@ -1019,7 +1268,7 @@ export const SupplierDashboard: React.FC = () => {
                     </div>
                     <div>
                       <p className="text-[10px] text-muted-foreground leading-none mb-1">Primary Representative</p>
-                      <p className="font-medium text-xs font-semibold">{mockSupplierProfile.contactPerson}</p>
+                      <p className="font-medium text-xs font-semibold">{supplierProfile.contactPerson}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3 text-sm">
@@ -1028,17 +1277,30 @@ export const SupplierDashboard: React.FC = () => {
                     </div>
                     <div className="overflow-hidden">
                       <p className="text-[10px] text-muted-foreground leading-none mb-1">Contact Email</p>
-                      <p className="font-medium text-xs truncate font-semibold">{mockSupplierProfile.email}</p>
+                      <p className="font-medium text-xs truncate font-semibold">{supplierProfile.email}</p>
                     </div>
                   </div>
                 </div>
 
                 <div className="mt-6 pt-4 border-t flex gap-2">
-                  <Button variant="ghost" size="sm" className="w-full text-xs hover:bg-slate-50">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="w-full text-xs hover:bg-slate-50"
+                    onClick={() => setShowEditProfileModal(true)}
+                  >
                     <Settings2 className="w-3.5 h-3.5 mr-2" />
                     Edit Profile
                   </Button>
-                  <Button variant="outline" size="sm" className="w-full text-xs border-slate-200">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full text-xs border-slate-200 text-destructive hover:text-destructive hover:bg-destructive/10"
+                    onClick={() => {
+                      logout();
+                      navigate('/login');
+                    }}
+                  >
                     <LogOut className="w-3.5 h-3.5 mr-2" />
                     Sign Out
                   </Button>
@@ -1052,15 +1314,39 @@ export const SupplierDashboard: React.FC = () => {
 
       {/* Main Content Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList className="grid w-full grid-cols-8">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="rfq">RFQs & Quotes</TabsTrigger>
-          <TabsTrigger value="orders">Purchase Orders</TabsTrigger>
-          <TabsTrigger value="shipments">Shipments</TabsTrigger>
-          <TabsTrigger value="invoices">Invoices</TabsTrigger>
-          <TabsTrigger value="payments">Payments</TabsTrigger>
-          <TabsTrigger value="documents">Documents</TabsTrigger>
-          <TabsTrigger value="analytics">Analytics</TabsTrigger>
+        <TabsList className="w-fit">
+          <TabsTrigger value="overview" className="flex items-center justify-center gap-1.5">
+            <Activity className="w-4 h-4" />
+            <span>Overview</span>
+          </TabsTrigger>
+          <TabsTrigger value="rfq" className="flex items-center justify-center gap-1.5">
+            <Target className="w-4 h-4" />
+            <span>RFQs & Quotes</span>
+          </TabsTrigger>
+          <TabsTrigger value="orders" className="flex items-center justify-center gap-1.5">
+            <Package className="w-4 h-4" />
+            <span>Purchase Orders</span>
+          </TabsTrigger>
+          <TabsTrigger value="shipments" className="flex items-center justify-center gap-1.5">
+            <Truck className="w-4 h-4" />
+            <span>Shipments</span>
+          </TabsTrigger>
+          <TabsTrigger value="invoices" className="flex items-center justify-center gap-1.5">
+            <Receipt className="w-4 h-4" />
+            <span>Invoices</span>
+          </TabsTrigger>
+          <TabsTrigger value="payments" className="flex items-center justify-center gap-1.5">
+            <CreditCard className="w-4 h-4" />
+            <span>Payments</span>
+          </TabsTrigger>
+          <TabsTrigger value="documents" className="flex items-center justify-center gap-1.5">
+            <FileText className="w-4 h-4" />
+            <span>Documents</span>
+          </TabsTrigger>
+          <TabsTrigger value="analytics" className="flex items-center justify-center gap-1.5">
+            <BarChart3 className="w-4 h-4" />
+            <span>Analytics</span>
+          </TabsTrigger>
         </TabsList>
 
         {/* Overview Tab */}
@@ -3140,7 +3426,7 @@ export const SupplierDashboard: React.FC = () => {
                         </div>
                         <div className="text-right">
                           <p className="font-bold text-sm">${item.totalPrice.toLocaleString()}</p>
-                          <Badge variant="ghost" className="text-[10px] uppercase p-0 h-auto">{item.deliveryStatus}</Badge>
+                          <Badge variant="outline" className="text-[10px] uppercase px-1.5 py-0.5">{item.deliveryStatus}</Badge>
                         </div>
                       </div>
                     ))}
@@ -3260,6 +3546,146 @@ export const SupplierDashboard: React.FC = () => {
           )}
         </SheetContent>
       </Sheet>
+
+      {/* Support Dialog Modal */}
+      <Dialog open={showSupportModal} onOpenChange={setShowSupportModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-lg">
+              <MessageSquare className="w-5 h-5 text-primary" />
+              Contact Supplier Support
+            </DialogTitle>
+            <DialogDescription>
+              Submit a query or ticket to our dedicated procurement support team.
+            </DialogDescription>
+          </DialogHeader>
+
+          {supportSentSuccess ? (
+            <div className="py-8 text-center space-y-3">
+              <div className="w-12 h-12 rounded-full bg-green-100 text-green-600 flex items-center justify-center mx-auto">
+                <CheckCircle className="w-6 h-6" />
+              </div>
+              <h4 className="font-bold text-lg text-slate-800">Support Ticket Created!</h4>
+              <p className="text-sm text-muted-foreground">Your query has been sent. Our team will contact you within 24 hours.</p>
+            </div>
+          ) : (
+            <form onSubmit={handleSendSupportMessage} className="space-y-4 pt-2">
+              <div className="space-y-1.5">
+                <Label htmlFor="support-subject" className="text-xs font-semibold">Subject / Topic</Label>
+                <Input
+                  id="support-subject"
+                  placeholder="e.g., Question regarding PO-2024-005678"
+                  value={supportSubject}
+                  onChange={(e) => setSupportSubject(e.target.value)}
+                  className="text-xs"
+                  required
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="support-message" className="text-xs font-semibold">Message Description</Label>
+                <Textarea
+                  id="support-message"
+                  placeholder="Describe your query or issue in detail..."
+                  rows={4}
+                  value={supportMessage}
+                  onChange={(e) => setSupportMessage(e.target.value)}
+                  className="text-xs resize-none"
+                  required
+                />
+              </div>
+              <DialogFooter className="pt-2">
+                <Button type="button" variant="outline" size="sm" onClick={() => setShowSupportModal(false)}>Cancel</Button>
+                <Button type="submit" size="sm">
+                  <Send className="w-3.5 h-3.5 mr-1.5" />
+                  Submit Support Ticket
+                </Button>
+              </DialogFooter>
+            </form>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Profile Modal */}
+      <Dialog open={showEditProfileModal} onOpenChange={setShowEditProfileModal}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-lg">
+              <User className="w-5 h-5 text-primary" />
+              Edit Supplier Profile
+            </DialogTitle>
+            <DialogDescription>
+              Update your primary contact person, email, phone, and company details.
+            </DialogDescription>
+          </DialogHeader>
+
+          <form onSubmit={handleSaveProfile} className="space-y-4 pt-2">
+            <div className="space-y-1.5">
+              <Label className="text-xs font-semibold">Company Name</Label>
+              <Input
+                value={editProfileForm.companyName}
+                onChange={(e) => setEditProfileForm(prev => ({ ...prev, companyName: e.target.value }))}
+                className="text-xs"
+                required
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label className="text-xs font-semibold">Primary Representative</Label>
+                <Input
+                  value={editProfileForm.contactPerson}
+                  onChange={(e) => setEditProfileForm(prev => ({ ...prev, contactPerson: e.target.value }))}
+                  className="text-xs"
+                  required
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-xs font-semibold">Contact Email</Label>
+                <Input
+                  type="email"
+                  value={editProfileForm.email}
+                  onChange={(e) => setEditProfileForm(prev => ({ ...prev, email: e.target.value }))}
+                  className="text-xs"
+                  required
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label className="text-xs font-semibold">Phone Number</Label>
+                <Input
+                  value={editProfileForm.phone}
+                  onChange={(e) => setEditProfileForm(prev => ({ ...prev, phone: e.target.value }))}
+                  className="text-xs"
+                  required
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-xs font-semibold">Supplier Code</Label>
+                <Input
+                  value={supplierProfile.supplierCode}
+                  disabled
+                  className="text-xs bg-slate-100"
+                />
+              </div>
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs font-semibold">Registered Office Address</Label>
+              <Textarea
+                value={editProfileForm.address}
+                onChange={(e) => setEditProfileForm(prev => ({ ...prev, address: e.target.value }))}
+                className="text-xs resize-none"
+                rows={2}
+                required
+              />
+            </div>
+
+            <DialogFooter className="pt-2">
+              <Button type="button" variant="outline" size="sm" onClick={() => setShowEditProfileModal(false)}>Cancel</Button>
+              <Button type="submit" size="sm">Save Changes</Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

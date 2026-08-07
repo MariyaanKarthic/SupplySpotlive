@@ -27,7 +27,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Login from './components/Login';
 import { Analytics as VercelAnalytics } from "@vercel/analytics/react";
-import { SidebarProvider } from "./components/ui/sidebar";
+import { SidebarProvider, SidebarTrigger } from "./components/ui/sidebar";
 import { PageSkeleton } from "./components/PageSkeleton";
 
 export type NavigationItem =
@@ -157,7 +157,8 @@ function Dashboard() {
           onSectionChange={setActiveSection}
         />
         <main className="flex-1 overflow-hidden flex flex-col min-w-0">
-          <div className="border-b px-6 py-3 bg-background/95 backdrop-blur shrink-0">
+          <div className="border-b px-4 md:px-6 py-3 bg-background/95 backdrop-blur shrink-0 flex items-center gap-3">
+            <SidebarTrigger className="md:hidden" />
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem>

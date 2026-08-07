@@ -395,17 +395,13 @@ export function SourcingRFx() {
   };
 
   return (
-    <div className="p-6 space-y-6 max-w-7xl mx-auto">
+    <div className="p-4 sm:p-6 space-y-6 w-full max-w-full overflow-x-hidden">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold flex items-center gap-3">
-            <Target className="w-8 h-8 text-primary" />
+          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">
             Sourcing & RFx Processes
           </h1>
-          <p className="text-muted-foreground mt-2">
-            Streamlined sourcing with automated quote comparison, reverse auctions, and intelligent supplier scoring
-          </p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" className="gap-2">
@@ -585,55 +581,55 @@ export function SourcingRFx() {
       </div>
 
       {/* Key Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Active RFx</p>
-                <p className="text-2xl font-bold">24</p>
-                <p className="text-xs text-green-600">+3 this week</p>
-              </div>
-              <FileText className="w-8 h-8 text-blue-500" />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+        <Card className="border-l-4 border-l-blue-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
+            <div>
+              <p className="text-xs text-muted-foreground font-semibold">Active RFx</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">24</p>
+              <p className="text-[11px] text-blue-600 font-medium">+3 this week</p>
+            </div>
+            <div className="p-2.5 bg-blue-50 rounded-lg">
+              <FileText className="w-5 h-5 text-blue-600" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Total Savings</p>
-                <p className="text-2xl font-bold">$2.4M</p>
-                <p className="text-xs text-green-600">+18% vs target</p>
-              </div>
-              <DollarSign className="w-8 h-8 text-green-500" />
+        <Card className="border-l-4 border-l-emerald-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
+            <div>
+              <p className="text-xs text-muted-foreground font-semibold">Total Savings</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">$2.4M</p>
+              <p className="text-[11px] text-emerald-600 font-medium">+18% vs target</p>
+            </div>
+            <div className="p-2.5 bg-emerald-50 rounded-lg">
+              <DollarSign className="w-5 h-5 text-emerald-600" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Avg Response Time</p>
-                <p className="text-2xl font-bold">5.2</p>
-                <p className="text-xs text-muted-foreground">days</p>
-              </div>
-              <Clock className="w-8 h-8 text-yellow-500" />
+        <Card className="border-l-4 border-l-amber-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
+            <div>
+              <p className="text-xs text-muted-foreground font-semibold">Avg Response Time</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">5.2 Days</p>
+              <p className="text-[11px] text-amber-600 font-medium">Fast processing</p>
+            </div>
+            <div className="p-2.5 bg-amber-50 rounded-lg">
+              <Clock className="w-5 h-5 text-amber-600" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Supplier Participation</p>
-                <p className="text-2xl font-bold">89%</p>
-                <p className="text-xs text-green-600">Above benchmark</p>
-              </div>
-              <Users className="w-8 h-8 text-purple-500" />
+        <Card className="border-l-4 border-l-purple-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
+            <div>
+              <p className="text-xs text-muted-foreground font-semibold">Supplier Participation</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">89%</p>
+              <p className="text-[11px] text-purple-600 font-medium">Above benchmark</p>
+            </div>
+            <div className="p-2.5 bg-purple-50 rounded-lg">
+              <Users className="w-5 h-5 text-purple-600" />
             </div>
           </CardContent>
         </Card>
@@ -641,7 +637,7 @@ export function SourcingRFx() {
 
       {/* Main Content */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="w-fit">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="responses">Responses & Scoring</TabsTrigger>
           <TabsTrigger value="auctions">Reverse Auctions</TabsTrigger>
@@ -727,7 +723,7 @@ export function SourcingRFx() {
             <div className="grid gap-4">
               {filteredRequests.map((request) => (
               <Card key={request.id} className="hover:shadow-md transition-shadow">
-                <CardContent className="p-6">
+                <CardContent className="p-3.5">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">

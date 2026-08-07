@@ -669,7 +669,7 @@ export function VendorManagement({ onNavigateToRegistration }: VendorManagementP
       {/* Rest of the component remains the same... */}
       {/* Tabs Navigation */}
       <Tabs defaultValue="vendors" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4 max-w-2xl">
+        <TabsList className="w-fit">
           <TabsTrigger value="vendors" className="gap-2">
             <Building className="w-4 h-4" />
             Vendor List

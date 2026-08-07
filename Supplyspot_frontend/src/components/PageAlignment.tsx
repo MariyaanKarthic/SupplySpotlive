@@ -82,7 +82,7 @@ const PageAlignment: React.FC<PageAlignmentProps> = ({
   };
 
   return (
-    <div className="w-full max-w-6xl mx-auto p-6 space-y-6">
+    <div className="w-full max-w-full overflow-x-hidden p-4 sm:p-6 space-y-6">
       <div className="space-y-2">
         <h2 className="text-3xl font-bold text-foreground">Page Alignment</h2>
       </div>
@@ -90,7 +90,7 @@ const PageAlignment: React.FC<PageAlignmentProps> = ({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <Card className="lg:col-span-1 p-6 space-y-6">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
+            <TabsList className="w-fit">
               <TabsTrigger value="alignment">Alignment</TabsTrigger>
               <TabsTrigger value="layout">Layout</TabsTrigger>
             </TabsList>

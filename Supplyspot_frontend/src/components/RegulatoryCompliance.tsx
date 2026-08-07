@@ -472,17 +472,13 @@ export function RegulatoryCompliance() {
   });
 
   return (
-    <div className="p-6 space-y-6 max-w-7xl mx-auto">
+    <div className="p-4 sm:p-6 space-y-6 w-full max-w-full overflow-x-hidden">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold flex items-center gap-3">
-            <ShieldCheck className="w-8 h-8 text-primary" />
+          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">
             Regulatory & Sustainability Monitoring
           </h1>
-          <p className="text-muted-foreground mt-2">
-            Continuous monitoring of regulatory changes and sustainability requirements for proactive compliance management
-          </p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" className="gap-2">
@@ -566,55 +562,55 @@ export function RegulatoryCompliance() {
       </div>
 
       {/* Key Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Active Alerts</p>
-                <p className="text-2xl font-bold">24</p>
-                <p className="text-xs text-red-600">4 critical</p>
-              </div>
-              <AlertTriangle className="w-8 h-8 text-red-500" />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+        <Card className="border-l-4 border-l-rose-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
+            <div>
+              <p className="text-xs text-muted-foreground font-semibold">Active Alerts</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">24</p>
+              <p className="text-[11px] text-rose-600 font-medium">4 critical</p>
+            </div>
+            <div className="p-2.5 bg-rose-50 rounded-lg">
+              <AlertTriangle className="w-5 h-5 text-rose-600" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Compliance Rate</p>
-                <p className="text-2xl font-bold">87%</p>
-                <p className="text-xs text-green-600">+3% this month</p>
-              </div>
-              <CheckCircle className="w-8 h-8 text-green-500" />
+        <Card className="border-l-4 border-l-emerald-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
+            <div>
+              <p className="text-xs text-muted-foreground font-semibold">Compliance Rate</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">87%</p>
+              <p className="text-[11px] text-emerald-600 font-medium">+3% this month</p>
+            </div>
+            <div className="p-2.5 bg-emerald-50 rounded-lg">
+              <CheckCircle className="w-5 h-5 text-emerald-600" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Sustainability Score</p>
-                <p className="text-2xl font-bold">8.2</p>
-                <p className="text-xs text-muted-foreground">out of 10</p>
-              </div>
-              <Leaf className="w-8 h-8 text-green-500" />
+        <Card className="border-l-4 border-l-blue-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
+            <div>
+              <p className="text-xs text-muted-foreground font-semibold">Sustainability Score</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">8.2 / 10</p>
+              <p className="text-[11px] text-blue-600 font-medium">Good rating</p>
+            </div>
+            <div className="p-2.5 bg-blue-50 rounded-lg">
+              <Leaf className="w-5 h-5 text-blue-600" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Risk Suppliers</p>
-                <p className="text-2xl font-bold">12</p>
-                <p className="text-xs text-orange-600">High risk</p>
-              </div>
-              <AlertCircle className="w-8 h-8 text-orange-500" />
+        <Card className="border-l-4 border-l-amber-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
+            <div>
+              <p className="text-xs text-muted-foreground font-semibold">Risk Suppliers</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">12</p>
+              <p className="text-[11px] text-amber-600 font-medium">High risk profile</p>
+            </div>
+            <div className="p-2.5 bg-amber-50 rounded-lg">
+              <AlertCircle className="w-5 h-5 text-amber-600" />
             </div>
           </CardContent>
         </Card>
@@ -622,7 +618,7 @@ export function RegulatoryCompliance() {
 
       {/* Main Content */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="w-fit">
           <TabsTrigger value="alerts">Regulatory Alerts</TabsTrigger>
           <TabsTrigger value="frameworks">Compliance Frameworks</TabsTrigger>
           <TabsTrigger value="sustainability">Sustainability Metrics</TabsTrigger>
@@ -720,7 +716,7 @@ export function RegulatoryCompliance() {
               const TypeIcon = getTypeIcon(alert.type);
               return (
                 <Card key={alert.id} className="hover:shadow-md transition-shadow">
-                  <CardContent className="p-6">
+                  <CardContent className="p-3.5">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-3">
@@ -1019,7 +1015,7 @@ export function RegulatoryCompliance() {
               <div className="space-y-4">
                 {mockComplianceFrameworks.map((framework) => (
                   <Card key={framework.id} className="border-l-4 border-l-primary">
-                    <CardContent className="p-6">
+                    <CardContent className="p-3.5">
                       <div className="flex items-center justify-between mb-4">
                         <div>
                           <h3 className="font-semibold">{framework.name}</h3>
@@ -1337,7 +1333,7 @@ export function RegulatoryCompliance() {
               <div className="space-y-4">
                 {mockRiskAssessments.map((assessment) => (
                   <Card key={assessment.id} className="border-l-4 border-l-primary">
-                    <CardContent className="p-6">
+                    <CardContent className="p-3.5">
                       <div className="flex items-center justify-between mb-4">
                         <div>
                           <h3 className="font-semibold">{assessment.supplierName}</h3>

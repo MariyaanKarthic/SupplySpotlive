@@ -48,18 +48,18 @@ export function DraggableTableRow({
       )}
     >
       {showDragHandle && (
-        <TableCell className="w-8 p-2 sticky left-0 z-30 bg-inherit">
+        <TableCell className="w-10 min-w-[40px] max-w-[40px] p-2 text-center sticky left-0 z-30 bg-white dark:bg-slate-950 group-hover:bg-slate-50 dark:group-hover:bg-slate-900 transition-colors">
           <div
             {...attributes}
             {...listeners}
-            className="cursor-grab active:cursor-grabbing p-1 hover:bg-muted rounded"
+            className="cursor-grab active:cursor-grabbing p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded inline-flex items-center justify-center"
           >
-            <GripVertical className="w-4 h-4 text-muted-foreground" />
+            <GripVertical className="w-4 h-4 text-slate-400" />
           </div>
         </TableCell>
       )}
       {onSelect && (
-        <TableCell className="w-12 p-4 sticky left-8 z-30 bg-inherit">
+        <TableCell className="w-10 min-w-[40px] max-w-[40px] p-2 text-center sticky left-10 z-30 bg-white dark:bg-slate-950 group-hover:bg-slate-50 dark:group-hover:bg-slate-900 transition-colors">
           <Checkbox
             checked={isSelected}
             onCheckedChange={onSelect}
@@ -88,7 +88,7 @@ export function DraggableTableHeader({
   return (
     <TableRow>
       {showDragHandle && (
-        <TableHead className="w-8 p-2 sticky left-0 z-30 bg-inherit">
+        <TableHead className="w-10 min-w-[40px] max-w-[40px] p-2 text-center sticky left-0 z-30 bg-slate-100 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
           <span className="sr-only">Drag</span>
         </TableHead>
       )}

@@ -486,10 +486,7 @@ export default function ProcurementCollaboration() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-slate-900">Procurement Collaboration</h1>
-          <p className="text-slate-600 mt-1">
-            Manage ongoing requests, approvals, and vendor communications
-          </p>
+          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">Procurement Collaboration</h1>
         </div>
         <div className="flex items-center gap-3">
           {/* Notifications Sheet */}
@@ -617,65 +614,61 @@ export default function ProcurementCollaboration() {
       </div>
 
       {/* Stats Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-slate-600 text-sm">Active Requests</p>
-                <p className="text-slate-900 text-2xl mt-1">
-                  {collaborationItems.filter(i => i.status !== 'approved' && i.status !== 'rejected').length}
-                </p>
-              </div>
-              <div className="h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                <Activity className="h-6 w-6 text-blue-600" />
-              </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+        <Card className="border-l-4 border-l-blue-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
+            <div>
+              <p className="text-xs text-muted-foreground font-semibold">Active Requests</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">
+                {collaborationItems.filter(i => i.status !== 'approved' && i.status !== 'rejected').length}
+              </p>
+              <p className="text-[11px] text-blue-600 font-medium">In discussion</p>
+            </div>
+            <div className="p-2.5 bg-blue-50 rounded-lg">
+              <Activity className="w-5 h-5 text-blue-600" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-slate-600 text-sm">Unread Messages</p>
-                <p className="text-slate-900 text-2xl mt-1">{unreadMessages}</p>
-              </div>
-              <div className="h-12 w-12 bg-green-100 rounded-lg flex items-center justify-center">
-                <MessageSquare className="h-6 w-6 text-green-600" />
-              </div>
+        <Card className="border-l-4 border-l-emerald-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
+            <div>
+              <p className="text-xs text-muted-foreground font-semibold">Unread Messages</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">{unreadMessages}</p>
+              <p className="text-[11px] text-emerald-600 font-medium">New notifications</p>
+            </div>
+            <div className="p-2.5 bg-emerald-50 rounded-lg">
+              <MessageSquare className="w-5 h-5 text-emerald-600" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-slate-600 text-sm">Pending Approvals</p>
-                <p className="text-slate-900 text-2xl mt-1">
-                  {collaborationItems.filter(i => i.status === 'pending').length}
-                </p>
-              </div>
-              <div className="h-12 w-12 bg-orange-100 rounded-lg flex items-center justify-center">
-                <Clock className="h-6 w-6 text-orange-600" />
-              </div>
+        <Card className="border-l-4 border-l-amber-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
+            <div>
+              <p className="text-xs text-muted-foreground font-semibold">Pending Approvals</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">
+                {collaborationItems.filter(i => i.status === 'pending').length}
+              </p>
+              <p className="text-[11px] text-amber-600 font-medium">Awaiting review</p>
+            </div>
+            <div className="p-2.5 bg-amber-50 rounded-lg">
+              <Clock className="w-5 h-5 text-amber-600" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-slate-600 text-sm">High Priority</p>
-                <p className="text-slate-900 text-2xl mt-1">
-                  {collaborationItems.filter(i => i.priority === 'high').length}
-                </p>
-              </div>
-              <div className="h-12 w-12 bg-red-100 rounded-lg flex items-center justify-center">
-                <AlertCircle className="h-6 w-6 text-red-600" />
-              </div>
+        <Card className="border-l-4 border-l-rose-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
+            <div>
+              <p className="text-xs text-muted-foreground font-semibold">High Priority</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">
+                {collaborationItems.filter(i => i.priority === 'high').length}
+              </p>
+              <p className="text-[11px] text-rose-600 font-medium">Urgent action items</p>
+            </div>
+            <div className="p-2.5 bg-rose-50 rounded-lg">
+              <AlertCircle className="w-5 h-5 text-rose-600" />
             </div>
           </CardContent>
         </Card>
@@ -812,7 +805,7 @@ export default function ProcurementCollaboration() {
               </CardHeader>
               <CardContent>
                 <Tabs value={activeTab} onValueChange={setActiveTab}>
-                  <TabsList className="grid w-full grid-cols-4">
+                  <TabsList className="w-fit">
                     <TabsTrigger value="overview">Overview</TabsTrigger>
                     <TabsTrigger value="messages">
                       Messages
@@ -825,7 +818,7 @@ export default function ProcurementCollaboration() {
                   </TabsList>
 
                   <TabsContent value="overview" className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                       <div className="p-4 bg-slate-50 rounded-lg">
                         <p className="text-slate-600 text-sm mb-1">Deadline</p>
                         <p className="text-slate-900">{selectedItem.deadline}</p>
@@ -848,7 +841,7 @@ export default function ProcurementCollaboration() {
 
                     <div>
                       <h4 className="text-slate-900 mb-3">Quick Actions</h4>
-                      <div className="grid grid-cols-2 gap-3">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
                         <Button variant="outline" className="justify-start" onClick={() => setShowViewDetails(true)}>
                           <Eye className="h-4 w-4 mr-2" />
                           View {selectedItem.type.toUpperCase()}

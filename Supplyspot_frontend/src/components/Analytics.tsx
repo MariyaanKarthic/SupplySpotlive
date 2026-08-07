@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card } from './ui/card';
+import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Badge } from './ui/badge';
@@ -84,8 +84,7 @@ export function Analytics() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-semibold">Analytics & Reports</h1>
-          <p className="text-muted-foreground">Analyze vendor performance and spending patterns</p>
+          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">Analytics & Reports</h1>
         </div>
         <div className="flex items-center gap-2">
           <Select value={timeRange} onValueChange={setTimeRange}>
@@ -107,69 +106,57 @@ export function Analytics() {
       </div>
 
       {/* Key Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card className="p-6">
-          <div className="flex items-center justify-between">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+        <Card className="border-l-4 border-l-blue-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Total Spend</p>
-              <p className="text-2xl font-semibold">${(totalSpend / 1000).toFixed(0)}K</p>
-              <div className="flex items-center gap-1 mt-1">
-                <TrendingUp className="w-4 h-4 text-green-500" />
-                <span className="text-sm text-green-500">+15.2%</span>
-              </div>
+              <p className="text-xs text-muted-foreground font-semibold">Total Spend</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">${(totalSpend / 1000).toFixed(0)}K</p>
+              <p className="text-[11px] text-emerald-600 font-medium">+15.2% vs last period</p>
             </div>
-            <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-              <DollarSign className="w-6 h-6 text-blue-600" />
+            <div className="p-2.5 bg-blue-50 rounded-lg">
+              <DollarSign className="w-5 h-5 text-blue-600" />
             </div>
-          </div>
+          </CardContent>
         </Card>
 
-        <Card className="p-6">
-          <div className="flex items-center justify-between">
+        <Card className="border-l-4 border-l-emerald-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Active Vendors</p>
-              <p className="text-2xl font-semibold">{activeVendors}</p>
-              <div className="flex items-center gap-1 mt-1">
-                <TrendingUp className="w-4 h-4 text-green-500" />
-                <span className="text-sm text-green-500">+8.3%</span>
-              </div>
+              <p className="text-xs text-muted-foreground font-semibold">Active Vendors</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">{activeVendors}</p>
+              <p className="text-[11px] text-emerald-600 font-medium">+8.3% active growth</p>
             </div>
-            <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-              <Users className="w-6 h-6 text-green-600" />
+            <div className="p-2.5 bg-emerald-50 rounded-lg">
+              <Users className="w-5 h-5 text-emerald-600" />
             </div>
-          </div>
+          </CardContent>
         </Card>
 
-        <Card className="p-6">
-          <div className="flex items-center justify-between">
+        <Card className="border-l-4 border-l-amber-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Avg Vendor Score</p>
-              <p className="text-2xl font-semibold">{avgVendorScore.toFixed(1)}</p>
-              <div className="flex items-center gap-1 mt-1">
-                <span className="text-yellow-500">★</span>
-                <span className="text-sm text-muted-foreground">Out of 5.0</span>
-              </div>
+              <p className="text-xs text-muted-foreground font-semibold">Avg Vendor Score</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">{avgVendorScore.toFixed(1)} / 5.0</p>
+              <p className="text-[11px] text-amber-600 font-medium">★ High rating average</p>
             </div>
-            <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
-              <BarChart3 className="w-6 h-6 text-yellow-600" />
+            <div className="p-2.5 bg-amber-50 rounded-lg">
+              <BarChart3 className="w-5 h-5 text-amber-600" />
             </div>
-          </div>
+          </CardContent>
         </Card>
 
-        <Card className="p-6">
-          <div className="flex items-center justify-between">
+        <Card className="border-l-4 border-l-purple-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Avg Payment Time</p>
-              <p className="text-2xl font-semibold">{avgPaymentTime} days</p>
-              <div className="flex items-center gap-1 mt-1">
-                <TrendingDown className="w-4 h-4 text-green-500" />
-                <span className="text-sm text-green-500">-2.1 days</span>
-              </div>
+              <p className="text-xs text-muted-foreground font-semibold">Avg Payment Time</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">{avgPaymentTime} Days</p>
+              <p className="text-[11px] text-emerald-600 font-medium">-2.1 days improvement</p>
             </div>
-            <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-              <Clock className="w-6 h-6 text-purple-600" />
+            <div className="p-2.5 bg-purple-50 rounded-lg">
+              <Clock className="w-5 h-5 text-purple-600" />
             </div>
-          </div>
+          </CardContent>
         </Card>
       </div>
 

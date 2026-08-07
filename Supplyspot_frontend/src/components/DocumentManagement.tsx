@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card } from './ui/card';
+import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Badge } from './ui/badge';
@@ -264,42 +264,57 @@ export function DocumentManagement() {
       </div>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="p-4">
-          <div className="flex items-center justify-between">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+        <Card className="border-l-4 border-l-blue-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Total Documents</p>
-              <p className="text-2xl font-semibold">{totalDocuments}</p>
+              <p className="text-xs text-muted-foreground font-semibold">Total Documents</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">{totalDocuments}</p>
+              <p className="text-[11px] text-blue-600 font-medium">All uploads</p>
             </div>
-            <FileText className="w-8 h-8 text-blue-500" />
-          </div>
+            <div className="p-2.5 bg-blue-50 rounded-lg">
+              <FileText className="w-5 h-5 text-blue-600" />
+            </div>
+          </CardContent>
         </Card>
-        <Card className="p-4">
-          <div className="flex items-center justify-between">
+
+        <Card className="border-l-4 border-l-amber-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Pending Review</p>
-              <p className="text-2xl font-semibold">{pendingReview}</p>
+              <p className="text-xs text-muted-foreground font-semibold">Pending Review</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">{pendingReview}</p>
+              <p className="text-[11px] text-amber-600 font-medium">Awaiting verification</p>
             </div>
-            <Eye className="w-8 h-8 text-yellow-500" />
-          </div>
+            <div className="p-2.5 bg-amber-50 rounded-lg">
+              <Eye className="w-5 h-5 text-amber-600" />
+            </div>
+          </CardContent>
         </Card>
-        <Card className="p-4">
-          <div className="flex items-center justify-between">
+
+        <Card className="border-l-4 border-l-emerald-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Approved</p>
-              <p className="text-2xl font-semibold">{approved}</p>
+              <p className="text-xs text-muted-foreground font-semibold">Approved</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">{approved}</p>
+              <p className="text-[11px] text-emerald-600 font-medium">Verified & active</p>
             </div>
-            <FileText className="w-8 h-8 text-green-500" />
-          </div>
+            <div className="p-2.5 bg-emerald-50 rounded-lg">
+              <FileText className="w-5 h-5 text-emerald-600" />
+            </div>
+          </CardContent>
         </Card>
-        <Card className="p-4">
-          <div className="flex items-center justify-between">
+
+        <Card className="border-l-4 border-l-rose-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Expired/Rejected</p>
-              <p className="text-2xl font-semibold">{expired}</p>
+              <p className="text-xs text-muted-foreground font-semibold">Expired / Rejected</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">{expired}</p>
+              <p className="text-[11px] text-rose-600 font-medium">Action required</p>
             </div>
-            <FileText className="w-8 h-8 text-red-500" />
-          </div>
+            <div className="p-2.5 bg-rose-50 rounded-lg">
+              <FileText className="w-5 h-5 text-rose-600" />
+            </div>
+          </CardContent>
         </Card>
       </div>
 

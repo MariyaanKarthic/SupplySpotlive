@@ -443,7 +443,7 @@ export const GateEntryIntegration: React.FC = () => {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">Gate Entry Integration</h1>
+          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">Gate Entry Integration</h1>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={() => setShowSettings(true)}>
@@ -462,107 +462,107 @@ export const GateEntryIntegration: React.FC = () => {
       </div>
 
       {/* Key Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-8 gap-4">
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-muted-foreground">Expected ASN</p>
-                <p className="text-xl font-bold">{mockStats.asnDeliveries.expected}</p>
-                <p className="text-xs text-blue-600">Today</p>
-              </div>
-              <Package className="w-6 h-6 text-blue-500" />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-8 gap-3">
+        <Card className="border-l-4 border-l-blue-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
+            <div>
+              <p className="text-xs text-muted-foreground font-semibold">Expected ASN</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">{mockStats.asnDeliveries.expected}</p>
+              <p className="text-[11px] text-blue-600 font-medium">Scheduled today</p>
+            </div>
+            <div className="p-2 bg-blue-50 rounded-lg">
+              <Package className="w-4 h-4 text-blue-600" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-muted-foreground">Arrived</p>
-                <p className="text-xl font-bold">{mockStats.asnDeliveries.arrived}</p>
-                <p className="text-xs text-green-600">At gates</p>
-              </div>
-              <Truck className="w-6 h-6 text-green-500" />
+        <Card className="border-l-4 border-l-emerald-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
+            <div>
+              <p className="text-xs text-muted-foreground font-semibold">Arrived</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">{mockStats.asnDeliveries.arrived}</p>
+              <p className="text-[11px] text-emerald-600 font-medium">At facility gates</p>
+            </div>
+            <div className="p-2 bg-emerald-50 rounded-lg">
+              <Truck className="w-4 h-4 text-emerald-600" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-muted-foreground">In Process</p>
-                <p className="text-xl font-bold">{mockStats.asnDeliveries.inProcess}</p>
-                <p className="text-xs text-orange-600">Unloading</p>
-              </div>
-              <Activity className="w-6 h-6 text-orange-500" />
+        <Card className="border-l-4 border-l-amber-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
+            <div>
+              <p className="text-xs text-muted-foreground font-semibold">In Process</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">{mockStats.asnDeliveries.inProcess}</p>
+              <p className="text-[11px] text-amber-600 font-medium">Unloading bay</p>
+            </div>
+            <div className="p-2 bg-amber-50 rounded-lg">
+              <Activity className="w-4 h-4 text-amber-600" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-muted-foreground">Completed</p>
-                <p className="text-xl font-bold">{mockStats.asnDeliveries.completed}</p>
-                <p className="text-xs text-green-600">Today</p>
-              </div>
-              <CheckCircle className="w-6 h-6 text-green-500" />
+        <Card className="border-l-4 border-l-indigo-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
+            <div>
+              <p className="text-xs text-muted-foreground font-semibold">Completed</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">{mockStats.asnDeliveries.completed}</p>
+              <p className="text-[11px] text-indigo-600 font-medium">Dispatched today</p>
+            </div>
+            <div className="p-2 bg-indigo-50 rounded-lg">
+              <CheckCircle className="w-4 h-4 text-indigo-600" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-muted-foreground">Verification Rate</p>
-                <p className="text-xl font-bold">{Math.round((mockStats.materialVerification.verified / mockStats.materialVerification.totalDeliveries) * 100)}%</p>
-                <p className="text-xs text-green-600">Material accuracy</p>
-              </div>
-              <ClipboardCheck className="w-6 h-6 text-green-500" />
+        <Card className="border-l-4 border-l-teal-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
+            <div>
+              <p className="text-xs text-muted-foreground font-semibold">Verification</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">{Math.round((mockStats.materialVerification.verified / mockStats.materialVerification.totalDeliveries) * 100)}%</p>
+              <p className="text-[11px] text-teal-600 font-medium">Material accuracy</p>
+            </div>
+            <div className="p-2 bg-teal-50 rounded-lg">
+              <ClipboardCheck className="w-4 h-4 text-teal-600" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-muted-foreground">On-Time Rate</p>
-                <p className="text-xl font-bold">{Math.round((mockStats.deliveryPerformance.onTimeDeliveries / mockStats.deliveryPerformance.totalDeliveries) * 100)}%</p>
-                <p className="text-xs text-green-600">Delivery performance</p>
-              </div>
-              <Target className="w-6 h-6 text-green-500" />
+        <Card className="border-l-4 border-l-green-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
+            <div>
+              <p className="text-xs text-muted-foreground font-semibold">On-Time Rate</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">{Math.round((mockStats.deliveryPerformance.onTimeDeliveries / mockStats.deliveryPerformance.totalDeliveries) * 100)}%</p>
+              <p className="text-[11px] text-green-600 font-medium">Punctual arrival</p>
+            </div>
+            <div className="p-2 bg-green-50 rounded-lg">
+              <Target className="w-4 h-4 text-green-600" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-muted-foreground">Avg Delay</p>
-                <p className="text-xl font-bold">{mockStats.deliveryPerformance.avgDelayTime}m</p>
-                <p className="text-xs text-orange-600">When delayed</p>
-              </div>
-              <Clock3 className="w-6 h-6 text-orange-500" />
+        <Card className="border-l-4 border-l-orange-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
+            <div>
+              <p className="text-xs text-muted-foreground font-semibold">Avg Delay</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">{mockStats.deliveryPerformance.avgDelayTime}m</p>
+              <p className="text-[11px] text-orange-600 font-medium">When delayed</p>
+            </div>
+            <div className="p-2 bg-orange-50 rounded-lg">
+              <Clock3 className="w-4 h-4 text-orange-600" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-muted-foreground">Active Passes</p>
-                <p className="text-xl font-bold">{mockStats.totalActivePasses}</p>
-                <p className="text-xs text-blue-600">Visitor passes</p>
-              </div>
-              <UserCheck className="w-6 h-6 text-blue-500" />
+        <Card className="border-l-4 border-l-purple-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
+            <div>
+              <p className="text-xs text-muted-foreground font-semibold">Active Passes</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">{mockStats.totalActivePasses}</p>
+              <p className="text-[11px] text-purple-600 font-medium">Visitor passes</p>
+            </div>
+            <div className="p-2 bg-purple-50 rounded-lg">
+              <UserCheck className="w-4 h-4 text-purple-600" />
             </div>
           </CardContent>
         </Card>
@@ -570,7 +570,7 @@ export const GateEntryIntegration: React.FC = () => {
 
       {/* Main Content Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList className="grid w-full grid-cols-6">
+        <TabsList className="w-fit">
           <TabsTrigger value="asn-deliveries">ASN Deliveries</TabsTrigger>
           <TabsTrigger value="gate-passes">Gate Passes</TabsTrigger>
           <TabsTrigger value="verification">Material Verification</TabsTrigger>

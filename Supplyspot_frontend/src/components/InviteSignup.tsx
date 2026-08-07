@@ -349,7 +349,7 @@ export default function InviteSignup() {
                     value={formData.email}
                     onChange={handleInputChange}
                     className={`pl-10 ${getFieldError('email') ? 'border-red-500' : ''}`}
-                    disabled={loading || !inviteValidation?.valid || inviteValidation?.email}
+                    disabled={loading || !inviteValidation?.valid || !!inviteValidation?.email}
                   />
                 </div>
                 {getFieldError('email') && (

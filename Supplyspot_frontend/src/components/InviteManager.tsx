@@ -250,12 +250,11 @@ export default function InviteManager() {
   }
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
+    <div className="w-full max-w-full overflow-x-hidden p-4 sm:p-6 space-y-6">
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">Invite Management</h1>
-          <p className="text-gray-600 mt-1">Create and manage user invitations</p>
+          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">Invite Management</h1>
         </div>
         <Sheet open={showCreateDialog} onOpenChange={setShowCreateDialog}>
           <SheetTrigger asChild>
@@ -377,63 +376,68 @@ export default function InviteManager() {
 
       {/* Statistics */}
       {stats && (
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center space-x-2">
-                <Users className="h-8 w-8 text-blue-600" />
-                <div>
-                  <p className="text-2xl font-bold">{stats.total_invites}</p>
-                  <p className="text-sm text-gray-600">Total Invites</p>
-                </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
+          <Card className="border-l-4 border-l-blue-500 shadow-sm hover:shadow-md transition-all">
+            <CardContent className="p-3.5 flex items-center justify-between">
+              <div>
+                <p className="text-xs text-muted-foreground font-semibold">Total Invites</p>
+                <p className="text-xl font-bold text-foreground mt-0.5">{stats.total_invites}</p>
+                <p className="text-[11px] text-blue-600 font-medium">All generated</p>
+              </div>
+              <div className="p-2.5 bg-blue-50 rounded-lg">
+                <Users className="w-5 h-5 text-blue-600" />
               </div>
             </CardContent>
           </Card>
           
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center space-x-2">
-                <CheckCircle className="h-8 w-8 text-green-600" />
-                <div>
-                  <p className="text-2xl font-bold">{stats.active_invites}</p>
-                  <p className="text-sm text-gray-600">Active</p>
-                </div>
+          <Card className="border-l-4 border-l-emerald-500 shadow-sm hover:shadow-md transition-all">
+            <CardContent className="p-3.5 flex items-center justify-between">
+              <div>
+                <p className="text-xs text-muted-foreground font-semibold">Active</p>
+                <p className="text-xl font-bold text-foreground mt-0.5">{stats.active_invites}</p>
+                <p className="text-[11px] text-emerald-600 font-medium">Ready to use</p>
+              </div>
+              <div className="p-2.5 bg-emerald-50 rounded-lg">
+                <CheckCircle className="w-5 h-5 text-emerald-600" />
               </div>
             </CardContent>
           </Card>
           
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center space-x-2">
-                <Mail className="h-8 w-8 text-blue-600" />
-                <div>
-                  <p className="text-2xl font-bold">{stats.used_invites}</p>
-                  <p className="text-sm text-gray-600">Used</p>
-                </div>
+          <Card className="border-l-4 border-l-indigo-500 shadow-sm hover:shadow-md transition-all">
+            <CardContent className="p-3.5 flex items-center justify-between">
+              <div>
+                <p className="text-xs text-muted-foreground font-semibold">Used</p>
+                <p className="text-xl font-bold text-foreground mt-0.5">{stats.used_invites}</p>
+                <p className="text-[11px] text-indigo-600 font-medium">Redeemed invites</p>
+              </div>
+              <div className="p-2.5 bg-indigo-50 rounded-lg">
+                <Mail className="w-5 h-5 text-indigo-600" />
               </div>
             </CardContent>
           </Card>
           
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center space-x-2">
-                <XCircle className="h-8 w-8 text-red-600" />
-                <div>
-                  <p className="text-2xl font-bold">{stats.expired_invites}</p>
-                  <p className="text-sm text-gray-600">Expired</p>
-                </div>
+          <Card className="border-l-4 border-l-rose-500 shadow-sm hover:shadow-md transition-all">
+            <CardContent className="p-3.5 flex items-center justify-between">
+              <div>
+                <p className="text-xs text-muted-foreground font-semibold">Expired</p>
+                <p className="text-xl font-bold text-foreground mt-0.5">{stats.expired_invites}</p>
+                <p className="text-[11px] text-rose-600 font-medium">Overdue invites</p>
+              </div>
+              <div className="p-2.5 bg-rose-50 rounded-lg">
+                <XCircle className="w-5 h-5 text-rose-600" />
               </div>
             </CardContent>
           </Card>
           
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center space-x-2">
-                <BarChart3 className="h-8 w-8 text-purple-600" />
-                <div>
-                  <p className="text-2xl font-bold">{stats.total_users_registered}</p>
-                  <p className="text-sm text-gray-600">Users Registered</p>
-                </div>
+          <Card className="border-l-4 border-l-purple-500 shadow-sm hover:shadow-md transition-all col-span-2 sm:col-span-1">
+            <CardContent className="p-3.5 flex items-center justify-between">
+              <div>
+                <p className="text-xs text-muted-foreground font-semibold">Users Registered</p>
+                <p className="text-xl font-bold text-foreground mt-0.5">{stats.total_users_registered}</p>
+                <p className="text-[11px] text-purple-600 font-medium">Onboarded users</p>
+              </div>
+              <div className="p-2.5 bg-purple-50 rounded-lg">
+                <BarChart3 className="w-5 h-5 text-purple-600" />
               </div>
             </CardContent>
           </Card>

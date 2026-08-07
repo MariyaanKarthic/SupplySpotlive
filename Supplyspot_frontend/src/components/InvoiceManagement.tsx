@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card } from './ui/card';
+import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Badge } from './ui/badge';
@@ -317,7 +317,7 @@ export function InvoiceManagement() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1>Invoice Management</h1>
+          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">Invoice Management</h1>
         </div>
         <div className="flex gap-3">
           <Button 
@@ -413,57 +413,76 @@ export function InvoiceManagement() {
       </div>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-        <Card className="p-4">
-          <div className="flex items-center justify-between">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
+        <Card className="border-l-4 border-l-blue-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Total Invoices</p>
-              <p className="text-2xl font-semibold">{invoices.length}</p>
+              <p className="text-xs text-muted-foreground font-semibold">Total Invoices</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">{invoices.length}</p>
+              <p className="text-[11px] text-blue-600 font-medium">All active & processed</p>
             </div>
-            <DollarSign className="w-8 h-8 text-blue-500" />
-          </div>
+            <div className="p-2.5 bg-blue-50 rounded-lg">
+              <DollarSign className="w-5 h-5 text-blue-600" />
+            </div>
+          </CardContent>
         </Card>
-        <Card className="p-4">
-          <div className="flex items-center justify-between">
+
+        <Card className="border-l-4 border-l-purple-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">OCR Processing</p>
-              <p className="text-2xl font-semibold">{totalOcrProcessing}</p>
+              <p className="text-xs text-muted-foreground font-semibold">OCR Processing</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">{totalOcrProcessing}</p>
+              <p className="text-[11px] text-purple-600 font-medium">Auto-extracted text</p>
             </div>
-            <Bot className="w-8 h-8 text-purple-500" />
-          </div>
+            <div className="p-2.5 bg-purple-50 rounded-lg">
+              <Bot className="w-5 h-5 text-purple-600" />
+            </div>
+          </CardContent>
         </Card>
-        <Card className="p-4">
-          <div className="flex items-center justify-between">
+
+        <Card className="border-l-4 border-l-amber-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Pending Approval</p>
-              <p className="text-2xl font-semibold">${totalPending.toLocaleString()}</p>
+              <p className="text-xs text-muted-foreground font-semibold">Pending Approval</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">${totalPending.toLocaleString()}</p>
+              <p className="text-[11px] text-amber-600 font-medium">Awaiting review</p>
             </div>
-            <Clock className="w-8 h-8 text-yellow-500" />
-          </div>
+            <div className="p-2.5 bg-amber-50 rounded-lg">
+              <Clock className="w-5 h-5 text-amber-600" />
+            </div>
+          </CardContent>
         </Card>
-        <Card className="p-4">
-          <div className="flex items-center justify-between">
+
+        <Card className="border-l-4 border-l-indigo-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Auto-Matched</p>
-              <p className="text-2xl font-semibold">{invoices.filter(inv => inv.matchingStatus === 'Matched').length}</p>
+              <p className="text-xs text-muted-foreground font-semibold">Auto-Matched</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">{invoices.filter(inv => inv.matchingStatus === 'Matched').length}</p>
+              <p className="text-[11px] text-indigo-600 font-medium">3-Way PO verified</p>
             </div>
-            <Target className="w-8 h-8 text-green-500" />
-          </div>
+            <div className="p-2.5 bg-indigo-50 rounded-lg">
+              <Target className="w-5 h-5 text-indigo-600" />
+            </div>
+          </CardContent>
         </Card>
-        <Card className="p-4">
-          <div className="flex items-center justify-between">
+
+        <Card className="border-l-4 border-l-emerald-500 shadow-sm hover:shadow-md transition-all col-span-2 sm:col-span-1">
+          <CardContent className="p-3.5 flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Paid This Month</p>
-              <p className="text-2xl font-semibold">${totalPaid.toLocaleString()}</p>
+              <p className="text-xs text-muted-foreground font-semibold">Paid This Month</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">${totalPaid.toLocaleString()}</p>
+              <p className="text-[11px] text-emerald-600 font-medium">Disbursed successfully</p>
             </div>
-            <CheckCircle className="w-8 h-8 text-green-500" />
-          </div>
+            <div className="p-2.5 bg-emerald-50 rounded-lg">
+              <CheckCircle className="w-5 h-5 text-emerald-600" />
+            </div>
+          </CardContent>
         </Card>
       </div>
 
       {/* Tabs Navigation */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4 max-w-2xl">
+        <TabsList className="w-fit">
           <TabsTrigger value="all" className="gap-2">
             <FileText className="w-4 h-4" />
             All Invoices

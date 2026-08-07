@@ -1,7 +1,20 @@
 require('dotenv').config();
 
 module.exports = {
-  development: {
+  development: process.env.DB_CLIENT === 'sqlite3' ? {
+    client: 'sqlite3',
+    connection: {
+      filename: './dev.sqlite3'
+    },
+    useNullAsDefault: true,
+    migrations: {
+      directory: './migrations',
+      tableName: 'knex_migrations'
+    },
+    seeds: {
+      directory: './seeds'
+    }
+  } : {
     client: 'pg',
     connection: {
       host: process.env.DB_HOST || 'localhost',

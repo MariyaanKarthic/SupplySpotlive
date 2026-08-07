@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card } from './ui/card';
+import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Badge } from './ui/badge';
@@ -147,8 +147,7 @@ export function ContractManagement() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-semibold">Contract Management</h1>
-          <p className="text-muted-foreground">Manage vendor contracts and agreements</p>
+          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">Contract Management</h1>
         </div>
         <Sheet open={isAddContractOpen} onOpenChange={setIsAddContractOpen}>
           <SheetTrigger asChild>
@@ -229,42 +228,57 @@ export function ContractManagement() {
       </div>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="p-4">
-          <div className="flex items-center justify-between">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+        <Card className="border-l-4 border-l-blue-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Total Contracts</p>
-              <p className="text-2xl font-semibold">156</p>
+              <p className="text-xs text-muted-foreground font-semibold">Total Contracts</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">156</p>
+              <p className="text-[11px] text-blue-600 font-medium">All agreements</p>
             </div>
-            <FileText className="w-8 h-8 text-blue-500" />
-          </div>
+            <div className="p-2.5 bg-blue-50 rounded-lg">
+              <FileText className="w-5 h-5 text-blue-600" />
+            </div>
+          </CardContent>
         </Card>
-        <Card className="p-4">
-          <div className="flex items-center justify-between">
+
+        <Card className="border-l-4 border-l-emerald-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Active Contracts</p>
-              <p className="text-2xl font-semibold">123</p>
+              <p className="text-xs text-muted-foreground font-semibold">Active Contracts</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">123</p>
+              <p className="text-[11px] text-emerald-600 font-medium">Currently active</p>
             </div>
-            <FileText className="w-8 h-8 text-green-500" />
-          </div>
+            <div className="p-2.5 bg-emerald-50 rounded-lg">
+              <FileText className="w-5 h-5 text-emerald-600" />
+            </div>
+          </CardContent>
         </Card>
-        <Card className="p-4">
-          <div className="flex items-center justify-between">
+
+        <Card className="border-l-4 border-l-amber-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Expiring Soon</p>
-              <p className="text-2xl font-semibold">8</p>
+              <p className="text-xs text-muted-foreground font-semibold">Expiring Soon</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">8</p>
+              <p className="text-[11px] text-amber-600 font-medium">Within 30 days</p>
             </div>
-            <AlertTriangle className="w-8 h-8 text-orange-500" />
-          </div>
+            <div className="p-2.5 bg-amber-50 rounded-lg">
+              <AlertTriangle className="w-5 h-5 text-amber-600" />
+            </div>
+          </CardContent>
         </Card>
-        <Card className="p-4">
-          <div className="flex items-center justify-between">
+
+        <Card className="border-l-4 border-l-purple-500 shadow-sm hover:shadow-md transition-all">
+          <CardContent className="p-3.5 flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Total Value</p>
-              <p className="text-2xl font-semibold">$2.4M</p>
+              <p className="text-xs text-muted-foreground font-semibold">Total Value</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">$2.4M</p>
+              <p className="text-[11px] text-purple-600 font-medium">Active contract sum</p>
             </div>
-            <DollarSign className="w-8 h-8 text-purple-500" />
-          </div>
+            <div className="p-2.5 bg-purple-50 rounded-lg">
+              <DollarSign className="w-5 h-5 text-purple-600" />
+            </div>
+          </CardContent>
         </Card>
       </div>
 
