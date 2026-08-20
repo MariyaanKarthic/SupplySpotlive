@@ -1,4 +1,12 @@
 import React, { useState, useMemo } from 'react';
+import { 
+  Breadcrumb, 
+  BreadcrumbItem, 
+  BreadcrumbLink, 
+  BreadcrumbList, 
+  BreadcrumbPage, 
+  BreadcrumbSeparator 
+} from './ui/breadcrumb';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -721,7 +729,11 @@ interface SortConfig {
   direction: SortDirection;
 }
 
-export const Databoards: React.FC = () => {
+interface DataboardsProps {
+  onNavigate?: (section: any) => void;
+}
+
+export const Databoards: React.FC<DataboardsProps> = ({ onNavigate }) => {
   const [activeTab, setActiveTab] = useState<DataType>('vendors');
   const [searchTerm, setSearchTerm] = useState('');
   const [sortConfig, setSortConfig] = useState<SortConfig>({ key: '', direction: null });
@@ -1235,25 +1247,32 @@ export const Databoards: React.FC = () => {
   };
 
   return (
-    <div className="p-6 space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-start">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">Databoards</h1>
-        </div>
-        <div className="flex items-center gap-3">
-          <Button variant="outline" onClick={() => setShowExportDialog(true)}>
-            <Download className="w-4 h-4 mr-2" />
-            Export Data
-          </Button>
-          <Button variant="outline">
-            <Upload className="w-4 h-4 mr-2" />
-            Import Data
-          </Button>
-          <Button variant="outline" onClick={() => window.location.reload()}>
-            <RefreshCw className="w-4 h-4 mr-2" />
-            Refresh
-          </Button>
+    <div className="px-6 pb-6 space-y-6 w-full max-w-full overflow-x-hidden">
+      {/* Sticky Header section with Breadcrumbs */}
+      <div className="sticky top-0 bg-background/95 backdrop-blur z-20 border-b py-3 -mx-6 px-6 space-y-1.5 flex flex-col no-print">
+        <Breadcrumb className="text-xs">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink 
+                onClick={() => onNavigate && onNavigate("home")} 
+                className="cursor-pointer"
+              >
+                Dashboard
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Management</BreadcrumbPage>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Databoards</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+        <div className="flex items-center justify-between w-full">
+          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">Databoards Dashboard</h1>
+          
         </div>
       </div>
 

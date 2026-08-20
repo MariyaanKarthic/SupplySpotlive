@@ -1,4 +1,12 @@
 import React, { useState } from 'react';
+import { 
+  Breadcrumb, 
+  BreadcrumbItem, 
+  BreadcrumbLink, 
+  BreadcrumbList, 
+  BreadcrumbPage, 
+  BreadcrumbSeparator 
+} from './ui/breadcrumb';
 import { Card } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -355,7 +363,11 @@ const informationRequests = [
   }
 ];
 
-export function RegistrationReview() {
+interface RegistrationReviewProps {
+  onNavigate?: (section: any) => void;
+}
+
+export function RegistrationReview({ onNavigate }: RegistrationReviewProps) {
   const [selectedRegistration, setSelectedRegistration] = useState<any>(registrationsPendingReview[0]);
   const [activeStage, setActiveStage] = useState('registration');
   const [reviewComments, setReviewComments] = useState('');
@@ -1379,22 +1391,32 @@ export function RegistrationReview() {
   );
 
   return (
-    <div className="p-3 sm:p-5 space-y-4 w-full max-w-full overflow-x-hidden">
-      {/* Top Header with Horizontal Divider Line */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-200 dark:border-slate-800">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">
-            Registration Review Workflow
-          </h1>
-        </div>
-        <div className="flex items-center gap-2.5">
-          <Badge variant="secondary" className="px-2.5 py-1 text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">
-            {filteredRegistrations.length} Pending Reviews
-          </Badge>
-          <Button variant="outline" size="sm" className="h-8 gap-1.5 text-xs">
-            <Download className="w-3.5 h-3.5" />
-            Export Report
-          </Button>
+    <div className="px-6 pb-6 space-y-6 w-full max-w-full overflow-x-hidden">
+      {/* Sticky Header section with Breadcrumbs */}
+      <div className="sticky top-0 bg-background/95 backdrop-blur z-20 border-b py-3 -mx-6 px-6 space-y-1.5 flex flex-col no-print">
+        <Breadcrumb className="text-xs">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink 
+                onClick={() => onNavigate && onNavigate("home")} 
+                className="cursor-pointer"
+              >
+                Dashboard
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Supplier Onboarding</BreadcrumbPage>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Registration Review</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+        <div className="flex items-center justify-between w-full">
+          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">Registration Review Workflow</h1>
+          
         </div>
       </div>
 

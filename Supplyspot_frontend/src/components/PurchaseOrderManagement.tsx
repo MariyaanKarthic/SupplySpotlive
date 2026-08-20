@@ -1,4 +1,13 @@
 import React, { useState } from 'react';
+import { toast } from 'sonner';
+import { 
+  Breadcrumb, 
+  BreadcrumbItem, 
+  BreadcrumbLink, 
+  BreadcrumbList, 
+  BreadcrumbPage, 
+  BreadcrumbSeparator 
+} from './ui/breadcrumb';
 import { Card, CardHeader, CardTitle, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -10,6 +19,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Textarea } from './ui/textarea';
 import { Progress } from './ui/progress';
 import { Alert, AlertDescription } from './ui/alert';
+import { Table as UITable, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
 import { 
   Search, 
   Filter, 
@@ -52,6 +62,7 @@ import {
   ArrowUpDown,
   ChevronLeft,
   ChevronRight,
+  ArrowLeft,
   FileSpreadsheet
 } from 'lucide-react';
 import { 
@@ -97,15 +108,25 @@ const purchaseOrderData = [
     priority: 'High',
     acknowledgmentStatus: 'Pending',
     lineItems: [
-      { id: 1, item: 'Office Furniture Set', quantity: 1, unitPrice: 60000, total: 60000, deliveryDate: '2025-11-01' }
+      { id: 1, item: 'Executive Office Desk', quantity: 2, unitPrice: 2000, total: 4000, deliveryDate: '2025-11-01' },
+      { id: 2, item: 'Ergonomic Office Chair', quantity: 5, unitPrice: 400, total: 2000, deliveryDate: '2025-11-01' },
+      { id: 3, item: 'Filing Cabinet 4-Drawer', quantity: 2, unitPrice: 350, total: 700, deliveryDate: '2025-11-05' },
+      { id: 4, item: 'Conference Table 10ft', quantity: 1, unitPrice: 1500, total: 1500, deliveryDate: '2025-11-10' },
+      { id: 5, item: 'Whiteboard 8x4', quantity: 2, unitPrice: 250, total: 500, deliveryDate: '2025-11-10' },
+      { id: 6, item: 'Office Lounge Sofa', quantity: 1, unitPrice: 1300, total: 1300, deliveryDate: '2025-11-15' }
     ],
     deliveryAddress: '123 Business Park, Tech City, TC 12345',
     terms: 'Net 30 days',
-    notes: 'Based on RFQ-2025-001 specifications.',
-    attachments: ['PO_specifications.pdf'],
+    notes: 'IMPORTANT: Please ensure all executive desks are pre-assembled prior to delivery. Delivery must be scheduled between 8:00 AM and 10:00 AM to avoid disrupting office hours. Driver must call the site manager 30 mins prior to arrival at the loading dock. Fragile glass items must be heavily secured.',
+    attachments: ['PO_specifications.pdf', 'floor_plan_layout.pdf', 'site_delivery_rules.pdf'],
     notifications: [],
     changeRequests: [],
-    communicationHistory: []
+    communicationHistory: [
+      { id: 1, type: 'Message', message: 'Can we deliver the ergonomic chairs a day early? We have a truck in the area.', author: 'Supplier Rep', timestamp: 'Oct 17, 2025 09:30 AM' },
+      { id: 2, type: 'Reply', message: 'Yes, early delivery is approved for the chairs. The warehouse will be open and ready to receive.', author: 'John Smith (Buyer)', timestamp: 'Oct 17, 2025 10:15 AM' },
+      { id: 3, type: 'System', message: 'PO-2025-001 specifications updated with final floor plan attachment.', author: 'System', timestamp: 'Oct 18, 2025 08:00 AM' },
+      { id: 4, type: 'Message', message: 'Floor plan received. We will place the desks exactly as diagrammed.', author: 'Supplier Rep', timestamp: 'Oct 18, 2025 11:20 AM' }
+    ]
   },
   {
     id: 1,
@@ -123,18 +144,26 @@ const purchaseOrderData = [
     lineItems: [
       { id: 1, item: 'Laptops (HP EliteBook)', quantity: 10, unitPrice: 1200, total: 12000, deliveryDate: '2023-11-30' },
       { id: 2, item: 'Monitors (Dell 24")', quantity: 15, unitPrice: 300, total: 4500, deliveryDate: '2023-11-28' },
-      { id: 3, item: 'Office Chairs (Ergonomic)', quantity: 20, unitPrice: 250, total: 5000, deliveryDate: '2023-11-25' }
+      { id: 3, item: 'Office Chairs (Ergonomic)', quantity: 20, unitPrice: 250, total: 5000, deliveryDate: '2023-11-25' },
+      { id: 4, item: 'Wireless Keyboards & Mice', quantity: 15, unitPrice: 80, total: 1200, deliveryDate: '2023-11-28' },
+      { id: 5, item: 'USB-C Docking Stations', quantity: 10, unitPrice: 150, total: 1500, deliveryDate: '2023-11-30' },
+      { id: 6, item: 'Surge Protectors', quantity: 20, unitPrice: 30, total: 600, deliveryDate: '2023-11-25' },
+      { id: 7, item: 'Cable Management Kits', quantity: 10, unitPrice: 20, total: 200, deliveryDate: '2023-11-25' }
     ],
     deliveryAddress: '123 Business Park, Tech City, TC 12345',
     terms: 'Net 30 days',
-    notes: 'All items must meet specified quality standards. Delivery to be coordinated with facilities team.',
-    attachments: ['PO_specifications.pdf', 'delivery_instructions.pdf'],
+    notes: 'All items must meet specified quality standards. Delivery to be coordinated with facilities team. Pallets must be shrink-wrapped and stacked no higher than 4 feet to fit into the service elevator.',
+    attachments: ['PO_specifications.pdf', 'delivery_instructions.pdf', 'compliance_checklist.pdf'],
     notifications: [
       { id: 1, type: 'new_po', message: 'New purchase order received', timestamp: '2023-11-15 09:00', read: false },
       { id: 2, type: 'reminder', message: 'Acknowledgment required within 24 hours', timestamp: '2023-11-15 15:00', read: false }
     ],
     changeRequests: [],
-    communicationHistory: []
+    communicationHistory: [
+      { id: 1, type: 'Message', message: 'Please confirm if the laptops will come pre-imaged with our standard OS build.', author: 'John Smith (Buyer)', timestamp: 'Nov 16, 2023 10:00 AM' },
+      { id: 2, type: 'Reply', message: 'Yes, we have your latest OS image on file. They will be pre-loaded prior to shipping.', author: 'Supplier Rep', timestamp: 'Nov 16, 2023 11:30 AM' },
+      { id: 3, type: 'Message', message: 'Excellent. Please ensure the asset tags are applied visibly on the bottom casing.', author: 'John Smith (Buyer)', timestamp: 'Nov 16, 2023 01:15 PM' }
+    ]
   },
   {
     id: 2,
@@ -302,12 +331,11 @@ const notificationData = [
   }
 ];
 
-export function PurchaseOrderManagement() {
+export function PurchaseOrderManagement({ onNavigate }: { onNavigate?: (view: any) => void }) {
   const [activeTab, setActiveTab] = useState('purchase-orders');
   const [selectedPO, setSelectedPO] = useState<any>(null);
-  const [isPOModalOpen, setIsPOModalOpen] = useState(false);
-  const [isChangeRequestModalOpen, setIsChangeRequestModalOpen] = useState(false);
-  const [isCommunicationModalOpen, setIsCommunicationModalOpen] = useState(false);
+  const [purchaseOrders, setPurchaseOrders] = useState<any[]>(purchaseOrderData);
+  const [currentView, setCurrentView] = useState<'list' | 'view' | 'change-request' | 'send-message'>('list');
   
   // High Density State
   const [poSearchTerm, setPoSearchTerm] = useState('');
@@ -334,6 +362,18 @@ export function PurchaseOrderManagement() {
   );
 
   const [selectedChangeRequest, setSelectedChangeRequest] = useState<any>(null);
+
+  // Change Request Form States
+  const [changeType, setChangeType] = useState('quantity');
+  const [changeDescription, setChangeDescription] = useState('');
+  const [currentVal, setCurrentVal] = useState('');
+  const [proposedVal, setProposedVal] = useState('');
+  const [impactAmount, setImpactAmount] = useState('0');
+
+  // Send Message Form States
+  const [msgSubject, setMsgSubject] = useState('');
+  const [msgBody, setMsgBody] = useState('');
+  const [msgPriority, setMsgPriority] = useState('medium');
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -389,7 +429,7 @@ export function PurchaseOrderManagement() {
   };
 
   const handleExportCSV = () => {
-    const dataToExport = activeTab === 'purchase-orders' ? purchaseOrderData : notificationData;
+    const dataToExport = activeTab === 'purchase-orders' ? purchaseOrders : notificationData;
     const headers = Object.keys(dataToExport[0]).join(',');
     const rows = dataToExport.map(item => Object.values(item).map(val => `"${val}"`).join(','));
     const csvContent = [headers, ...rows].join('\n');
@@ -412,7 +452,7 @@ export function PurchaseOrderManagement() {
     console.log('Drag end:', event);
   };
 
-  const filteredPOs = purchaseOrderData.filter(po => {
+  const filteredPOs = purchaseOrders.filter(po => {
     const matchesSearch = po.poNumber.toLowerCase().includes(poSearchTerm.toLowerCase()) ||
                          po.buyer.toLowerCase().includes(poSearchTerm.toLowerCase());
     const matchesStatus = poStatusFilter === 'all' || po.status === poStatusFilter;
@@ -449,44 +489,559 @@ export function PurchaseOrderManagement() {
 
   const handleAcknowledgePO = (poId: number) => {
     console.log('Acknowledging PO:', poId);
-    // Implementation would handle PO acknowledgment
+    setPurchaseOrders(prev => prev.map(po => {
+      if (po.id === poId) {
+        const updated = {
+          ...po,
+          status: 'Acknowledged',
+          acknowledgmentStatus: 'Acknowledged',
+          acknowledgmentDate: new Date().toISOString().split('T')[0],
+          communicationHistory: [
+            ...(po.communicationHistory || []),
+            { id: Date.now(), type: 'acknowledgment', message: 'PO acknowledged. Delivery scheduled as requested.', timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16), author: 'Supplier' }
+          ]
+        };
+        if (selectedPO && selectedPO.id === poId) {
+          setSelectedPO(updated);
+        }
+        return updated;
+      }
+      return po;
+    }));
+    toast.success(`Purchase Order acknowledged successfully.`);
   };
 
   const handleRequestChange = (poId: number) => {
     console.log('Requesting change for PO:', poId);
-    setIsChangeRequestModalOpen(true);
+    const po = purchaseOrders.find(p => p.id === poId);
+    setSelectedPO(po);
+    setChangeType('quantity');
+    setChangeDescription('');
+    setCurrentVal('');
+    setProposedVal('');
+    setImpactAmount('0');
+    setCurrentView('change-request');
   };
 
   const handleSendMessage = (poId: number) => {
     console.log('Sending message for PO:', poId);
-    setIsCommunicationModalOpen(true);
+    const po = purchaseOrders.find(p => p.id === poId);
+    setSelectedPO(po);
+    setMsgSubject('');
+    setMsgBody('');
+    setMsgPriority('medium');
+    setCurrentView('send-message');
   };
 
-  return (
-    <div className="p-6 space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">Purchase Order Management</h1>
-        </div>
-        <div className="flex gap-3">
-          <Button variant="outline" className="gap-2 relative">
-            <Bell className="w-4 h-4" />
-            Notifications
-            {unreadNotifications > 0 && (
-              <Badge className="absolute -top-2 -right-2 w-5 h-5 flex items-center justify-center p-0 text-xs">
-                {unreadNotifications}
+  if (currentView === 'view' && selectedPO) {
+    return (
+      <div className="px-6 pb-6 space-y-6 w-full max-w-full overflow-x-hidden">
+        {/* Sticky Header section with Breadcrumbs */}
+        <div className="sticky top-0 bg-background/95 backdrop-blur z-20 border-b py-3 -mx-6 px-6 space-y-1.5 flex flex-col no-print">
+          <Breadcrumb className="text-xs">
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink 
+                  onClick={() => onNavigate && onNavigate("home")} 
+                  className="cursor-pointer"
+                >
+                  Dashboard
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbLink 
+                  onClick={() => setCurrentView('list')} 
+                  className="cursor-pointer"
+                >
+                  Purchase Orders
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage>{selectedPO.poNumber}</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+          <div className="flex items-center justify-between w-full">
+            <div className="flex items-center gap-3">
+              <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">{selectedPO.poNumber}</h1>
+              <Badge variant={getStatusColor(selectedPO.status)} className="font-bold text-[10px] uppercase tracking-wider">
+                {selectedPO.status}
               </Badge>
-            )}
-          </Button>
-          <Button variant="outline" className="gap-2">
-            <RefreshCw className="w-4 h-4" />
-            Refresh
-          </Button>
-          <Button className="gap-2" onClick={handleExportExcel}>
-            <Download className="w-4 h-4" />
-            Export Data
-          </Button>
+            </div>
+            <div className="flex gap-2 animate-in fade-in duration-200">
+              {selectedPO.acknowledgmentStatus === 'Pending' && (
+                <Button 
+                  className="gap-2 font-semibold bg-slate-900 text-white dark:bg-slate-50 dark:text-slate-955 hover:bg-slate-800 rounded-md shadow-sm h-10 px-4"
+                  onClick={() => handleAcknowledgePO(selectedPO.id)}
+                >
+                  <CheckCircle className="w-4 h-4" />
+                  Acknowledge Order
+                </Button>
+              )}
+              <Button variant="outline" className="gap-2 font-semibold border-slate-200 text-slate-850 hover:bg-slate-50 h-10 px-4" onClick={() => setCurrentView('change-request')}>
+                <Edit3 className="w-4 h-4 text-blue-500" />
+                Request Change
+              </Button>
+              <Button variant="outline" className="gap-2 font-semibold border-slate-200 text-slate-850 hover:bg-slate-50 h-10 px-4" onClick={() => setCurrentView('send-message')}>
+                <MessageCircle className="w-4 h-4 text-slate-505" />
+                Message
+              </Button>
+              <Button variant="outline" className="gap-2 font-semibold border-slate-200 text-slate-850 hover:bg-slate-50 h-10 px-4" onClick={handleExportCSV}>
+                <Download className="w-4 h-4" />
+                Download
+              </Button>
+              <Button variant="ghost" onClick={() => setCurrentView('list')} className="font-semibold text-slate-650 hover:bg-transparent">
+                <ArrowLeft className="w-4 h-4 mr-1.5" />
+                Back to List
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-6">
+          {/* Read-Only DETAILS Block */}
+          <div className="grid grid-cols-4 gap-y-6 gap-x-4 text-sm px-1">
+            <div>
+              <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">Buyer Information</span>
+              <span className="font-bold text-slate-850 dark:text-slate-200 mt-1 block">{selectedPO.buyer}</span>
+              <span className="text-xs text-slate-500 block mt-0.5">{selectedPO.buyerContact}</span>
+            </div>
+            <div>
+              <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">RFQ Reference</span>
+              <span className="font-bold text-slate-850 dark:text-slate-200 mt-1 block">{selectedPO.rfqNumber}</span>
+            </div>
+            <div>
+              <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">Expected Delivery</span>
+              <span className="font-bold text-slate-850 dark:text-slate-200 mt-1 block">{selectedPO.expectedDeliveryDate}</span>
+            </div>
+            <div>
+              <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">Priority</span>
+              <span className="font-bold text-red-500 mt-1 block">{selectedPO.priority}</span>
+            </div>
+            <div>
+              <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">Payment Terms</span>
+              <span className="font-bold text-slate-850 dark:text-slate-200 mt-1 block">{selectedPO.terms}</span>
+            </div>
+            <div className="col-span-2">
+              <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">Shipping Address</span>
+              <span className="font-bold text-slate-850 dark:text-slate-200 mt-1 block">{selectedPO.deliveryAddress}</span>
+            </div>
+            <div>
+              <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">Acknowledgment</span>
+              <div className="mt-1">
+                <Badge variant={getStatusColor(selectedPO.acknowledgmentStatus)} className="font-bold text-[10px] uppercase tracking-wider">
+                  {selectedPO.acknowledgmentStatus}
+                </Badge>
+              </div>
+            </div>
+          </div>
+
+          {/* Line Items Table */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <h5 className="font-bold text-slate-850 dark:text-slate-200 text-sm flex items-center gap-2">
+                <List className="w-4 h-4" />
+                Order Items List
+              </h5>
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{(selectedPO.lineItems || []).length} Positions</span>
+            </div>
+            <div className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg shadow-sm overflow-hidden">
+              <div className="overflow-x-auto">
+                <UITable>
+                  <TableHeader className="bg-slate-50 dark:bg-slate-900/50">
+                    <TableRow>
+                      <TableHead className="w-[300px] font-semibold text-xs uppercase tracking-wider text-slate-500">Description</TableHead>
+                      <TableHead className="font-semibold text-xs uppercase tracking-wider text-slate-500 text-right">Qty</TableHead>
+                      <TableHead className="font-semibold text-xs uppercase tracking-wider text-slate-500 text-right">Unit Price</TableHead>
+                      <TableHead className="font-semibold text-xs uppercase tracking-wider text-slate-500 text-right">Total</TableHead>
+                      <TableHead className="font-semibold text-xs uppercase tracking-wider text-slate-500 text-center">Delivery Date</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {(selectedPO.lineItems || []).map((item: any) => (
+                      <TableRow key={item.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-900/25">
+                        <TableCell className="font-medium text-slate-900 dark:text-slate-100 text-sm">
+                          {item.item}
+                          <span className="block text-[10px] text-slate-400 mt-0.5">ID: ITEM-{item.id}</span>
+                        </TableCell>
+                        <TableCell className="text-right text-slate-700 dark:text-slate-300 text-sm font-semibold">{item.quantity}</TableCell>
+                        <TableCell className="text-right text-slate-700 dark:text-slate-300 text-sm">{selectedPO.currency} {item.unitPrice?.toLocaleString()}</TableCell>
+                        <TableCell className="text-right text-slate-900 dark:text-slate-100 font-bold text-sm">{selectedPO.currency} {item.total?.toLocaleString()}</TableCell>
+                        <TableCell className="text-center text-slate-700 dark:text-slate-300 text-sm">{item.deliveryDate}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </UITable>
+              </div>
+            </div>
+          </div>
+
+          {/* Communication and Notes section - High Density */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="space-y-3">
+              <h5 className="font-bold text-slate-850 dark:text-slate-200 text-sm flex items-center gap-2">
+                <MessageSquare className="w-4 h-4" />
+                Collaboration Log
+              </h5>
+              <div className="border border-slate-200 dark:border-slate-800 rounded-xl p-4 bg-slate-50/30 max-h-64 overflow-y-auto space-y-3">
+                {selectedPO.communicationHistory && selectedPO.communicationHistory.length > 0 ? (
+                  selectedPO.communicationHistory.map((comm: any) => (
+                    <div key={comm.id} className="text-xs bg-white dark:bg-slate-950 p-3 rounded-lg border border-slate-100 dark:border-slate-800 shadow-sm">
+                      <div className="flex justify-between items-center mb-1.5 font-bold">
+                        <span className="text-primary uppercase tracking-tighter text-[9px]">{comm.type}</span>
+                        <span className="text-slate-400 tabular-nums">{comm.timestamp}</span>
+                      </div>
+                      <p className="text-slate-600 dark:text-slate-350 leading-relaxed italic">"{comm.message}"</p>
+                      <p className="mt-2 text-[9px] text-slate-400 text-right uppercase tracking-widest font-black">— {comm.author}</p>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-8 text-slate-400">
+                    <MessageSquare className="w-10 h-10 mx-auto mb-2 opacity-10" />
+                    <p className="text-xs font-medium">No communication history recorded.</p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <h5 className="font-bold text-slate-850 dark:text-slate-200 text-sm flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 text-amber-500" />
+                Delivery Notes & Instructions
+              </h5>
+              <div className="border border-slate-200 dark:border-slate-800 rounded-xl p-4 bg-slate-50/80 dark:bg-slate-900 h-64 flex flex-col justify-between">
+                <p className="text-xs text-slate-600 dark:text-slate-350 leading-relaxed italic font-medium">
+                  "{selectedPO.notes || "No special instructions provided by the buyer for this order."}"
+                </p>
+                <div className="flex flex-wrap gap-2 pt-4 border-t dark:border-slate-800">
+                  {(selectedPO.attachments || []).map((file: string, idx: number) => (
+                    <Badge key={idx} variant="outline" className="bg-white dark:bg-slate-950 text-[9px] font-bold uppercase tracking-widest border-slate-200 dark:border-slate-800 cursor-pointer hover:border-primary transition-colors gap-1.5 h-6">
+                      <FileText className="w-3 h-3" />
+                      {file}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (currentView === 'change-request' && selectedPO) {
+    return (
+      <div className="px-6 pb-6 space-y-6 w-full max-w-full overflow-x-hidden">
+        {/* Sticky Header section with Breadcrumbs */}
+        <div className="sticky top-0 bg-background/95 backdrop-blur z-20 border-b py-3 -mx-6 px-6 space-y-1.5 flex flex-col no-print">
+          <Breadcrumb className="text-xs">
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink 
+                  onClick={() => onNavigate && onNavigate("home")} 
+                  className="cursor-pointer"
+                >
+                  Dashboard
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbLink 
+                  onClick={() => setCurrentView('list')} 
+                  className="cursor-pointer"
+                >
+                  Purchase Orders
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbLink 
+                  onClick={() => setCurrentView('view')} 
+                  className="cursor-pointer"
+                >
+                  {selectedPO.poNumber}
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage>Request Change</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+          <div className="flex items-center justify-between w-full">
+            <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">Request Change ({selectedPO.poNumber})</h1>
+            <Button variant="ghost" onClick={() => setCurrentView('view')} className="font-semibold text-slate-650 hover:bg-transparent">Cancel</Button>
+          </div>
+        </div>
+
+        <Card className="p-6 max-w-2xl mx-auto bg-white dark:bg-slate-950">
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="changeType" className="font-semibold text-xs text-slate-500 uppercase tracking-wider">Change Type</Label>
+              <Select value={changeType} onValueChange={setChangeType}>
+                <SelectTrigger className="mt-1 h-10 text-sm">
+                  <SelectValue placeholder="Select change type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="quantity">Quantity Change</SelectItem>
+                  <SelectItem value="delivery_date">Delivery Date</SelectItem>
+                  <SelectItem value="specifications">Specifications</SelectItem>
+                  <SelectItem value="price">Price Adjustment</SelectItem>
+                  <SelectItem value="other">Other</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="changeDescription" className="font-semibold text-xs text-slate-500 uppercase tracking-wider">Description</Label>
+              <Textarea 
+                id="changeDescription"
+                placeholder="Describe the requested change and reason..."
+                rows={4}
+                value={changeDescription}
+                onChange={(e) => setChangeDescription(e.target.value)}
+                className="mt-1 text-sm bg-white dark:bg-slate-900 border-slate-200"
+              />
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="currentValue" className="font-semibold text-xs text-slate-500 uppercase tracking-wider">Current Value</Label>
+                <Input id="currentValue" placeholder="Current value" value={currentVal} onChange={(e) => setCurrentVal(e.target.value)} className="mt-1 h-10 text-sm" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="proposedValue" className="font-semibold text-xs text-slate-500 uppercase tracking-wider">Proposed Value</Label>
+                <Input id="proposedValue" placeholder="Proposed value" value={proposedVal} onChange={(e) => setProposedVal(e.target.value)} className="mt-1 h-10 text-sm" />
+              </div>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="financialImpact" className="font-semibold text-xs text-slate-500 uppercase tracking-wider">Financial Impact (if applicable)</Label>
+              <Input id="financialImpact" placeholder="$0.00" type="number" value={impactAmount} onChange={(e) => setImpactAmount(e.target.value)} className="mt-1 h-10 text-sm" />
+            </div>
+
+            <div className="flex justify-end gap-2 pt-4 border-t">
+              <Button variant="ghost" onClick={() => setCurrentView('view')} className="font-semibold text-slate-650 hover:bg-transparent">
+                Cancel
+              </Button>
+              <Button 
+                onClick={() => {
+                  const impact = Number(impactAmount || 0);
+
+                  // Append change request
+                  setPurchaseOrders(prev => prev.map(po => {
+                    if (po.id === selectedPO.id) {
+                      const newRequest = {
+                        id: (po.changeRequests || []).length + 1,
+                        type: changeType.toLowerCase().includes('quantity') ? 'quantity_change' : 'delivery_date',
+                        description: changeDescription,
+                        requestedBy: 'Supplier',
+                        requestDate: new Date().toISOString().split('T')[0],
+                        status: 'Pending',
+                        originalValue: currentVal,
+                        proposedValue: proposedVal,
+                        impactAmount: impact,
+                        reason: changeDescription
+                      };
+                      const updated = {
+                        ...po,
+                        status: 'Change Requested',
+                        changeRequests: [...(po.changeRequests || []), newRequest],
+                        communicationHistory: [
+                          ...(po.communicationHistory || []),
+                          { id: Date.now(), type: 'change_request', message: `Submitted change request: ${changeDescription}`, timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16), author: 'Supplier' }
+                        ]
+                      };
+                      setSelectedPO(updated);
+                      return updated;
+                    }
+                    return po;
+                  }));
+                  toast.success('Change request submitted successfully.');
+                  setCurrentView('view');
+                }} 
+                className="font-semibold bg-slate-900 hover:bg-slate-800 text-white rounded-md h-10 px-4"
+              >
+                Submit Request
+              </Button>
+            </div>
+          </div>
+        </Card>
+      </div>
+    );
+  }
+
+  if (currentView === 'send-message' && selectedPO) {
+    return (
+      <div className="px-6 pb-6 space-y-6 w-full max-w-full overflow-x-hidden">
+        {/* Sticky Header section with Breadcrumbs */}
+        <div className="sticky top-0 bg-background/95 backdrop-blur z-20 border-b py-3 -mx-6 px-6 space-y-1.5 flex flex-col no-print">
+          <Breadcrumb className="text-xs">
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink 
+                  onClick={() => onNavigate && onNavigate("home")} 
+                  className="cursor-pointer"
+                >
+                  Dashboard
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbLink 
+                  onClick={() => setCurrentView('list')} 
+                  className="cursor-pointer"
+                >
+                  Purchase Orders
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbLink 
+                  onClick={() => setCurrentView('view')} 
+                  className="cursor-pointer"
+                >
+                  {selectedPO.poNumber}
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage>Send Message</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+          <div className="flex items-center justify-between w-full">
+            <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">Send Message ({selectedPO.poNumber})</h1>
+            <Button variant="ghost" onClick={() => setCurrentView('view')} className="font-semibold text-slate-650 hover:bg-transparent">Cancel</Button>
+          </div>
+        </div>
+
+        <Card className="p-6 max-w-2xl mx-auto bg-white dark:bg-slate-955">
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="msgSubject" className="font-semibold text-xs text-slate-500 uppercase tracking-wider">Subject</Label>
+              <Input id="msgSubject" placeholder="Message subject" value={msgSubject} onChange={(e) => setMsgSubject(e.target.value)} className="mt-1 h-10 text-sm" />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="msgBody" className="font-semibold text-xs text-slate-500 uppercase tracking-wider">Message</Label>
+              <Textarea 
+                id="msgBody"
+                placeholder="Enter your message..."
+                rows={6}
+                value={msgBody}
+                onChange={(e) => setMsgBody(e.target.value)}
+                className="mt-1 text-sm bg-white dark:bg-slate-900 border-slate-200"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="msgPriority" className="font-semibold text-xs text-slate-500 uppercase tracking-wider">Priority</Label>
+              <Select value={msgPriority} onValueChange={setMsgPriority}>
+                <SelectTrigger className="mt-1 h-10 text-sm">
+                  <SelectValue placeholder="Select priority" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="low">Low</SelectItem>
+                  <SelectItem value="medium">Medium</SelectItem>
+                  <SelectItem value="high">High</SelectItem>
+                  <SelectItem value="urgent">Urgent</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex justify-end gap-2 pt-4 border-t">
+              <Button variant="ghost" onClick={() => setCurrentView('view')} className="font-semibold text-slate-650 hover:bg-transparent">
+                Cancel
+              </Button>
+              <Button 
+                onClick={() => {
+                  if (!msgBody.trim()) {
+                    toast.error('Message body cannot be empty.');
+                    return;
+                  }
+
+                  // Append communication history message
+                  setPurchaseOrders(prev => prev.map(po => {
+                    if (po.id === selectedPO.id) {
+                      const newCommLog = {
+                        id: (po.communicationHistory || []).length + 1,
+                        type: 'message',
+                        message: msgSubject ? `${msgSubject}: ${msgBody}` : msgBody,
+                        timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16),
+                        author: 'Supplier'
+                      };
+                      const updated = {
+                        ...po,
+                        communicationHistory: [...(po.communicationHistory || []), newCommLog]
+                      };
+                      setSelectedPO(updated);
+                      return updated;
+                    }
+                    return po;
+                  }));
+
+                  toast.success('Message sent to buyer successfully.');
+                  setCurrentView('view');
+                }} 
+                className="font-semibold bg-slate-900 hover:bg-slate-800 text-white rounded-md h-10 px-4"
+              >
+                Send Message
+              </Button>
+            </div>
+          </div>
+        </Card>
+      </div>
+    );
+  }
+
+  return (
+    <div className="px-6 pb-6 space-y-6 w-full max-w-full overflow-x-hidden">
+      {/* Sticky Header section with Breadcrumbs */}
+      <div className="sticky top-0 bg-background/95 backdrop-blur z-20 border-b py-3 -mx-6 px-6 space-y-1.5 flex flex-col no-print">
+        <Breadcrumb className="text-xs">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink 
+                onClick={() => onNavigate && onNavigate("home")} 
+                className="cursor-pointer"
+              >
+                Dashboard
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Procurement</BreadcrumbPage>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Purchase Orders</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+        <div className="flex items-center justify-between w-full">
+          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">Purchase Order Management</h1>
+          <div className="flex gap-3">
+            <Button variant="outline" className="gap-2 relative h-9.5">
+              <Bell className="w-4 h-4" />
+              Notifications
+              {unreadNotifications > 0 && (
+                <Badge className="absolute -top-2 -right-2 w-5 h-5 flex items-center justify-center p-0 text-xs">
+                  {unreadNotifications}
+                </Badge>
+              )}
+            </Button>
+            <Button variant="outline" className="gap-2 h-9.5">
+              <RefreshCw className="w-4 h-4" />
+              Refresh
+            </Button>
+            <Button className="gap-2 bg-slate-900 text-white hover:bg-slate-800 h-9.5 rounded-md" onClick={handleExportExcel}>
+              <Download className="w-4 h-4" />
+              Export Data
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -496,7 +1051,7 @@ export function PurchaseOrderManagement() {
           <CardContent className="p-3.5 flex items-center justify-between">
             <div>
               <p className="text-xs text-muted-foreground font-semibold">Active POs</p>
-              <p className="text-xl font-bold text-foreground mt-0.5">{purchaseOrderData.filter(po => ['New', 'Acknowledged', 'In Progress'].includes(po.status)).length}</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">{purchaseOrders.filter(po => ['New', 'Acknowledged', 'In Progress'].includes(po.status)).length}</p>
               <p className="text-[11px] text-blue-600 font-medium">Requiring attention</p>
             </div>
             <div className="p-2.5 bg-blue-50 rounded-lg">
@@ -509,7 +1064,7 @@ export function PurchaseOrderManagement() {
           <CardContent className="p-3.5 flex items-center justify-between">
             <div>
               <p className="text-xs text-muted-foreground font-semibold">Pending Acknowledgment</p>
-              <p className="text-xl font-bold text-foreground mt-0.5">{purchaseOrderData.filter(po => po.acknowledgmentStatus === 'Pending').length}</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">{purchaseOrders.filter(po => po.acknowledgmentStatus === 'Pending').length}</p>
               <p className="text-[11px] text-amber-600 font-medium">Action required</p>
             </div>
             <div className="p-2.5 bg-amber-50 rounded-lg">
@@ -522,7 +1077,7 @@ export function PurchaseOrderManagement() {
           <CardContent className="p-3.5 flex items-center justify-between">
             <div>
               <p className="text-xs text-muted-foreground font-semibold">Change Requests</p>
-              <p className="text-xl font-bold text-foreground mt-0.5">{purchaseOrderData.reduce((acc, po) => acc + po.changeRequests.length, 0)}</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">{purchaseOrders.reduce((acc, po) => acc + (po.changeRequests || []).length, 0)}</p>
               <p className="text-[11px] text-purple-600 font-medium">Active requests</p>
             </div>
             <div className="p-2.5 bg-purple-50 rounded-lg">
@@ -871,7 +1426,7 @@ export function PurchaseOrderManagement() {
                                       size="sm"
                                       onClick={() => {
                                         setSelectedPO(po);
-                                        setIsPOModalOpen(true);
+                                        setCurrentView('view');
                                       }}
                                       className="h-8 w-8 p-0 bg-white hover:bg-slate-50 rounded-full border-slate-200"
                                     >
@@ -1024,7 +1579,7 @@ export function PurchaseOrderManagement() {
                       size="sm"
                       onClick={() => {
                         setSelectedPO(po);
-                        setIsPOModalOpen(true);
+                        setCurrentView('view');
                       }}
                       className="h-10 px-4 font-bold text-xs border-slate-200 hover:border-primary hover:text-primary transition-all bg-white shadow-sm"
                     >
@@ -1089,7 +1644,7 @@ export function PurchaseOrderManagement() {
                       size="sm"
                       onClick={() => {
                         setSelectedPO(po);
-                        setIsPOModalOpen(true);
+                        setCurrentView('view');
                       }}
                       className="flex-1 h-9 font-bold text-xs bg-white border-slate-200 hover:bg-slate-50 gap-2"
                     >
@@ -1175,8 +1730,8 @@ export function PurchaseOrderManagement() {
               <h3>Change Requests</h3>
             </div>
             <div className="space-y-4 p-4">
-              {purchaseOrderData.flatMap(po => 
-                po.changeRequests.map(change => (
+              {purchaseOrders.flatMap(po => 
+                (po.changeRequests || []).map((change: any) => (
                   <Card key={`${po.id}-${change.id}`} className="p-4">
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
@@ -1300,324 +1855,6 @@ export function PurchaseOrderManagement() {
           </div>
         </TabsContent>
       </Tabs>
-
-      <Sheet open={isPOModalOpen} onOpenChange={setIsPOModalOpen}>
-        <SheetContent className="sm:max-w-4xl overflow-y-auto p-0 border-none shadow-2xl">
-          {selectedPO && (
-            <>
-              <div className="bg-slate-900 p-6 text-white shrink-0">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <div className="flex items-center gap-3 mb-2">
-                      <h2 className="text-2xl font-bold tracking-tight">{selectedPO.poNumber}</h2>
-                      <Badge className="bg-white/10 text-white border-white/20 hover:bg-white/20 px-3 py-1 font-bold text-[10px] uppercase tracking-widest leading-none">
-                        {selectedPO.status}
-                      </Badge>
-                    </div>
-                    <p className="text-slate-400 text-sm font-medium">Issue Date: {selectedPO.issueDate} • Vendor Reference: VR-{selectedPO.id}992</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-slate-500 mb-1">Total Order Value</p>
-                    <p className="text-3xl font-black text-white leading-none">{selectedPO.currency} {selectedPO.totalAmount?.toLocaleString()}</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="p-6 space-y-6 overflow-y-auto bg-white" style={{ maxHeight: 'calc(90vh - 120px)' }}>
-                {/* Metadata Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600">
-                        <Building className="w-5 h-5" />
-                      </div>
-                      <div>
-                        <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Buyer Information</p>
-                        <p className="text-sm font-bold text-slate-700">{selectedPO.buyer}</p>
-                        <p className="text-xs text-slate-500">{selectedPO.buyerContact}</p>
-                      </div>
-                    </div>
-                    <div className="h-px bg-slate-100" />
-                    <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-xl bg-orange-50 flex items-center justify-center text-orange-600">
-                        <ShoppingCart className="w-5 h-5" />
-                      </div>
-                      <div>
-                        <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">RFQ Reference</p>
-                        <p className="text-sm font-bold text-slate-700">{selectedPO.rfqNumber}</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600">
-                        <Calendar className="w-5 h-5" />
-                      </div>
-                      <div>
-                        <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Delivery Details</p>
-                        <p className="text-sm font-bold text-slate-700">Expected: {selectedPO.expectedDeliveryDate}</p>
-                        <p className="text-xs text-slate-500">Priority: <span className="font-bold text-red-500">{selectedPO.priority}</span></p>
-                      </div>
-                    </div>
-                    <div className="h-px bg-slate-100" />
-                    <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-xl bg-purple-50 flex items-center justify-center text-purple-600">
-                        <Clock className="w-5 h-5" />
-                      </div>
-                      <div>
-                        <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Payment Terms</p>
-                        <p className="text-sm font-bold text-slate-700">{selectedPO.terms}</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100">
-                    <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-2">Shipping Address</p>
-                    <div className="flex gap-2">
-                      <Building className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
-                      <p className="text-xs text-slate-600 leading-relaxed font-medium">{selectedPO.deliveryAddress}</p>
-                    </div>
-                    <div className="mt-4 pt-4 border-t border-slate-200/60">
-                      <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-2">Acknowledgment</p>
-                      <Badge variant={getStatusColor(selectedPO.acknowledgmentStatus)} className="font-bold">
-                        {selectedPO.acknowledgmentStatus}
-                      </Badge>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Line Items Table */}
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <h5 className="font-bold text-slate-800 text-sm flex items-center gap-2">
-                      <List className="w-4 h-4" />
-                      Order Items List
-                    </h5>
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{selectedPO.lineItems?.length} Positions</span>
-                  </div>
-                  <div className="border border-slate-200 rounded-xl overflow-hidden shadow-sm">
-                    <table className="w-full text-sm">
-                      <thead className="bg-slate-50/80 text-[10px] uppercase tracking-[0.1em] font-black text-slate-500 border-b border-slate-200">
-                        <tr>
-                          <th className="p-3 text-left">Description</th>
-                          <th className="p-3 text-right">Qty</th>
-                          <th className="p-3 text-right">Unit Price</th>
-                          <th className="p-3 text-right">Total</th>
-                          <th className="p-3 text-center">Delivery Date</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-slate-100">
-                        {selectedPO.lineItems?.map((item: any) => (
-                          <tr key={item.id} className="hover:bg-slate-50/50 transition-colors">
-                            <td className="p-3">
-                              <p className="font-bold text-slate-700">{item.item}</p>
-                              <p className="text-[10px] text-slate-400">ID: ITEM-{item.id}200</p>
-                            </td>
-                            <td className="p-3 text-right font-black text-slate-600">{item.quantity}</td>
-                            <td className="p-3 text-right font-semibold text-slate-500">{selectedPO.currency} {item.unitPrice?.toLocaleString()}</td>
-                            <td className="p-3 text-right font-black text-slate-900">{selectedPO.currency} {item.total?.toLocaleString()}</td>
-                            <td className="p-3 text-center">
-                              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-600">
-                                {item.deliveryDate}
-                              </span>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-
-                {/* Communication and Notes section - High Density */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <div className="space-y-3">
-                    <h5 className="font-bold text-slate-800 text-sm flex items-center gap-2">
-                      <MessageSquare className="w-4 h-4" />
-                      Collaboration Log
-                    </h5>
-                    <div className="border border-slate-200 rounded-xl p-4 bg-slate-50/30 max-h-48 overflow-y-auto space-y-3">
-                      {selectedPO.communicationHistory && selectedPO.communicationHistory.length > 0 ? (
-                        selectedPO.communicationHistory.map((comm: any) => (
-                          <div key={comm.id} className="text-xs bg-white p-3 rounded-lg border border-slate-100 shadow-sm">
-                            <div className="flex justify-between items-center mb-1.5 font-bold">
-                              <span className="text-primary uppercase tracking-tighter text-[9px]">{comm.type}</span>
-                              <span className="text-slate-400 tabular-nums">{comm.timestamp}</span>
-                            </div>
-                            <p className="text-slate-600 leading-relaxed italic">"{comm.message}"</p>
-                            <p className="mt-2 text-[9px] text-slate-400 text-right uppercase tracking-widest font-black">— {comm.author}</p>
-                          </div>
-                        ))
-                      ) : (
-                        <div className="text-center py-8 text-slate-400">
-                          <MessageSquare className="w-10 h-10 mx-auto mb-2 opacity-10" />
-                          <p className="text-xs font-medium">No communication history recorded.</p>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="space-y-3">
-                    <h5 className="font-bold text-slate-800 text-sm flex items-center gap-2">
-                      <AlertCircle className="w-4 h-4 text-amber-500" />
-                      Delivery Notes & Instructions
-                    </h5>
-                    <div className="border border-slate-200 rounded-xl p-4 bg-slate-50/80 h-48 flex flex-col justify-between">
-                      <p className="text-xs text-slate-600 leading-relaxed italic font-medium">
-                        "{selectedPO.notes || "No special instructions provided by the buyer for this order."}"
-                      </p>
-                      <div className="flex flex-wrap gap-2 pt-4">
-                        {selectedPO.attachments?.map((file: string, idx: number) => (
-                          <Badge key={idx} variant="outline" className="bg-white text-[9px] font-bold uppercase tracking-widest border-slate-200 cursor-pointer hover:border-primary transition-colors gap-1.5 h-6">
-                            <FileText className="w-3 h-3" />
-                            {file}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="p-4 bg-slate-50 border-t border-slate-200 flex flex-wrap gap-3 shrink-0 no-print">
-                {selectedPO.acknowledgmentStatus === 'Pending' && (
-                  <Button className="flex-1 sm:flex-none sm:min-w-[180px] gap-2 h-11 font-bold shadow-lg shadow-green-500/20 bg-green-600 hover:bg-green-700 transition-all transform active:scale-95 text-white" onClick={() => handleAcknowledgePO(selectedPO.id)}>
-                    <CheckCircle className="w-5 h-5" />
-                    Acknowledge Order
-                  </Button>
-                )}
-                <Button variant="outline" className="flex-1 sm:flex-none sm:min-w-[160px] gap-2 h-11 font-bold border-slate-200 hover:bg-white transition-all shadow-sm bg-white" onClick={() => handleRequestChange(selectedPO.id)}>
-                  <Edit3 className="w-4 h-4 text-blue-500" />
-                  Request Change
-                </Button>
-                <Button variant="outline" className="flex-1 sm:flex-none sm:min-w-[160px] gap-2 h-11 font-bold border-slate-200 hover:bg-white transition-all shadow-sm bg-white" onClick={() => handleSendMessage(selectedPO.id)}>
-                  <MessageCircle className="w-4 h-4 text-slate-500" />
-                  Message
-                </Button>
-                <Button variant="outline" className="flex-1 sm:flex-none sm:min-w-[140px] gap-2 h-11 font-bold border-slate-200 hover:bg-white transition-all shadow-sm bg-white ml-auto">
-                  <Download className="w-4 h-4" />
-                  Download
-                </Button>
-                <Button variant="ghost" onClick={() => setIsPOModalOpen(false)} className="flex-1 sm:flex-none h-11 font-bold text-slate-400 hover:text-slate-600 hover:bg-slate-200/50">
-                  Close Review
-                </Button>
-              </div>
-            </>
-          )}
-        </SheetContent>
-      </Sheet>
-
-      {/* Change Request Sheet */}
-      <Sheet open={isChangeRequestModalOpen} onOpenChange={setIsChangeRequestModalOpen}>
-        <SheetContent className="sm:max-w-xl overflow-y-auto">
-          <SheetHeader>
-            <SheetTitle>Request Change</SheetTitle>
-            <SheetDescription>
-              Submit a change request for this purchase order
-            </SheetDescription>
-          </SheetHeader>
-          <div className="space-y-4 mt-4">
-            <div className="space-y-2">
-              <Label>Change Type</Label>
-              <Select>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select change type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="quantity">Quantity Change</SelectItem>
-                  <SelectItem value="delivery_date">Delivery Date</SelectItem>
-                  <SelectItem value="specifications">Specifications</SelectItem>
-                  <SelectItem value="price">Price Adjustment</SelectItem>
-                  <SelectItem value="other">Other</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            
-            <div className="space-y-2">
-              <Label>Description</Label>
-              <Textarea 
-                placeholder="Describe the requested change and reason..."
-                rows={4}
-              />
-            </div>
-            
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Current Value</Label>
-                <Input placeholder="Current value" />
-              </div>
-              <div className="space-y-2">
-                <Label>Proposed Value</Label>
-                <Input placeholder="Proposed value" />
-              </div>
-            </div>
-            
-            <div className="space-y-2">
-              <Label>Financial Impact (if applicable)</Label>
-              <Input placeholder="$0.00" type="number" />
-            </div>
-
-            <div className="flex justify-end gap-2 pt-4">
-              <Button variant="outline" onClick={() => setIsChangeRequestModalOpen(false)}>
-                Cancel
-              </Button>
-              <Button onClick={() => setIsChangeRequestModalOpen(false)}>
-                Submit Request
-              </Button>
-            </div>
-          </div>
-        </SheetContent>
-      </Sheet>
-
-      {/* Communication Sheet */}
-      <Sheet open={isCommunicationModalOpen} onOpenChange={setIsCommunicationModalOpen}>
-        <SheetContent className="sm:max-w-xl overflow-y-auto">
-          <SheetHeader>
-            <SheetTitle>Send Message</SheetTitle>
-            <SheetDescription>
-              Communicate with the buyer about this purchase order
-            </SheetDescription>
-          </SheetHeader>
-          <div className="space-y-4 mt-4">
-            <div className="space-y-2">
-              <Label>Subject</Label>
-              <Input placeholder="Message subject" />
-            </div>
-            
-            <div className="space-y-2">
-              <Label>Message</Label>
-              <Textarea 
-                placeholder="Enter your message..."
-                rows={6}
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label>Priority</Label>
-              <Select>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select priority" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="low">Low</SelectItem>
-                  <SelectItem value="medium">Medium</SelectItem>
-                  <SelectItem value="high">High</SelectItem>
-                  <SelectItem value="urgent">Urgent</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="flex justify-end gap-2 pt-4">
-              <Button variant="outline" onClick={() => setIsCommunicationModalOpen(false)}>
-                Cancel
-              </Button>
-              <Button onClick={() => setIsCommunicationModalOpen(false)}>
-                Send Message
-              </Button>
-            </div>
-          </div>
-        </SheetContent>
-      </Sheet>
     </div>
   );
 }

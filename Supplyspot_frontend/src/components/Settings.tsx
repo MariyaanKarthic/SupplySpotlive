@@ -1,4 +1,12 @@
 import React, { useState } from 'react';
+import { 
+  Breadcrumb, 
+  BreadcrumbItem, 
+  BreadcrumbLink, 
+  BreadcrumbList, 
+  BreadcrumbPage, 
+  BreadcrumbSeparator 
+} from './ui/breadcrumb';
 import { Card } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -34,7 +42,11 @@ const userRoles = [
   { id: 4, name: 'Emily Davis', email: 'emily.davis@company.com', role: 'Editor', status: 'Inactive', lastLogin: '2023-12-05' }
 ];
 
-export function Settings() {
+interface SettingsProps {
+  onNavigate?: (section: any) => void;
+}
+
+export function Settings({ onNavigate }: SettingsProps) {
   const [activeTab, setActiveTab] = useState('general');
   const [isAddUserOpen, setIsAddUserOpen] = useState(false);
   const [showApiKey, setShowApiKey] = useState(false);
@@ -561,9 +573,33 @@ export function Settings() {
   };
 
   return (
-    <div className="p-6">
-      <div className="mb-6">
-        <h1 className="text-3xl font-semibold">Settings</h1>
+    <div className="px-6 pb-6 space-y-6 w-full max-w-full overflow-x-hidden">
+      {/* Sticky Header section with Breadcrumbs */}
+      <div className="sticky top-0 bg-background/95 backdrop-blur z-20 border-b py-3 -mx-6 px-6 space-y-1.5 flex flex-col no-print">
+        <Breadcrumb className="text-xs">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink 
+                onClick={() => onNavigate && onNavigate("home")} 
+                className="cursor-pointer"
+              >
+                Dashboard
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Management</BreadcrumbPage>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Settings</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+        <div className="flex items-center justify-between w-full">
+          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">Settings</h1>
+          
+        </div>
       </div>
 
       <div className="flex gap-6">

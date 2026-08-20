@@ -1,4 +1,12 @@
 import React, { useState } from 'react';
+import { 
+  Breadcrumb, 
+  BreadcrumbItem, 
+  BreadcrumbLink, 
+  BreadcrumbList, 
+  BreadcrumbPage, 
+  BreadcrumbSeparator 
+} from './ui/breadcrumb';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
@@ -503,7 +511,11 @@ const mockPerformanceMetrics: PerformanceMetric[] = [
   }
 ];
 
-export const SupplierDashboard: React.FC = () => {
+interface SupplierDashboardProps {
+  onNavigate?: (section: any) => void;
+}
+
+export const SupplierDashboard: React.FC<SupplierDashboardProps> = ({ onNavigate }) => {
   const navigate = useNavigate();
   const { logout } = useAuth();
 
@@ -596,20 +608,34 @@ export const SupplierDashboard: React.FC = () => {
     const to = Math.min(currentPage * itemsPerPage, totalItems);
 
     return (
-      <div className="flex items-center justify-end px-4 py-1 bg-card border-t text-sm text-muted-foreground gap-8">
-        <div className="flex items-center gap-2">
-          <span>Rows per page:</span>
-          <Select value={itemsPerPage.toString()} onValueChange={(v: string) => setItemsPerPage(parseInt(v))}>
-            <SelectTrigger className="h-8 w-16 border-none shadow-none focus:ring-0 bg-transparent hover:bg-muted/50">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="5">5</SelectItem>
-              <SelectItem value="10">10</SelectItem>
-              <SelectItem value="25">25</SelectItem>
-            </SelectContent>
-          </Select>
+      <div className="px-6 pb-6 space-y-6 w-full max-w-full overflow-x-hidden">
+      {/* Sticky Header section with Breadcrumbs */}
+      <div className="sticky top-0 bg-background/95 backdrop-blur z-20 border-b py-3 -mx-6 px-6 space-y-1.5 flex flex-col no-print">
+        <Breadcrumb className="text-xs">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink 
+                onClick={() => onNavigate && onNavigate("home")} 
+                className="cursor-pointer"
+              >
+                Dashboard
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Supplier Portal</BreadcrumbPage>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Supplier Dashboard</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+        <div className="flex items-center justify-between w-full">
+          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">Supplier Portal</h1>
+          
         </div>
+      </div>
 
         <span>{from}–{to} of {totalItems}</span>
 
@@ -862,13 +888,32 @@ export const SupplierDashboard: React.FC = () => {
   const urgentNotifications = mockNotifications.filter(n => n.priority === 'urgent' && !n.read).length;
 
   return (
-    <div className="p-4 pt-2 space-y-4">
-      {/* Header */}
-      <div className="flex justify-between items-center bg-transparent py-2 px-0">
-        <div className="flex items-center gap-4">
+    <div className="px-6 pb-6 space-y-6 w-full max-w-full overflow-x-hidden">
+      {/* Sticky Header section with Breadcrumbs */}
+      <div className="sticky top-0 bg-background/95 backdrop-blur z-20 border-b py-3 -mx-6 px-6 space-y-1.5 flex flex-col no-print">
+        <Breadcrumb className="text-xs">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink 
+                onClick={() => onNavigate && onNavigate("home")} 
+                className="cursor-pointer"
+              >
+                Dashboard
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Supplier Portal</BreadcrumbPage>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Supplier Dashboard</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+        <div className="flex items-center justify-between w-full">
           <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">Supplier Portal</h1>
-        </div>
-        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3">
           {/* Notifications Popover */}
           <Popover>
             <PopoverTrigger asChild>
@@ -1308,6 +1353,7 @@ export const SupplierDashboard: React.FC = () => {
               </div>
             </PopoverContent>
           </Popover>
+        </div>
         </div>
       </div>
 

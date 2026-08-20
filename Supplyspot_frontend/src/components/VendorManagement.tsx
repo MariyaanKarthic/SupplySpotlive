@@ -1,4 +1,12 @@
 import React, { useState } from 'react';
+import { 
+  Breadcrumb, 
+  BreadcrumbItem, 
+  BreadcrumbLink, 
+  BreadcrumbList, 
+  BreadcrumbPage, 
+  BreadcrumbSeparator 
+} from './ui/breadcrumb';
 import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -433,9 +441,10 @@ const discussions = [
 
 interface VendorManagementProps {
   onNavigateToRegistration?: () => void;
+  onNavigate?: (section: any) => void;
 }
 
-export function VendorManagement({ onNavigateToRegistration }: VendorManagementProps) {
+export function VendorManagement({ onNavigateToRegistration, onNavigate }: VendorManagementProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedVendor, setSelectedVendor] = useState<any>(null);
   const [isViewVendorOpen, setIsViewVendorOpen] = useState(false);
@@ -621,13 +630,32 @@ export function VendorManagement({ onNavigateToRegistration }: VendorManagementP
   };
 
   return (
-    <div className="p-6 space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
+    <div className="px-6 pb-6 space-y-6 w-full max-w-full overflow-x-hidden">
+      {/* Sticky Header section with Breadcrumbs */}
+      <div className="sticky top-0 bg-background/95 backdrop-blur z-20 border-b py-3 -mx-6 px-6 space-y-1.5 flex flex-col no-print">
+        <Breadcrumb className="text-xs">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink 
+                onClick={() => onNavigate && onNavigate("home")} 
+                className="cursor-pointer"
+              >
+                Dashboard
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Supplier Onboarding</BreadcrumbPage>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Vendor Management</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+        <div className="flex items-center justify-between w-full">
           <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">Vendor Management</h1>
-        </div>
-        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2">
           <Button
             className="gap-2"
             onClick={onNavigateToRegistration}
@@ -639,6 +667,7 @@ export function VendorManagement({ onNavigateToRegistration }: VendorManagementP
             <UserPlus className="w-4 h-4" />
             Registration Portal
           </Button>
+        </div>
         </div>
       </div>
 

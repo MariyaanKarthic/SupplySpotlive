@@ -1,4 +1,12 @@
 import { useState } from 'react';
+import { 
+  Breadcrumb, 
+  BreadcrumbItem, 
+  BreadcrumbLink, 
+  BreadcrumbList, 
+  BreadcrumbPage, 
+  BreadcrumbSeparator 
+} from './ui/breadcrumb';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
@@ -82,7 +90,11 @@ interface DocumentItem {
   type: string;
 }
 
-export default function ProcurementCollaboration() {
+interface ProcurementCollaborationProps {
+  onNavigate?: (section: any) => void;
+}
+
+export default function ProcurementCollaboration({ onNavigate }: ProcurementCollaborationProps) {
   const [selectedItem, setSelectedItem] = useState<CollaborationItem | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState<string>('all');
@@ -482,134 +494,32 @@ export default function ProcurementCollaboration() {
   const unreadMessages = messages.filter(m => !m.read).length;
 
   return (
-    <div className="p-6 space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
+    <div className="px-6 pb-6 space-y-6 w-full max-w-full overflow-x-hidden">
+      {/* Sticky Header section with Breadcrumbs */}
+      <div className="sticky top-0 bg-background/95 backdrop-blur z-20 border-b py-3 -mx-6 px-6 space-y-1.5 flex flex-col no-print">
+        <Breadcrumb className="text-xs">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink 
+                onClick={() => onNavigate && onNavigate("home")} 
+                className="cursor-pointer"
+              >
+                Dashboard
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Procurement</BreadcrumbPage>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Collaboration Dashboard</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+        <div className="flex items-center justify-between w-full">
           <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">Procurement Collaboration</h1>
-        </div>
-        <div className="flex items-center gap-3">
-          {/* Notifications Sheet */}
-          <Sheet open={showNotifications} onOpenChange={setShowNotifications}>
-            <SheetTrigger asChild>
-              <Button variant="outline" className="relative">
-                <Bell className="h-4 w-4 mr-2" />
-                Notifications
-                {unreadNotifications > 0 && (
-                  <Badge className="ml-2 bg-red-500">{unreadNotifications}</Badge>
-                )}
-              </Button>
-            </SheetTrigger>
-            <SheetContent className="sm:max-w-md overflow-y-auto">
-              <SheetHeader>
-                <SheetTitle>Notifications</SheetTitle>
-                <SheetDescription>
-                  Stay updated with your collaboration activities
-                </SheetDescription>
-              </SheetHeader>
-              <ScrollArea className="h-[calc(100vh-120px)] pr-4 mt-4">
-                <div className="space-y-3">
-                  {notifications.map((notification) => (
-                    <div
-                      key={notification.id}
-                      className={`p-4 rounded-lg border cursor-pointer hover:bg-slate-50 transition-colors ${
-                        notification.read ? 'bg-white' : 'bg-blue-50 border-blue-200'
-                      }`}
-                      onClick={() => markNotificationAsRead(notification.id)}
-                    >
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-1">
-                            {notification.type === 'message' && <MessageSquare className="h-4 w-4 text-blue-600" />}
-                            {notification.type === 'approval' && <CheckCircle className="h-4 w-4 text-green-600" />}
-                            {notification.type === 'document' && <FileText className="h-4 w-4 text-purple-600" />}
-                            {notification.type === 'deadline' && <Clock className="h-4 w-4 text-orange-600" />}
-                            <span className="text-slate-900">{notification.title}</span>
-                          </div>
-                          <p className="text-slate-600 text-sm">{notification.description}</p>
-                          <p className="text-slate-400 text-xs mt-1">{notification.timestamp}</p>
-                        </div>
-                        <Badge className={getPriorityColor(notification.priority)}>
-                          {notification.priority}
-                        </Badge>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </ScrollArea>
-            </SheetContent>
-          </Sheet>
-
-          {/* Quick Upload Sheet */}
-          <Sheet open={showQuickUpload} onOpenChange={setShowQuickUpload}>
-            <SheetTrigger asChild>
-              <Button>
-                <Upload className="h-4 w-4 mr-2" />
-                Quick Upload
-              </Button>
-            </SheetTrigger>
-            <SheetContent className="sm:max-w-lg overflow-y-auto">
-              <SheetHeader>
-                <SheetTitle>Quick Upload Documents</SheetTitle>
-                <SheetDescription>
-                  Upload documents to the current collaboration
-                </SheetDescription>
-              </SheetHeader>
-              <div className="space-y-4 mt-4">
-                <div>
-                  <Label>Document Category</Label>
-                  <Select value={uploadCategory} onValueChange={setUploadCategory}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select category" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="rfq">RFQ Documents</SelectItem>
-                      <SelectItem value="quotation">Quotations</SelectItem>
-                      <SelectItem value="technical">Technical Specifications</SelectItem>
-                      <SelectItem value="compliance">Compliance Documents</SelectItem>
-                      <SelectItem value="contract">Contract Documents</SelectItem>
-                      <SelectItem value="other">Other</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label>Select Files</Label>
-                  <Input
-                    type="file"
-                    multiple
-                    onChange={handleFileSelect}
-                    className="cursor-pointer"
-                  />
-                  {uploadFiles.length > 0 && (
-                    <div className="mt-2 space-y-1">
-                      {uploadFiles.map((file, index) => (
-                        <div key={index} className="flex items-center justify-between p-2 bg-slate-50 rounded">
-                          <div className="flex items-center gap-2">
-                            <FileText className="h-4 w-4 text-slate-600" />
-                            <span className="text-sm text-slate-900">{file.name}</span>
-                          </div>
-                          <span className="text-xs text-slate-500">{(file.size / 1024).toFixed(2)} KB</span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-                <div>
-                  <Label>Description (Optional)</Label>
-                  <Textarea placeholder="Add a description for these documents..." />
-                </div>
-              </div>
-              <SheetFooter className="mt-4">
-                <Button variant="outline" onClick={() => setShowQuickUpload(false)}>
-                  Cancel
-                </Button>
-                <Button onClick={handleQuickUpload}>
-                  <Upload className="h-4 w-4 mr-2" />
-                  Upload Files
-                </Button>
-              </SheetFooter>
-            </SheetContent>
-          </Sheet>
+          
         </div>
       </div>
 

@@ -1,4 +1,12 @@
 import React, { useState } from 'react';
+import { 
+  Breadcrumb, 
+  BreadcrumbItem, 
+  BreadcrumbLink, 
+  BreadcrumbList, 
+  BreadcrumbPage, 
+  BreadcrumbSeparator 
+} from './ui/breadcrumb';
 import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -802,7 +810,11 @@ const clarificationData = [
 
 
 
-export function RFQManagement() {
+interface RFQManagementProps {
+  onNavigate?: (section: any) => void;
+}
+
+export function RFQManagement({ onNavigate }: RFQManagementProps) {
   const [activeTab, setActiveTab] = useState('rfqs');
   const [rfqs, setRFQs] = useState(rfqData);
   const [quotations, setQuotations] = useState(quotationData);
@@ -834,23 +846,34 @@ export function RFQManagement() {
     const to = Math.min(currentPage * itemsPerPage, totalItems);
 
     return (
-      <div className="flex items-center justify-end px-4 py-2 border-t text-[13px] text-slate-500 gap-8 h-12 bg-white">
-        <div className="flex items-center gap-2">
-          <span>Rows per page:</span>
-          <Select value={itemsPerPage.toString()} onValueChange={(v: string) => {
-            setItemsPerPage(parseInt(v));
-            onPageChange(1);
-          }}>
-            <SelectTrigger className="h-8 w-16 border-none shadow-none focus:ring-0 bg-transparent hover:bg-slate-50 text-slate-600 font-medium">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="5">5</SelectItem>
-              <SelectItem value="10">10</SelectItem>
-              <SelectItem value="25">25</SelectItem>
-            </SelectContent>
-          </Select>
+      <div className="px-6 pb-6 space-y-6 w-full max-w-full overflow-x-hidden">
+      {/* Sticky Header section with Breadcrumbs */}
+      <div className="sticky top-0 bg-background/95 backdrop-blur z-20 border-b py-3 -mx-6 px-6 space-y-1.5 flex flex-col no-print">
+        <Breadcrumb className="text-xs">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink 
+                onClick={() => onNavigate && onNavigate("home")} 
+                className="cursor-pointer"
+              >
+                Dashboard
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Procurement</BreadcrumbPage>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>RFQ Management</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+        <div className="flex items-center justify-between w-full">
+          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">RFQ Management</h1>
+          
         </div>
+      </div>
 
         <span className="font-medium whitespace-nowrap">{from}–{to} of {totalItems}</span>
 
@@ -1138,17 +1161,37 @@ export function RFQManagement() {
   };
 
   return (
-    <div className="p-5 space-y-4">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
+    <div className="px-6 pb-6 space-y-6 w-full max-w-full overflow-x-hidden">
+      {/* Sticky Header section with Breadcrumbs */}
+      <div className="sticky top-0 bg-background/95 backdrop-blur z-20 border-b py-3 -mx-6 px-6 space-y-1.5 flex flex-col no-print">
+        <Breadcrumb className="text-xs">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink 
+                onClick={() => onNavigate && onNavigate("home")} 
+                className="cursor-pointer"
+              >
+                Dashboard
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Procurement</BreadcrumbPage>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>RFQ Management</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+        <div className="flex items-center justify-between w-full">
           <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">RFQ Management</h1>
-        </div>
-        <div className="flex gap-3">
+          <div className="flex gap-3">
           <Button variant="outline" className="gap-2 h-10 border-slate-200" onClick={() => window.location.reload()}>
             <RefreshCw className="w-4 h-4" />
             Refresh
           </Button>
+        </div>
         </div>
       </div>
 

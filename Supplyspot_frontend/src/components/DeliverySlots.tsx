@@ -1,4 +1,12 @@
 import React, { useState } from 'react';
+import { 
+  Breadcrumb, 
+  BreadcrumbItem, 
+  BreadcrumbLink, 
+  BreadcrumbList, 
+  BreadcrumbPage, 
+  BreadcrumbSeparator 
+} from './ui/breadcrumb';
 import {
   Truck,
   Calendar,
@@ -784,7 +792,11 @@ const mockProductionSchedule: ProductionSchedule[] = [
   }
 ];
 
-export function DeliverySlots() {
+interface DeliverySlotsProps {
+  onNavigate?: (section: any) => void;
+}
+
+export function DeliverySlots({ onNavigate }: DeliverySlotsProps) {
   const [activeTab, setActiveTab] = useState('bookings');
   const [slots, setSlots] = useState<DeliverySlot[]>(mockInitialSlots);
   const [bookings, setBookings] = useState<SlotBooking[]>(mockInitialBookings);
@@ -1147,35 +1159,32 @@ export function DeliverySlots() {
   const weekDays = getWeekDays(selectedDate);
 
   return (
-    <div className="p-4 sm:p-6 space-y-6 w-full max-w-full overflow-x-hidden">
-      {/* Top Header */}
-      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 pb-2 border-b border-slate-100">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">
-            Automated Smart Delivery Slots
-          </h1>
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <Button variant="outline" size="sm" className="gap-1.5 text-xs bg-blue-50 text-blue-700 border-blue-300 hover:bg-blue-100 dark:bg-blue-950 dark:text-blue-300" onClick={() => setShowRouteMapModal(true)}>
-            <MapIcon className="w-3.5 h-3.5 text-blue-600" />
-            Dynamic Route Map
-          </Button>
-          <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={() => toast.info('Auto-optimizing slot capacities and carrier routes...')}>
-            <RefreshCw className="w-3.5 h-3.5" />
-            Auto-Optimize
-          </Button>
-          <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={() => toast.success('Schedule exported as CSV/PDF!')}>
-            <Download className="w-3.5 h-3.5" />
-            Export Schedule
-          </Button>
-          <Button size="sm" className="gap-1.5 text-xs bg-emerald-600 hover:bg-emerald-700 text-white" onClick={() => setShowAddBooking(true)}>
-            <Plus className="w-3.5 h-3.5" />
-            Add Active Booking
-          </Button>
-          <Button size="sm" variant="default" className="gap-1.5 text-xs" onClick={() => setShowCreateSlot(true)}>
-            <Layers className="w-3.5 h-3.5" />
-            Create Slot
-          </Button>
+    <div className="px-6 pb-6 space-y-6 w-full max-w-full overflow-x-hidden">
+      {/* Sticky Header section with Breadcrumbs */}
+      <div className="sticky top-0 bg-background/95 backdrop-blur z-20 border-b py-3 -mx-6 px-6 space-y-1.5 flex flex-col no-print">
+        <Breadcrumb className="text-xs">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink 
+                onClick={() => onNavigate && onNavigate("home")} 
+                className="cursor-pointer"
+              >
+                Dashboard
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Logistics</BreadcrumbPage>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Smart Delivery Slots</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+        <div className="flex items-center justify-between w-full">
+          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">Delivery Slots Management</h1>
+          
         </div>
       </div>
 

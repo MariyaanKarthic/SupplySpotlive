@@ -1,4 +1,12 @@
 import React, { useState } from 'react';
+import { 
+  Breadcrumb, 
+  BreadcrumbItem, 
+  BreadcrumbLink, 
+  BreadcrumbList, 
+  BreadcrumbPage, 
+  BreadcrumbSeparator 
+} from './ui/breadcrumb';
 import {
   ShieldCheck,
   AlertTriangle,
@@ -364,7 +372,11 @@ const mockRiskAssessments: RiskAssessment[] = [
   }
 ];
 
-export function RegulatoryCompliance() {
+interface RegulatoryComplianceProps {
+  onNavigate?: (section: any) => void;
+}
+
+export function RegulatoryCompliance({ onNavigate }: RegulatoryComplianceProps) {
   const [activeTab, setActiveTab] = useState('alerts');
   const [searchQuery, setSearchQuery] = useState('');
   const [filterSeverity, setFilterSeverity] = useState('all');
@@ -472,92 +484,32 @@ export function RegulatoryCompliance() {
   });
 
   return (
-    <div className="p-4 sm:p-6 space-y-6 w-full max-w-full overflow-x-hidden">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">
-            Regulatory & Sustainability Monitoring
-          </h1>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline" className="gap-2">
-            <RefreshCw className="w-4 h-4" />
-            Sync Updates
-          </Button>
-          <Button variant="outline" className="gap-2">
-            <Download className="w-4 h-4" />
-            Export Report
-          </Button>
-          <Sheet open={showCreateAlert} onOpenChange={setShowCreateAlert}>
-            <SheetTrigger asChild>
-              <Button className="gap-2">
-                <Plus className="w-4 h-4" />
-                Add Alert
-              </Button>
-            </SheetTrigger>
-            <SheetContent className="sm:max-w-2xl overflow-y-auto">
-              <SheetHeader>
-                <SheetTitle>Create Regulatory Alert</SheetTitle>
-                <SheetDescription>
-                  Add a new regulatory or sustainability alert for monitoring
-                </SheetDescription>
-              </SheetHeader>
-              <div className="space-y-4 mt-4">
-                <div>
-                  <Label>Alert Title</Label>
-                  <Input placeholder="Enter alert title" />
-                </div>
-                <div>
-                  <Label>Description</Label>
-                  <Textarea placeholder="Detailed description of the regulatory change" rows={3} />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label>Type</Label>
-                    <Select>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="regulatory">Regulatory</SelectItem>
-                        <SelectItem value="sustainability">Sustainability</SelectItem>
-                        <SelectItem value="compliance">Compliance</SelectItem>
-                        <SelectItem value="environmental">Environmental</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label>Severity</Label>
-                    <Select>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select severity" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="critical">Critical</SelectItem>
-                        <SelectItem value="high">High</SelectItem>
-                        <SelectItem value="medium">Medium</SelectItem>
-                        <SelectItem value="low">Low</SelectItem>
-                        <SelectItem value="info">Info</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-                <div>
-                  <Label>Jurisdiction</Label>
-                  <Input placeholder="e.g., European Union, United States" />
-                </div>
-                <div className="flex justify-end gap-2">
-                  <Button variant="outline" onClick={() => setShowCreateAlert(false)}>
-                    Cancel
-                  </Button>
-                  <Button onClick={() => setShowCreateAlert(false)}>
-                    Create Alert
-                  </Button>
-                </div>
-              </div>
-            </SheetContent>
-          </Sheet>
+    <div className="px-6 pb-6 space-y-6 w-full max-w-full overflow-x-hidden">
+      {/* Sticky Header section with Breadcrumbs */}
+      <div className="sticky top-0 bg-background/95 backdrop-blur z-20 border-b py-3 -mx-6 px-6 space-y-1.5 flex flex-col no-print">
+        <Breadcrumb className="text-xs">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink 
+                onClick={() => onNavigate && onNavigate("home")} 
+                className="cursor-pointer"
+              >
+                Dashboard
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Management</BreadcrumbPage>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Regulatory & Sustainability</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+        <div className="flex items-center justify-between w-full">
+          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">Regulatory & Sustainability</h1>
+          
         </div>
       </div>
 

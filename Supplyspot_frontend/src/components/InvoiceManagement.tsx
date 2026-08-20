@@ -1,4 +1,12 @@
 import React, { useState } from 'react';
+import { 
+  Breadcrumb, 
+  BreadcrumbItem, 
+  BreadcrumbLink, 
+  BreadcrumbList, 
+  BreadcrumbPage, 
+  BreadcrumbSeparator 
+} from './ui/breadcrumb';
 import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -212,7 +220,11 @@ const vendorSubmissions = [
   }
 ];
 
-export function InvoiceManagement() {
+interface InvoiceManagementProps {
+  onNavigate?: (section: any) => void;
+}
+
+export function InvoiceManagement({ onNavigate }: InvoiceManagementProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [isAddInvoiceOpen, setIsAddInvoiceOpen] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState<any>(null);
@@ -313,102 +325,32 @@ export function InvoiceManagement() {
   const totalOcrProcessing = invoices.filter(inv => inv.status === 'OCR Processing').length;
 
   return (
-    <div className="p-6 space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
+    <div className="px-6 pb-6 space-y-6 w-full max-w-full overflow-x-hidden">
+      {/* Sticky Header section with Breadcrumbs */}
+      <div className="sticky top-0 bg-background/95 backdrop-blur z-20 border-b py-3 -mx-6 px-6 space-y-1.5 flex flex-col no-print">
+        <Breadcrumb className="text-xs">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink 
+                onClick={() => onNavigate && onNavigate("home")} 
+                className="cursor-pointer"
+              >
+                Dashboard
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Finance & Payments</BreadcrumbPage>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Invoices</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+        <div className="flex items-center justify-between w-full">
           <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">Invoice Management</h1>
-        </div>
-        <div className="flex gap-3">
-          <Button 
-            variant="outline" 
-            className="gap-2"
-            onClick={() => setIsVendorSubmissionOpen(true)}
-          >
-            <Globe className="w-4 h-4" />
-            Vendor Portal
-          </Button>
-          <Button 
-            variant="outline" 
-            className="gap-2"
-            onClick={() => setIsOcrModalOpen(true)}
-          >
-            <Scan className="w-4 h-4" />
-            OCR Scan
-          </Button>
-          <Sheet open={isAddInvoiceOpen} onOpenChange={setIsAddInvoiceOpen}>
-            <SheetTrigger asChild>
-              <Button className="gap-2">
-                <Plus className="w-4 h-4" />
-                Add Invoice
-              </Button>
-            </SheetTrigger>
-            <SheetContent className="sm:max-w-xl overflow-y-auto">
-              <SheetHeader>
-                <SheetTitle>Create New Invoice</SheetTitle>
-                <SheetDescription>
-                  Create a new invoice by entering the details below.
-                </SheetDescription>
-              </SheetHeader>
-              <div className="grid grid-cols-2 gap-4 mt-4">
-                <div className="space-y-2">
-                  <Label htmlFor="invoice-number">Invoice Number</Label>
-                  <Input id="invoice-number" placeholder="INV-2023-XXX" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="invoice-vendor">Vendor</Label>
-                  <Select>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select vendor" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="techcorp">TechCorp Solutions</SelectItem>
-                      <SelectItem value="global">Global Supplies Ltd</SelectItem>
-                      <SelectItem value="premium">Premium Services Inc</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="invoice-amount">Amount</Label>
-                  <Input id="invoice-amount" type="number" placeholder="0.00" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="invoice-due">Due Date</Label>
-                  <DatePicker id="invoice-due" placeholder="Select due date" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="invoice-issue">Issue Date</Label>
-                  <DatePicker id="invoice-issue" placeholder="Select issue date" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="invoice-category">Category</Label>
-                  <Select>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select category" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="technology">Technology</SelectItem>
-                      <SelectItem value="materials">Materials</SelectItem>
-                      <SelectItem value="services">Services</SelectItem>
-                      <SelectItem value="transportation">Transportation</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2 col-span-2">
-                  <Label htmlFor="invoice-description">Description</Label>
-                  <Input id="invoice-description" placeholder="Invoice description" />
-                </div>
-              </div>
-              <div className="flex justify-end gap-2 mt-6">
-                <Button variant="outline" onClick={() => setIsAddInvoiceOpen(false)}>
-                  Cancel
-                </Button>
-                <Button onClick={() => setIsAddInvoiceOpen(false)}>
-                  Create Invoice
-                </Button>
-              </div>
-            </SheetContent>
-          </Sheet>
+          
         </div>
       </div>
 

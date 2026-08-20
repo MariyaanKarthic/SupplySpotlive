@@ -1,4 +1,12 @@
 import React, { useState } from 'react';
+import { 
+  Breadcrumb, 
+  BreadcrumbItem, 
+  BreadcrumbLink, 
+  BreadcrumbList, 
+  BreadcrumbPage, 
+  BreadcrumbSeparator 
+} from './ui/breadcrumb';
 import {
   Target,
   Plus,
@@ -294,7 +302,11 @@ const mockReverseAuction: ReverseAuction = {
   ]
 };
 
-export function SourcingRFx() {
+interface SourcingRFxProps {
+  onNavigate?: (section: any) => void;
+}
+
+export function SourcingRFx({ onNavigate }: SourcingRFxProps) {
   const [activeTab, setActiveTab] = useState('overview');
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState('all');
@@ -395,188 +407,32 @@ export function SourcingRFx() {
   };
 
   return (
-    <div className="p-4 sm:p-6 space-y-6 w-full max-w-full overflow-x-hidden">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">
-            Sourcing & RFx Processes
-          </h1>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline" className="gap-2">
-            <Upload className="w-4 h-4" />
-            Import from SAP
-          </Button>
-          <Sheet open={showCreateDialog} onOpenChange={setShowCreateDialog}>
-            <SheetTrigger asChild>
-              <Button className="gap-2">
-                <Plus className="w-4 h-4" />
-                Create RFx
-              </Button>
-            </SheetTrigger>
-            <SheetContent className="sm:max-w-4xl overflow-y-auto">
-              <SheetHeader>
-                <SheetTitle>Create New RFx</SheetTitle>
-                <SheetDescription>
-                  Create a new Request for Quotation, Proposal, or Information
-                </SheetDescription>
-              </SheetHeader>
-              <div className="space-y-6">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label>RFx Type</Label>
-                    <Select 
-                      value={newRFx.type} 
-                      onValueChange={(value: 'RFQ' | 'RFP' | 'RFI') => setNewRFx({...newRFx, type: value})}
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="RFQ">RFQ - Request for Quotation</SelectItem>
-                        <SelectItem value="RFP">RFP - Request for Proposal</SelectItem>
-                        <SelectItem value="RFI">RFI - Request for Information</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label>Category</Label>
-                    <Select onValueChange={(value: string) => setNewRFx({...newRFx, category: value})}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select category" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="office-supplies">Office Supplies</SelectItem>
-                        <SelectItem value="technology">Technology</SelectItem>
-                        <SelectItem value="professional-services">Professional Services</SelectItem>
-                        <SelectItem value="manufacturing">Manufacturing</SelectItem>
-                        <SelectItem value="logistics">Logistics</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-                
-                <div>
-                  <Label>Title</Label>
-                  <Input 
-                    placeholder="Enter RFx title"
-                    value={newRFx.title || ''}
-                    onChange={(e) => setNewRFx({...newRFx, title: e.target.value})}
-                  />
-                </div>
-                
-                <div>
-                  <Label>Description</Label>
-                  <Textarea 
-                    placeholder="Detailed description of requirements"
-                    value={newRFx.description || ''}
-                    onChange={(e) => setNewRFx({...newRFx, description: e.target.value})}
-                    rows={3}
-                  />
-                </div>
-                
-                <div className="grid grid-cols-3 gap-4">
-                  <div>
-                    <Label>SAP PR Number (Optional)</Label>
-                    <Input 
-                      placeholder="PR-45001236"
-                      value={newRFx.prNumber || ''}
-                      onChange={(e) => setNewRFx({...newRFx, prNumber: e.target.value})}
-                    />
-                  </div>
-                  <div>
-                    <Label>Budget</Label>
-                    <Input 
-                      type="number"
-                      placeholder="0"
-                      value={newRFx.budget || ''}
-                      onChange={(e) => setNewRFx({...newRFx, budget: Number(e.target.value)})}
-                    />
-                  </div>
-                  <div>
-                    <Label>Currency</Label>
-                    <Select 
-                      value={newRFx.currency} 
-                      onValueChange={(value: string) => setNewRFx({...newRFx, currency: value})}
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="USD">USD</SelectItem>
-                        <SelectItem value="EUR">EUR</SelectItem>
-                        <SelectItem value="GBP">GBP</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-                
-                <div className="flex items-center space-x-2">
-                  <Switch 
-                    checked={newRFx.isReverseAuction}
-                    onCheckedChange={(checked: boolean) => setNewRFx({...newRFx, isReverseAuction: checked})}
-                  />
-                  <Label>Enable Reverse Auction</Label>
-                </div>
-                
-                <div className="flex justify-between pt-4">
-                  <Sheet open={showScoringDialog} onOpenChange={setShowScoringDialog}>
-                    <SheetTrigger asChild>
-                      <Button variant="outline">Configure Scoring</Button>
-                    </SheetTrigger>
-                    <SheetContent className="sm:max-w-2xl overflow-y-auto">
-                      <SheetHeader>
-                        <SheetTitle>Scoring Criteria Configuration</SheetTitle>
-                        <SheetDescription>
-                          Set weights for different evaluation criteria (total must equal 100%)
-                        </SheetDescription>
-                      </SheetHeader>
-                      <div className="space-y-4 mt-4">
-                        {Object.entries(newRFx.scoringCriteria || {}).map(([key, criterion]) => (
-                          <div key={key} className="flex items-center space-x-4">
-                            <Switch 
-                              checked={criterion.enabled}
-                              onCheckedChange={(checked: boolean) => {
-                                setNewRFx({...newRFx, scoringCriteria: {
-                                  ...newRFx.scoringCriteria!,
-                                  [key]: { ...criterion, enabled: checked }
-                                }});
-                              }}
-                            />
-                            <Label className="w-24 capitalize">{key}</Label>
-                            <div className="flex-1">
-                              <Slider
-                                value={[criterion.weight]}
-                                onValueChange={([value]: number[]) => {
-                                  setNewRFx({...newRFx, scoringCriteria: {
-                                    ...newRFx.scoringCriteria!,
-                                    [key]: { ...criterion, weight: value }
-                                  }});
-                                }}
-                                max={100}
-                                step={5}
-                                className="flex-1"
-                                disabled={!criterion.enabled}
-                              />
-                            </div>
-                            <span className="w-12 text-right">{criterion.weight}%</span>
-                          </div>
-                        ))}
-                      </div>
-                    </SheetContent>
-                  </Sheet>
-                  
-                  <div className="flex gap-2">
-                    <Button variant="outline" onClick={() => setShowCreateDialog(false)}>
-                      Cancel
-                    </Button>
-                    <Button onClick={handleCreateRFx}>Create RFx</Button>
-                  </div>
-                </div>
-              </div>
-            </SheetContent>
-          </Sheet>
+    <div className="px-6 pb-6 space-y-6 w-full max-w-full overflow-x-hidden">
+      {/* Sticky Header section with Breadcrumbs */}
+      <div className="sticky top-0 bg-background/95 backdrop-blur z-20 border-b py-3 -mx-6 px-6 space-y-1.5 flex flex-col no-print">
+        <Breadcrumb className="text-xs">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink 
+                onClick={() => onNavigate && onNavigate("home")} 
+                className="cursor-pointer"
+              >
+                Dashboard
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Procurement</BreadcrumbPage>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Sourcing & RFx</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+        <div className="flex items-center justify-between w-full">
+          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">Sourcing & RFx Processes</h1>
+          
         </div>
       </div>
 

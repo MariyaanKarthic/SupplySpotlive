@@ -85,7 +85,16 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { DraggableTableRow, DraggableTableHeader } from './ui/draggable-table-row';
+import { ModernDataTable, ColumnDef } from './ui/modern-data-table';
 import { Settings2, ArrowUpDown, ChevronLeft, ChevronRight, FileSpreadsheet } from 'lucide-react';
+import { 
+  Breadcrumb, 
+  BreadcrumbItem, 
+  BreadcrumbLink, 
+  BreadcrumbList, 
+  BreadcrumbPage, 
+  BreadcrumbSeparator 
+} from './ui/breadcrumb';
 
 // Mock data for Goods Receipts
 const mockGoodsReceipts = [
@@ -979,7 +988,11 @@ const mockGoodsReceipts = [
   }
 ];
 
-export function GoodsReceipts() {
+interface GoodsReceiptsProps {
+  onNavigate?: (section: any) => void;
+}
+
+export function GoodsReceipts({ onNavigate }: GoodsReceiptsProps) {
   const [goodsReceipts, setGoodsReceipts] = useState(mockGoodsReceipts);
   const [grSearchTerm, setGrSearchTerm] = useState('');
   const [grStatusFilter, setGrStatusFilter] = useState('all');
@@ -1001,6 +1014,130 @@ export function GoodsReceipts() {
   const [activeTab, setActiveTab] = useState('overview');
   const [showMetrics, setShowMetrics] = useState(true);
   const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set());
+
+  const grColumns: ColumnDef<any>[] = [
+    {
+      key: 'grNumber',
+      header: 'GR Number',
+      sortable: true,
+      render: (gr) => (
+        <div>
+          <p className="font-semibold text-slate-900 dark:text-slate-100 leading-tight">{gr.grNumber}</p>
+          <p className="text-[11px] text-slate-400 font-medium">Location: {gr.warehouse}</p>
+        </div>
+      ),
+    },
+    {
+      key: 'poNumber',
+      header: 'PO Reference',
+      sortable: true,
+      render: (gr) => (
+        <Badge variant="outline" className="font-medium text-xs border-slate-200 text-slate-600 h-6">
+          <ShoppingCart className="w-3 h-3 mr-1 text-slate-400" />
+          {gr.poNumber}
+        </Badge>
+      ),
+    },
+    {
+      key: 'vendor',
+      header: 'Vendor',
+      sortable: true,
+      render: (gr) => (
+        <div className="flex items-center gap-2.5">
+          <div className="h-7 w-7 rounded-lg bg-slate-50 flex items-center justify-center text-slate-400">
+            <Building className="w-3.5 h-3.5" />
+          </div>
+          <div>
+            <p className="text-xs font-semibold text-slate-700">{gr.vendor}</p>
+            <p className="text-[10px] text-slate-400 font-medium">{gr.vendorCode}</p>
+          </div>
+        </div>
+      ),
+    },
+    {
+      key: 'receiptDate',
+      header: 'Receipt Date',
+      sortable: true,
+      render: (gr) => (
+        <div className="flex items-center gap-1.5 text-slate-600 font-medium h-7 px-2.5 bg-slate-50/60 rounded-md group-hover:bg-white transition-colors w-fit">
+          <Calendar className="w-3.5 h-3.5 text-slate-400" />
+          <span className="text-xs">{gr.receiptDate}</span>
+        </div>
+      ),
+    },
+    {
+      key: 'status',
+      header: 'Status',
+      sortable: true,
+      render: (gr) => getStatusBadge(gr.status),
+    },
+    {
+      key: 'qualityStatus',
+      header: 'Quality',
+      sortable: true,
+      render: (gr) => getQualityBadge(gr.qualityStatus),
+    },
+    {
+      key: 'matchingStatus',
+      header: 'Matching',
+      sortable: true,
+      render: (gr) => getMatchingBadge(gr.matchingStatus),
+    },
+    {
+      key: 'progress',
+      header: 'Progress',
+      sortable: true,
+      render: (gr) => (
+        <div className="flex flex-col gap-1 min-w-[120px]">
+          <div className="flex justify-between items-center text-[10px] font-bold text-slate-500">
+            <span>{Math.round((gr.itemsAccepted / gr.totalItems) * 105)}%</span>
+            <span className="text-slate-300">Intake</span>
+          </div>
+          <Progress value={(gr.itemsAccepted / gr.totalItems) * 105} className="h-1 bg-slate-100" />
+        </div>
+      ),
+    },
+    {
+      key: 'actions',
+      header: 'Actions',
+      align: 'center',
+      render: (gr) => (
+        <div className="flex items-center justify-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handleViewGR(gr)}
+            className="h-7 w-7 p-0 bg-white hover:bg-slate-50 rounded-full border-slate-200"
+          >
+            <Eye className="w-3.5 h-3.5 text-slate-600" />
+          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-full">
+                <MoreHorizontal className="w-4 h-4 text-slate-400" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48 shadow-xl border-slate-200/60 p-1.5">
+              <DropdownMenuLabel className="text-xs font-semibold text-slate-500 px-2 py-1.5">Actions</DropdownMenuLabel>
+              <DropdownMenuItem className="gap-2.5 py-2.5 cursor-pointer rounded-md">
+                <Edit className="w-4 h-4 text-blue-500" />
+                <span className="font-semibold text-sm">Update GR</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem className="gap-2.5 py-2.5 cursor-pointer rounded-md">
+                <Scan className="w-4 h-4 text-purple-500" />
+                <span className="font-semibold text-sm">Print Labels</span>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator className="my-1.5" />
+              <DropdownMenuItem className="gap-2.5 py-2.5 cursor-pointer rounded-md text-slate-600">
+                <Download className="w-4 h-4" />
+                <span className="font-semibold text-sm">Download PDF</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      ),
+    },
+  ];
 
   const handleSelectRow = (id: number) => {
     setSelectedRows((prev) => {
@@ -1400,27 +1537,45 @@ export function GoodsReceipts() {
   };
 
   return (
-    <div className="p-4 sm:p-6 space-y-6 w-full max-w-full overflow-x-hidden">
-      {/* Header */}
-      <div className="flex items-center justify-between no-print">
-        <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">Goods Receipts</h1>
-        <div className="flex items-center gap-3">
-          <Button 
-            variant="outline" 
-            onClick={() => setShowMetrics(!showMetrics)}
-            className={`h-11 w-11 p-0 border-slate-200 hover:bg-slate-100 transition-all ${showMetrics ? 'text-blue-600 bg-blue-50 border-blue-200' : 'text-slate-600'}`}
-          >
-            <BarChart3 className="w-5 h-5" />
-          </Button>
-          <Button variant="outline" className="h-11 px-4 border-slate-200 hover:bg-slate-100 text-slate-700 font-bold gap-2 relative bg-white">
-            <Bell className="w-4 h-4 text-slate-500" />
-            Alerts
-            <span className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-blue-500 text-[10px] flex items-center justify-center rounded-full border-2 border-white text-white font-black">2</span>
-          </Button>
-          <Button className="h-11 px-6 bg-blue-600 hover:bg-blue-700 font-bold gap-2 transform transition-all active:scale-95 text-white" onClick={() => setShowCreateDialog(true)}>
-            <Plus className="w-5 h-5" />
-            Create Entry
-          </Button>
+    <div className="px-6 pb-6 space-y-6 w-full max-w-full overflow-x-hidden">
+      {/* Sticky Header section with Breadcrumbs */}
+      <div className="sticky top-0 bg-background/95 backdrop-blur z-20 border-b py-3 -mx-6 px-6 space-y-1.5 no-print flex flex-col">
+        <Breadcrumb className="text-xs">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink 
+                onClick={() => onNavigate && onNavigate("home")} 
+                className="cursor-pointer"
+              >
+                Dashboard
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Goods Receipts</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+        <div className="flex items-center justify-between w-full">
+          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">Goods Receipts</h1>
+          <div className="flex items-center gap-3">
+            <Button 
+              variant="outline" 
+              onClick={() => setShowMetrics(!showMetrics)}
+              className={`h-11 w-11 p-0 border-slate-200 hover:bg-slate-100 transition-all ${showMetrics ? 'text-blue-600 bg-blue-50 border-blue-200' : 'text-slate-600'}`}
+            >
+              <BarChart3 className="w-5 h-5" />
+            </Button>
+            <Button variant="outline" className="h-11 px-4 border-slate-200 hover:bg-slate-100 text-slate-700 font-bold gap-2 relative bg-white">
+              <Bell className="w-4 h-4 text-slate-500" />
+              Alerts
+              <span className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-blue-500 text-[10px] flex items-center justify-center rounded-full border-2 border-white text-white font-black">2</span>
+            </Button>
+            <Button className="h-11 px-6 bg-blue-600 hover:bg-blue-700 font-bold gap-2 transform transition-all active:scale-95 text-white" onClick={() => setShowCreateDialog(true)}>
+              <Plus className="w-5 h-5" />
+              Create Entry
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -1452,452 +1607,31 @@ export function GoodsReceipts() {
         </div>
       )}
 
-      {/* Combined Unified Toolbar */}
-      {/* Consolidated Management Container */}
-      <Card className="overflow-hidden border border-slate-200 dark:border-slate-800 mb-6">
-        <div className="p-3.5 border-b flex flex-col lg:flex-row items-center justify-between gap-4 bg-white dark:bg-slate-950 no-print">
-          <h3 className="font-semibold text-lg text-foreground shrink-0">Goods Intake</h3>
+      <ModernDataTable
+        title="Goods Intake"
+        data={goodsReceipts}
+        columns={grColumns}
+        idKey="id"
+        searchPlaceholder="Search by GR, PO, or vendor..."
+        searchKeys={['grNumber', 'poNumber', 'vendor']}
+        selectable={true}
+        draggable={true}
+        onRowOrderChange={(reordered) => setGoodsReceipts(reordered)}
+        exportEnabled={true}
+        onExport={handleExportCSV}
+        extraActions={
+          <>
+            <Button
+              onClick={() => setShowCreateDialog(true)}
+              className="bg-blue-600 hover:bg-blue-700 text-white rounded-xl h-9.5 text-xs font-semibold gap-1.5 px-3.5 shadow-sm"
+            >
+              <Plus className="w-4 h-4" />
+              New Goods Receipt
+            </Button>
+          </>
+        }
+      />
 
-          <div className="flex flex-wrap items-center gap-3">
-            <div className="relative w-72 sm:w-80">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input
-                placeholder="Search by GR, PO, or vendor..."
-                value={grSearchTerm}
-                onChange={(e) => setGrSearchTerm(e.target.value)}
-                className="pl-9 h-9 bg-slate-50/50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-800 focus:bg-white transition-all text-xs sm:text-sm"
-              />
-            </div>
-
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="outline" size="sm" className="h-9 px-3 flex items-center gap-2 bg-slate-50/50 border-slate-200 dark:border-slate-800">
-                  <Columns className="w-4 h-4 text-slate-600 dark:text-slate-400" />
-                  <span className="text-xs font-medium">Columns</span>
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent align="end" className="w-52 p-2">
-                <p className="text-xs font-semibold text-slate-500 px-2 py-1.5 mb-1 border-b border-slate-100 dark:border-slate-800 pb-2">Manage Columns</p>
-                <div className="mt-1 space-y-0.5">
-                  {[
-                    { id: 'grNumber', label: 'GR Number' },
-                    { id: 'poNumber', label: 'PO Reference' },
-                    { id: 'vendor', label: 'Vendor' },
-                    { id: 'receiptDate', label: 'Receipt Date' },
-                    { id: 'status', label: 'Status' },
-                    { id: 'quality', label: 'Quality' },
-                    { id: 'matching', label: 'Match' },
-                    { id: 'progress', label: 'Intake Progress' }
-                  ].map(col => (
-                    <div
-                      key={col.id}
-                      className="flex items-center gap-2.5 px-2 py-1.5 rounded-md hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer transition-colors"
-                      onClick={() => toggleColumn(col.id)}
-                    >
-                      <Checkbox
-                        checked={visibleGrColumns.includes(col.id)}
-                        onCheckedChange={() => toggleColumn(col.id)}
-                        className="pointer-events-none"
-                      />
-                      <span className="text-xs text-slate-700 dark:text-slate-300 select-none">{col.label}</span>
-                    </div>
-                  ))}
-                </div>
-              </PopoverContent>
-            </Popover>
-
-            <div className="flex items-center border border-slate-200 dark:border-slate-800 rounded-lg p-0.5 bg-slate-50 dark:bg-slate-900 shrink-0 h-9">
-              <Button
-                variant={grViewMode === 'card' ? 'secondary' : 'ghost'}
-                size="sm"
-                onClick={() => setGrViewMode('card')}
-                className="rounded-md h-8 px-2.5"
-              >
-                <Grid className="w-4 h-4" />
-              </Button>
-              <Button
-                variant={grViewMode === 'list' ? 'secondary' : 'ghost'}
-                size="sm"
-                onClick={() => setGrViewMode('list')}
-                className="rounded-md h-8 px-2.5"
-              >
-                <List className="w-4 h-4" />
-              </Button>
-              <Button
-                variant={grViewMode === 'table' ? 'secondary' : 'ghost'}
-                size="sm"
-                onClick={() => setGrViewMode('table')}
-                className="rounded-md h-8 px-2.5"
-              >
-                <TableIcon className="w-4 h-4" />
-              </Button>
-            </div>
-
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="h-9 px-3 flex items-center gap-2 bg-slate-50/50 border-slate-200 dark:border-slate-800">
-                  <Download className="w-4 h-4 text-slate-600 dark:text-slate-400" />
-                  <span className="text-xs font-medium text-slate-700 dark:text-slate-300">Export</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuItem onSelect={handleExportExcel} className="gap-2 cursor-pointer text-xs">
-                  <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
-                  Export to Excel (.xls)
-                </DropdownMenuItem>
-                <DropdownMenuItem onSelect={handleExportCSV} className="gap-2 cursor-pointer text-xs">
-                  <FileText className="w-4 h-4 text-blue-600" />
-                  Export to CSV (.csv)
-                </DropdownMenuItem>
-                <DropdownMenuItem onSelect={handleExportPDF} className="gap-2 cursor-pointer text-xs">
-                  <Printer className="w-4 h-4 text-rose-600" />
-                  Export to PDF / Print
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        </div>
-
-        {grViewMode === 'table' && (
-          <div className="flex-1 overflow-hidden">
-            <div className="overflow-x-auto h-full overflow-y-auto">
-              <DndContext
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragEnd={handleDragEnd}
-              >
-                <SortableContext
-                  items={pagedGRs.map((p) => p.id)}
-                  strategy={verticalListSortingStrategy}
-                >
-                  <Table className="w-full">
-                    <TableHeader className="bg-slate-100/80 dark:bg-slate-900/80">
-                      <DraggableTableHeader>
-                        <TableHead className="w-10 min-w-[40px] max-w-[40px] p-2 text-center sticky left-10 z-30 bg-slate-100 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
-                          <Checkbox
-                            checked={selectedRows.size === filteredGRs.length && filteredGRs.length > 0}
-                            onCheckedChange={handleSelectAll}
-                          />
-                        </TableHead>
-                        {visibleGrColumns.includes('grNumber') && (
-                          <TableHead className="text-left p-3.5 font-semibold text-slate-600 dark:text-slate-300 text-xs sticky left-20 z-30 bg-slate-100 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)] whitespace-nowrap min-w-[180px]">
-                            <button onClick={() => requestSort('grNumber')} className="flex items-center gap-1 hover:text-primary transition-all">
-                              GR Number
-                              <ArrowUpDown className={`w-3.5 h-3.5 ${grSortConfig.key === 'grNumber' ? 'text-primary' : 'text-slate-400'}`} />
-                            </button>
-                          </TableHead>
-                        )}
-                        {visibleGrColumns.includes('poNumber') && (
-                          <TableHead className="text-left p-3.5 font-semibold text-slate-600 dark:text-slate-300 text-xs whitespace-nowrap">
-                            <button onClick={() => requestSort('poNumber')} className="flex items-center gap-1 hover:text-primary transition-all">
-                              PO Reference
-                              <ArrowUpDown className={`w-3.5 h-3.5 ${grSortConfig.key === 'poNumber' ? 'text-primary' : 'text-slate-400'}`} />
-                            </button>
-                          </TableHead>
-                        )}
-                        {visibleGrColumns.includes('vendor') && (
-                          <TableHead className="text-left p-3.5 font-semibold text-slate-600 dark:text-slate-300 text-xs whitespace-nowrap min-w-[200px]">
-                            <button onClick={() => requestSort('vendor')} className="flex items-center gap-1 hover:text-primary transition-all">
-                              Vendor
-                              <ArrowUpDown className={`w-3.5 h-3.5 ${grSortConfig.key === 'vendor' ? 'text-primary' : 'text-slate-400'}`} />
-                            </button>
-                          </TableHead>
-                        )}
-                        {visibleGrColumns.includes('receiptDate') && (
-                          <TableHead className="text-left p-3.5 font-semibold text-slate-600 dark:text-slate-300 text-xs whitespace-nowrap">
-                            <button onClick={() => requestSort('receiptDate')} className="flex items-center gap-1 hover:text-primary transition-all">
-                              Receipt Date
-                              <ArrowUpDown className={`w-3.5 h-3.5 ${grSortConfig.key === 'receiptDate' ? 'text-primary' : 'text-slate-400'}`} />
-                            </button>
-                          </TableHead>
-                        )}
-                        {visibleGrColumns.includes('status') && (
-                          <TableHead className="text-left p-3.5 font-semibold text-slate-600 dark:text-slate-300 text-xs whitespace-nowrap">
-                            <button onClick={() => requestSort('status')} className="flex items-center gap-1 hover:text-primary transition-all">
-                              Status
-                              <ArrowUpDown className={`w-3.5 h-3.5 ${grSortConfig.key === 'status' ? 'text-primary' : 'text-slate-400'}`} />
-                            </button>
-                          </TableHead>
-                        )}
-                        {visibleGrColumns.includes('quality') && (
-                          <TableHead className="text-left p-3.5 font-semibold text-slate-600 dark:text-slate-300 text-xs whitespace-nowrap">
-                            <button onClick={() => requestSort('qualityStatus')} className="flex items-center gap-1 hover:text-primary transition-all">
-                              Quality
-                              <ArrowUpDown className={`w-3.5 h-3.5 ${grSortConfig.key === 'qualityStatus' ? 'text-primary' : 'text-slate-400'}`} />
-                            </button>
-                          </TableHead>
-                        )}
-                        {visibleGrColumns.includes('matching') && (
-                          <TableHead className="text-left p-3.5 font-semibold text-slate-600 dark:text-slate-300 text-xs whitespace-nowrap">
-                            <button onClick={() => requestSort('matchingStatus')} className="flex items-center gap-1 hover:text-primary transition-all">
-                              Matching
-                              <ArrowUpDown className={`w-3.5 h-3.5 ${grSortConfig.key === 'matchingStatus' ? 'text-primary' : 'text-slate-400'}`} />
-                            </button>
-                          </TableHead>
-                        )}
-                        {visibleGrColumns.includes('progress') && (
-                          <TableHead className="text-left p-3.5 font-semibold text-slate-600 dark:text-slate-300 text-xs whitespace-nowrap min-w-[140px]">
-                            <button onClick={() => requestSort('itemsAccepted')} className="flex items-center gap-1 hover:text-primary transition-all">
-                              Progress
-                              <ArrowUpDown className={`w-3.5 h-3.5 ${grSortConfig.key === 'itemsAccepted' ? 'text-primary' : 'text-slate-400'}`} />
-                            </button>
-                          </TableHead>
-                        )}
-                        <TableHead className="p-3.5 font-semibold text-slate-600 dark:text-slate-300 text-xs sticky right-0 z-30 bg-slate-100 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-[-2px_0_5px_-2px_rgba(0,0,0,0.1)] text-center w-24">
-                          Actions
-                        </TableHead>
-                      </DraggableTableHeader>
-                    </TableHeader>
-                    <TableBody>
-                      {pagedGRs.map((gr) => (
-                        <DraggableTableRow key={gr.id} id={gr.id}>
-                          <TableCell className="w-10 min-w-[40px] max-w-[40px] p-2 text-center sticky left-10 z-20 bg-white dark:bg-slate-950 group-hover:bg-slate-50 dark:group-hover:bg-slate-900 transition-colors">
-                            <Checkbox
-                              checked={selectedRows.has(gr.id)}
-                              onCheckedChange={() => handleSelectRow(gr.id)}
-                            />
-                          </TableCell>
-                          {visibleGrColumns.includes('grNumber') && (
-                            <TableCell className="p-3.5 sticky left-20 z-20 bg-white dark:bg-slate-950 group-hover:bg-slate-50 dark:group-hover:bg-slate-900 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)] transition-colors whitespace-nowrap">
-                              <div>
-                                <p className="font-semibold text-slate-900 dark:text-slate-100 leading-tight">{gr.grNumber}</p>
-                                <p className="text-[11px] text-slate-400 font-medium">Location: {gr.warehouse}</p>
-                              </div>
-                            </TableCell>
-                          )}
-                          {visibleGrColumns.includes('poNumber') && (
-                            <TableCell className="p-3.5 whitespace-nowrap">
-                              <Badge variant="outline" className="font-medium text-xs border-slate-200 text-slate-600 h-6">
-                                <ShoppingCart className="w-3 h-3 mr-1 text-slate-400" />
-                                {gr.poNumber}
-                              </Badge>
-                            </TableCell>
-                          )}
-                          {visibleGrColumns.includes('vendor') && (
-                            <TableCell className="p-3.5 whitespace-nowrap">
-                              <div className="flex items-center gap-2.5">
-                                <div className="h-7 w-7 rounded-lg bg-slate-50 flex items-center justify-center text-slate-400">
-                                  <Building className="w-3.5 h-3.5" />
-                                </div>
-                                <div>
-                                  <p className="text-xs font-semibold text-slate-700">{gr.vendor}</p>
-                                  <p className="text-[10px] text-slate-400 font-medium">{gr.vendorCode}</p>
-                                </div>
-                              </div>
-                            </TableCell>
-                          )}
-                          {visibleGrColumns.includes('receiptDate') && (
-                            <TableCell className="p-3.5 whitespace-nowrap">
-                              <div className="flex items-center gap-1.5 text-slate-600 font-medium h-7 px-2.5 bg-slate-50/60 rounded-md group-hover:bg-white transition-colors w-fit">
-                                <Calendar className="w-3.5 h-3.5 text-slate-400" />
-                                <span className="text-xs">{gr.receiptDate}</span>
-                              </div>
-                            </TableCell>
-                          )}
-                          {visibleGrColumns.includes('status') && (
-                            <TableCell className="p-3.5 whitespace-nowrap">
-                              {getStatusBadge(gr.status)}
-                            </TableCell>
-                          )}
-                          {visibleGrColumns.includes('quality') && (
-                            <TableCell className="p-3.5 whitespace-nowrap">
-                              {getQualityBadge(gr.qualityStatus)}
-                            </TableCell>
-                          )}
-                          {visibleGrColumns.includes('matching') && (
-                            <TableCell className="p-3.5 whitespace-nowrap">
-                              {getMatchingBadge(gr.matchingStatus)}
-                            </TableCell>
-                          )}
-                          {visibleGrColumns.includes('progress') && (
-                            <TableCell className="p-3.5 whitespace-nowrap min-w-[140px]">
-                              <div className="flex flex-col gap-1">
-                                <div className="flex justify-between items-center text-[10px] font-bold text-slate-500">
-                                  <span>{Math.round((gr.itemsAccepted / gr.totalItems) * 100)}%</span>
-                                  <span className="text-slate-300">Intake</span>
-                                </div>
-                                <Progress value={(gr.itemsAccepted / gr.totalItems) * 100} className="h-1 bg-slate-100" />
-                              </div>
-                            </TableCell>
-                          )}
-                          <TableCell className="p-3.5 sticky right-0 z-20 bg-white shadow-[-2px_0_5px_-2px_rgba(0,0,0,0.1)] group-hover:bg-slate-50 transition-colors whitespace-nowrap text-center">
-                            <div className="flex items-center justify-center gap-2">
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => handleViewGR(gr)}
-                                className="h-7 w-7 p-0 bg-white hover:bg-slate-50 rounded-full border-slate-200"
-                              >
-                                <Eye className="w-3.5 h-3.5 text-slate-600" />
-                              </Button>
-                              <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-full">
-                                    <MoreHorizontal className="w-4 h-4 text-slate-400" />
-                                  </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end" className="w-48 shadow-xl border-slate-200/60 p-1.5">
-                                  <DropdownMenuLabel className="text-xs font-semibold text-slate-500 px-2 py-1.5">Actions</DropdownMenuLabel>
-                                  <DropdownMenuItem className="gap-2.5 py-2.5 cursor-pointer rounded-md">
-                                    <Edit className="w-4 h-4 text-blue-500" />
-                                    <span className="font-semibold text-sm">Update GR</span>
-                                  </DropdownMenuItem>
-                                  <DropdownMenuItem className="gap-2.5 py-2.5 cursor-pointer rounded-md">
-                                    <Scan className="w-4 h-4 text-purple-500" />
-                                    <span className="font-semibold text-sm">Print Labels</span>
-                                  </DropdownMenuItem>
-                                  <DropdownMenuSeparator className="my-1.5" />
-                                  <DropdownMenuItem className="gap-2.5 py-2.5 cursor-pointer rounded-md text-slate-600">
-                                    <Download className="w-4 h-4" />
-                                    <span className="font-semibold text-sm">Download PDF</span>
-                                  </DropdownMenuItem>
-                                </DropdownMenuContent>
-                              </DropdownMenu>
-                            </div>
-                          </TableCell>
-                        </DraggableTableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </SortableContext>
-              </DndContext>
-            </div>
-
-            {/* Consolidated Material Pagination */}
-            <MaterialPagination
-              currentPage={grCurrentPage}
-              totalItems={sortedGRs.length}
-              onPageChange={setGrCurrentPage}
-            />
-          </div>
-        )}
-
-        {/* List View */}
-        {grViewMode === 'list' && (
-          <div className="flex-1 overflow-auto p-6 space-y-3 bg-slate-50/30">
-            {pagedGRs.map((gr) => (
-              <div key={gr.id} className="group flex items-center justify-between p-4 bg-white border border-slate-200 rounded-xl hover:border-primary/30 hover:shadow-md transition-all duration-300">
-                {/* ... existing content ... */}
-                <div className="flex items-center gap-6">
-                  {/* ... same as before ... */}
-                  <div className="w-12 h-12 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-primary/5 group-hover:text-primary transition-colors">
-                    <Receipt className="w-6 h-6" />
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-slate-900 group-hover:text-primary transition-colors">{gr.grNumber}</h4>
-                    <p className="text-[11px] text-slate-400 font-medium">Ref: {gr.poNumber}</p>
-                  </div>
-                  <div className="hidden md:flex items-center gap-10 ml-6">
-                    <div>
-                      <p className="text-xs font-semibold text-slate-500 mb-1">Vendor</p>
-                      <p className="text-sm font-bold text-slate-700">{gr.vendor}</p>
-                    </div>
-                    <div>
-                      <p className="text-xs font-semibold text-slate-500 mb-1">Receipt Date</p>
-                      <div className="flex items-center gap-1.5 text-sm font-bold text-slate-600">
-                        <Calendar className="w-3.5 h-3.5 text-slate-400" />
-                        {gr.receiptDate}
-                      </div>
-                    </div>
-                    <div>
-                      <p className="text-xs font-semibold text-slate-500 mb-1">Items</p>
-                      <p className="text-sm font-black text-slate-900">{gr.itemsReceived} / {gr.totalItems}</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-4">
-                  <div className="flex flex-col items-end gap-1.5">
-                    {getStatusBadge(gr.status)}
-                    {getQualityBadge(gr.qualityStatus)}
-                  </div>
-                  <div className="h-10 w-px bg-slate-100 mx-2" />
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleViewGR(gr)}
-                    className="h-10 px-4 font-bold text-xs border-slate-200 hover:border-primary hover:text-primary transition-all bg-white shadow-sm"
-                  >
-                    <Eye className="w-4 h-4 mr-2" />
-                    View Details
-                  </Button>
-                </div>
-              </div>
-            ))}
-            <MaterialPagination
-              currentPage={grCurrentPage}
-              totalItems={sortedGRs.length}
-              onPageChange={setGrCurrentPage}
-            />
-          </div>
-        )}
-
-        {/* Card View */}
-        {grViewMode === 'card' && (
-          <div className="flex-1 overflow-auto p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 bg-slate-50/30">
-            {pagedGRs.map((gr) => (
-              <Card key={gr.id} className="group hover:shadow-xl transition-all duration-300 border-slate-200/60 overflow-hidden flex flex-col bg-white">
-                <div className="p-5 flex-1">
-                  <div className="flex justify-between items-start mb-4">
-                    <div className="h-10 w-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-primary/5 group-hover:text-primary transition-colors">
-                      <Receipt className="w-5 h-5" />
-                    </div>
-                    <div className="flex flex-col items-end gap-1.5">
-                      {getStatusBadge(gr.status)}
-                    </div>
-                  </div>
-                  
-                  <div className="mb-4">
-                    <h4 className="font-bold text-slate-900 group-hover:text-primary transition-colors text-lg">{gr.grNumber}</h4>
-                    <p className="text-[11px] text-slate-400 font-medium">Ref: {gr.poNumber}</p>
-                  </div>
-
-                  <div className="space-y-3 mb-5">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-slate-500 font-medium">Vendor:</span>
-                      <span className="font-bold text-slate-900">{gr.vendor}</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-slate-500 font-medium">Receipt Date:</span>
-                      <span className="text-slate-700 font-semibold">{gr.receiptDate}</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-slate-500 font-medium">Items Status:</span>
-                      <span className="text-slate-700 font-bold">{gr.itemsReceived} / {gr.totalItems} Received</span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2 pt-2 border-t border-slate-50">
-                    {getQualityBadge(gr.qualityStatus)}
-                    {getMatchingBadge(gr.matchingStatus)}
-                  </div>
-                </div>
-
-                <div className="p-3 bg-slate-50 border-t border-slate-100 flex gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleViewGR(gr)}
-                    className="flex-1 h-9 font-bold text-xs bg-white border-slate-200 hover:bg-slate-50 gap-2"
-                  >
-                    <Eye className="w-4 h-4" />
-                    View Details
-                  </Button>
-                  <Button variant="ghost" size="sm" className="h-9 w-9 p-0 bg-white border border-slate-200 hover:bg-slate-50 rounded-md">
-                    <Download className="w-4 h-4 text-slate-400" />
-                  </Button>
-                </div>
-              </Card>
-            ))}
-            <div className="col-span-full">
-              <MaterialPagination
-                currentPage={grCurrentPage}
-                totalItems={sortedGRs.length}
-                onPageChange={setGrCurrentPage}
-              />
-            </div>
-          </div>
-        )}
-      </Card>
 
       {/* Create GR Sheet */}
       <Sheet open={showCreateDialog} onOpenChange={setShowCreateDialog}>

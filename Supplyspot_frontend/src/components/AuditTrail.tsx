@@ -1,4 +1,12 @@
 import React, { useState } from 'react';
+import { 
+  Breadcrumb, 
+  BreadcrumbItem, 
+  BreadcrumbLink, 
+  BreadcrumbList, 
+  BreadcrumbPage, 
+  BreadcrumbSeparator 
+} from './ui/breadcrumb';
 import {
   FileCheck,
   Calendar,
@@ -313,7 +321,11 @@ const mockWorkflows: ApprovalWorkflow[] = [
   }
 ];
 
-export function AuditTrail() {
+interface AuditTrailProps {
+  onNavigate?: (section: any) => void;
+}
+
+export function AuditTrail({ onNavigate }: AuditTrailProps) {
   const [activeTab, setActiveTab] = useState('entries');
   const [searchQuery, setSearchQuery] = useState('');
   const [filterModule, setFilterModule] = useState('all');
@@ -413,23 +425,32 @@ export function AuditTrail() {
   };
 
   return (
-    <div className="p-4 sm:p-6 space-y-6 w-full max-w-full overflow-x-hidden">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">
-            Audit Trail & Approvals
-          </h1>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm" className="gap-2">
-            <Download className="w-4 h-4" />
-            Export Report
-          </Button>
-          <Button variant="outline" size="sm" className="gap-2">
-            <RefreshCw className="w-4 h-4" />
-            Refresh
-          </Button>
+    <div className="px-6 pb-6 space-y-6 w-full max-w-full overflow-x-hidden">
+      {/* Sticky Header section with Breadcrumbs */}
+      <div className="sticky top-0 bg-background/95 backdrop-blur z-20 border-b py-3 -mx-6 px-6 space-y-1.5 flex flex-col no-print">
+        <Breadcrumb className="text-xs">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink 
+                onClick={() => onNavigate && onNavigate("home")} 
+                className="cursor-pointer"
+              >
+                Dashboard
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Management</BreadcrumbPage>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Audit Trail</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+        <div className="flex items-center justify-between w-full">
+          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">Audit Trail Log</h1>
+          
         </div>
       </div>
 

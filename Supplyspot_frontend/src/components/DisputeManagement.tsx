@@ -1,4 +1,12 @@
 import React, { useState } from 'react';
+import { 
+  Breadcrumb, 
+  BreadcrumbItem, 
+  BreadcrumbLink, 
+  BreadcrumbList, 
+  BreadcrumbPage, 
+  BreadcrumbSeparator 
+} from './ui/breadcrumb';
 import {
   MessageSquare,
   AlertTriangle,
@@ -936,7 +944,11 @@ const mockAnalytics: DisputeAnalytics = {
   ]
 };
 
-export function DisputeManagement() {
+interface DisputeManagementProps {
+  onNavigate?: (section: any) => void;
+}
+
+export function DisputeManagement({ onNavigate }: DisputeManagementProps) {
   const [activeTab, setActiveTab] = useState('disputes');
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
@@ -1088,332 +1100,32 @@ export function DisputeManagement() {
   const escalatedDisputes = mockDisputes.filter(d => d.status === 'escalated').length;
 
   return (
-    <div className="p-4 sm:p-6 space-y-6 w-full max-w-full overflow-x-hidden">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">
-            Dispute & Query Management
-          </h1>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline" className="gap-2">
-            <Download className="w-4 h-4" />
-            Export Report
-          </Button>
-          <Sheet open={showCreateDispute} onOpenChange={setShowCreateDispute}>
-            <SheetTrigger asChild>
-              <Button className="gap-2">
-                <Plus className="w-4 h-4" />
-                Submit Query
-              </Button>
-            </SheetTrigger>
-            <SheetContent className="sm:max-w-4xl overflow-y-auto">
-              <SheetHeader>
-                <SheetTitle>Submit New Query/Dispute</SheetTitle>
-                <SheetDescription>
-                  Create a new dispute or query with automatic routing and SLA tracking
-                </SheetDescription>
-              </SheetHeader>
-              <div className="space-y-6">
-                <div>
-                  <Label>Title</Label>
-                  <Input placeholder="Brief description of the issue" />
-                </div>
-                
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label>Category</Label>
-                    <Select value={queryCategory} onValueChange={(value: string) => {
-                      setQueryCategory(value);
-                      setShowDiscrepancyDetails(value === 'invoice-discrepancy');
-                    }}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select category" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="invoice-discrepancy">Invoice Discrepancy</SelectItem>
-                        <SelectItem value="payment-delay">Payment Delay</SelectItem>
-                        <SelectItem value="delivery-issue">Delivery Issue</SelectItem>
-                        <SelectItem value="quality-issue">Quality Issue</SelectItem>
-                        <SelectItem value="po-issue">PO Issue</SelectItem>
-                        <SelectItem value="asn-issue">ASN Issue</SelectItem>
-                        <SelectItem value="other">Other</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label>Priority</Label>
-                    <Select>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select priority" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="low">Low</SelectItem>
-                        <SelectItem value="medium">Medium</SelectItem>
-                        <SelectItem value="high">High</SelectItem>
-                        <SelectItem value="critical">Critical</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                {/* Document Linking Section */}
-                <Card className="border-blue-200 bg-blue-50">
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-lg flex items-center gap-2">
-                      <Hash className="w-5 h-5 text-blue-600" />
-                      Document Reference & Linking
-                    </CardTitle>
-                    <CardDescription>
-                      Link your query to specific documents for faster resolution
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label>Document Type</Label>
-                        <Select value={documentType} onValueChange={setDocumentType}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select document type" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="invoice">Invoice</SelectItem>
-                            <SelectItem value="po">Purchase Order (PO)</SelectItem>
-                            <SelectItem value="asn">Advanced Shipping Notice (ASN)</SelectItem>
-                            <SelectItem value="contract">Contract</SelectItem>
-                            <SelectItem value="delivery-note">Delivery Note</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div>
-                        <Label>Document Number</Label>
-                        <div className="relative">
-                          <Input 
-                            placeholder="Enter document number"
-                            value={documentNumber}
-                            onChange={(e: { target: { value: string } }) => setDocumentNumber(e.target.value)}
-                          />
-                          <Button 
-                            variant="ghost" 
-                            size="sm" 
-                            className="absolute right-1 top-1 h-8 w-8 p-0"
-                            disabled={!documentNumber}
-                          >
-                            <Search className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    {documentNumber && (
-                      <Alert className="border-green-200 bg-green-50">
-                        <CheckCircle className="h-4 w-4 text-green-600" />
-                        <AlertTitle className="text-green-800">Document Found</AlertTitle>
-                        <AlertDescription className="text-green-700">
-                          {documentType.toUpperCase()} #{documentNumber} - Status: Active | Amount: $15,500 | Date: Jan 20, 2024
-                          <Button variant="link" className="p-0 ml-2 text-green-700">
-                            <ExternalLink className="w-3 h-3 mr-1" />
-                            View Details
-                          </Button>
-                        </AlertDescription>
-                      </Alert>
-                    )}
-
-                    <div>
-                      <Label>Additional Related Documents</Label>
-                      <div className="flex gap-2">
-                        <Input placeholder="Additional PO/Invoice/ASN numbers (comma separated)" />
-                        <Button variant="outline" size="sm">
-                          <Plus className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Invoice Discrepancy Details */}
-                {showDiscrepancyDetails && (
-                  <Card className="border-orange-200 bg-orange-50">
-                    <CardHeader className="pb-3">
-                      <CardTitle className="text-lg flex items-center gap-2">
-                        <AlertTriangle className="w-5 h-5 text-orange-600" />
-                        Invoice Discrepancy Details
-                      </CardTitle>
-                      <CardDescription>
-                        Provide specific details about the invoice discrepancy
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      <div>
-                        <Label>Type of Discrepancy</Label>
-                        <Select>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select discrepancy type" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="amount-mismatch">Amount Mismatch</SelectItem>
-                            <SelectItem value="missing-po-reference">Missing PO Reference</SelectItem>
-                            <SelectItem value="missing-asn-reference">Missing ASN Reference</SelectItem>
-                            <SelectItem value="incorrect-quantity">Incorrect Quantity</SelectItem>
-                            <SelectItem value="wrong-pricing">Wrong Pricing</SelectItem>
-                            <SelectItem value="unauthorized-charges">Unauthorized Additional Charges</SelectItem>
-                            <SelectItem value="duplicate-invoice">Duplicate Invoice</SelectItem>
-                            <SelectItem value="other">Other</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <Label>Invoice Amount</Label>
-                          <div className="relative">
-                            <DollarSign className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
-                            <Input type="number" placeholder="15,500" className="pl-10" />
-                          </div>
-                        </div>
-                        <div>
-                          <Label>Expected/PO Amount</Label>
-                          <div className="relative">
-                            <DollarSign className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
-                            <Input type="number" placeholder="15,000" className="pl-10" />
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <Label>Invoice Date</Label>
-                          <DatePicker placeholder="Select invoice date" />
-                        </div>
-                        <div>
-                          <Label>Due Date</Label>
-                          <DatePicker placeholder="Select due date" />
-                        </div>
-                      </div>
-
-                      <div>
-                        <Label>Missing References</Label>
-                        <div className="space-y-2">
-                          <div className="flex items-center space-x-2">
-                            <input type="checkbox" id="missing-po" />
-                            <Label htmlFor="missing-po" className="font-normal">Missing PO Number on Invoice</Label>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <input type="checkbox" id="missing-asn" />
-                            <Label htmlFor="missing-asn" className="font-normal">Missing ASN Reference</Label>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <input type="checkbox" id="missing-delivery" />
-                            <Label htmlFor="missing-delivery" className="font-normal">Missing Delivery Note Reference</Label>
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
-
-                <div>
-                  <Label>Description</Label>
-                  <Textarea 
-                    placeholder="Detailed description of the issue. Please be as specific as possible to help us resolve your query quickly." 
-                    rows={4} 
-                  />
-                </div>
-
-                {/* Quick Templates */}
-                <Card>
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-base">Quick Templates</CardTitle>
-                    <CardDescription>
-                      Use these templates to speed up your query submission
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-2 gap-2">
-                      <Button variant="outline" size="sm" className="justify-start">
-                        <FileText className="w-4 h-4 mr-2" />
-                        Invoice Amount Mismatch
-                      </Button>
-                      <Button variant="outline" size="sm" className="justify-start">
-                        <Hash className="w-4 h-4 mr-2" />
-                        Missing PO Reference
-                      </Button>
-                      <Button variant="outline" size="sm" className="justify-start">
-                        <Truck className="w-4 h-4 mr-2" />
-                        Missing ASN Reference
-                      </Button>
-                      <Button variant="outline" size="sm" className="justify-start">
-                        <DollarSign className="w-4 h-4 mr-2" />
-                        Payment Delay Query
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <div>
-                  <Label>Attachments</Label>
-                  <div className="border-2 border-dashed border-border rounded-lg p-6 text-center">
-                    <Upload className="w-8 h-8 mx-auto mb-3 text-muted-foreground" />
-                    <p className="font-medium mb-1">Upload supporting documents</p>
-                    <p className="text-sm text-muted-foreground mb-3">
-                      Drag and drop files here or click to browse
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      Supported formats: PDF, XLSX, DOC, PNG, JPG (Max 10MB each)
-                    </p>
-                    <Button variant="outline" size="sm" className="mt-3">
-                      <Paperclip className="w-4 h-4 mr-2" />
-                      Choose Files
-                    </Button>
-                  </div>
-                </div>
-
-                {/* Expected Resolution */}
-                <Card className="border-blue-200 bg-blue-50">
-                  <CardContent className="p-4">
-                    <div className="flex items-start gap-3">
-                      <Info className="w-5 h-5 text-blue-600 mt-0.5" />
-                      <div>
-                        <p className="font-medium text-blue-900">Expected Resolution Timeline</p>
-                        <p className="text-sm text-blue-700">
-                          Based on your query category and priority, we aim to provide an initial response within 
-                          <span className="font-medium"> 4-24 hours</span> and full resolution within 
-                          <span className="font-medium"> 2-5 business days</span>.
-                        </p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <div className="flex justify-end gap-2 pt-4 border-t">
-                  <Button variant="outline" onClick={() => {
-                    setShowCreateDispute(false);
-                    setQueryCategory('');
-                    setDocumentType('');
-                    setDocumentNumber('');
-                    setShowDiscrepancyDetails(false);
-                  }}>
-                    Cancel
-                  </Button>
-                  <Button variant="outline">
-                    <Eye className="w-4 h-4 mr-2" />
-                    Preview
-                  </Button>
-                  <Button onClick={() => {
-                    setShowCreateDispute(false);
-                    setQueryCategory('');
-                    setDocumentType('');
-                    setDocumentNumber('');
-                    setShowDiscrepancyDetails(false);
-                  }}>
-                    <Send className="w-4 h-4 mr-2" />
-                    Submit Query
-                  </Button>
-                </div>
-              </div>
-            </SheetContent>
-          </Sheet>
+    <div className="px-6 pb-6 space-y-6 w-full max-w-full overflow-x-hidden">
+      {/* Sticky Header section with Breadcrumbs */}
+      <div className="sticky top-0 bg-background/95 backdrop-blur z-20 border-b py-3 -mx-6 px-6 space-y-1.5 flex flex-col no-print">
+        <Breadcrumb className="text-xs">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink 
+                onClick={() => onNavigate && onNavigate("home")} 
+                className="cursor-pointer"
+              >
+                Dashboard
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Support & Resolution</BreadcrumbPage>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Dispute & Query Management</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+        <div className="flex items-center justify-between w-full">
+          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">Dispute & Query Management</h1>
+          
         </div>
       </div>
 

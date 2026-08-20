@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Sidebar } from "./components/Sidebar";
+import { HomeScreen } from "./components/HomeScreen";
 import { VendorRegistration } from "./components/VendorRegistration";
 import { VendorManagement } from "./components/VendorManagement";
 import { ContractManagement } from "./components/ContractManagement";
@@ -22,15 +23,16 @@ import { SupplierDashboard } from "./components/SupplierDashboard";
 import { Databoards } from "./components/Databoards";
 import { RegistrationReview } from "./components/RegistrationReview";
 import ProcurementCollaboration from "./components/ProcurementCollaboration";
+import { PurchaseRequisitions } from "@/components/PurchaseRequisitions";
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Login from './components/Login';
-import { Analytics as VercelAnalytics } from "@vercel/analytics/react";
-import { SidebarProvider, SidebarTrigger } from "./components/ui/sidebar";
 import { PageSkeleton } from "./components/PageSkeleton";
+import { Analytics as VercelAnalytics } from "@vercel/analytics/react";
 
 export type NavigationItem =
+  | "home"
   | "registration"
   | "registration-review"
   | "vendors"
@@ -39,6 +41,7 @@ export type NavigationItem =
   | "rfq"
   | "purchase-orders"
   | "goods-receipts"
+  | "purchase-requisitions"
   | "procurement-collaboration"
   | "invoices"
   | "ap-automation"
@@ -64,6 +67,7 @@ import {
 } from "./components/ui/breadcrumb";
 
 const sectionTitles: Record<NavigationItem, string> = {
+  home: "Home",
   registration: "Vendor Registration",
   "registration-review": "Registration Review",
   vendors: "Vendor Management",
@@ -72,9 +76,10 @@ const sectionTitles: Record<NavigationItem, string> = {
   rfq: "RFQ Management",
   "purchase-orders": "Purchase Orders",
   "goods-receipts": "Goods Receipts",
+  "purchase-requisitions": "Purchase Requisitions",
   "procurement-collaboration": "Procurement Collaboration",
   invoices: "Invoice Management",
-  "ap-automation": "AP Automation",
+  "ap-automation": "Ap Automation",
   payments: "Payment Management",
   documents: "Document Management",
   analytics: "Analytics",
@@ -90,100 +95,84 @@ const sectionTitles: Record<NavigationItem, string> = {
 
 function Dashboard() {
   const [activeSection, setActiveSection] =
-    useState<NavigationItem>("vendors");
+    useState<NavigationItem>("home");
 
   const renderContent = () => {
     switch (activeSection) {
+      case "home":
+        return <HomeScreen onNavigate={setActiveSection} />;
       case "registration":
-        return <VendorRegistration />;
+        return <VendorRegistration onNavigate={setActiveSection} />;
       case "registration-review":
-        return <RegistrationReview />;
+        return <RegistrationReview onNavigate={setActiveSection} />;
       case "vendors":
         return (
           <VendorManagement
+            onNavigate={setActiveSection}
             onNavigateToRegistration={() =>
               setActiveSection("registration")
             }
           />
         );
       case "contracts":
-        return <ContractManagement />;
+        return <ContractManagement onNavigate={setActiveSection} />;
       case "sourcing-rfx":
-        return <SourcingRFx />;
+        return <SourcingRFx onNavigate={setActiveSection} />;
       case "rfq":
-        return <RFQManagement />;
+        return <RFQManagement onNavigate={setActiveSection} />;
       case "purchase-orders":
-        return <PurchaseOrderManagement />;
+        return <PurchaseOrderManagement onNavigate={setActiveSection} />;
       case "goods-receipts":
-        return <GoodsReceipts />;
+        return <GoodsReceipts onNavigate={setActiveSection} />;
+      case "purchase-requisitions":
+        return <PurchaseRequisitions onNavigate={setActiveSection} />;
       case "procurement-collaboration":
-        return <ProcurementCollaboration />;
+        return <ProcurementCollaboration onNavigate={setActiveSection} />;
       case "invoices":
-        return <InvoiceManagement />;
+        return <InvoiceManagement onNavigate={setActiveSection} />;
       case "ap-automation":
-        return <APAutomation />;
+        return <APAutomation onNavigate={setActiveSection} />;
       case "payments":
-        return <PaymentManagement />;
+        return <PaymentManagement onNavigate={setActiveSection} />;
       case "documents":
-        return <DocumentManagement />;
+        return <DocumentManagement onNavigate={setActiveSection} />;
       case "analytics":
-        return <Analytics />;
+        return <Analytics onNavigate={setActiveSection} />;
       case "audit-trail":
-        return <AuditTrail />;
+        return <AuditTrail onNavigate={setActiveSection} />;
       case "regulatory-compliance":
-        return <RegulatoryCompliance />;
+        return <RegulatoryCompliance onNavigate={setActiveSection} />;
       case "delivery-slots":
-        return <DeliverySlots />;
+        return <DeliverySlots onNavigate={setActiveSection} />;
       case "dispute-management":
-        return <DisputeManagement />;
+        return <DisputeManagement onNavigate={setActiveSection} />;
       case "gate-entry":
-        return <GateEntryIntegration />;
+        return <GateEntryIntegration onNavigate={setActiveSection} />;
       case "supplier-dashboard":
-        return <SupplierDashboard />;
+        return <SupplierDashboard onNavigate={setActiveSection} />;
       case "databoards":
-        return <Databoards />;
+        return <Databoards onNavigate={setActiveSection} />;
       case "settings":
-        return <Settings />;
+        return <Settings onNavigate={setActiveSection} />;
       default:
-        return <VendorManagement />;
+        return <VendorManagement onNavigate={setActiveSection} />;
     }
   };
 
   return (
-    <SidebarProvider defaultOpen={true}>
-      <div className="flex h-screen w-full bg-background overflow-hidden">
-        <Sidebar
-          activeSection={activeSection}
-          onSectionChange={setActiveSection}
-        />
-        <main className="flex-1 overflow-hidden flex flex-col min-w-0">
-          <div className="border-b px-4 md:px-6 py-3 bg-background/95 backdrop-blur shrink-0 flex items-center gap-3">
-            <SidebarTrigger className="md:hidden" />
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem>
-                  <BreadcrumbLink 
-                    onClick={() => setActiveSection("vendors")} 
-                    className="cursor-pointer"
-                  >
-                    Dashboard
-                  </BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>{sectionTitles[activeSection] || "Overview"}</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
-          </div>
-          <div className="flex-1 overflow-y-auto">
-            <React.Suspense fallback={<PageSkeleton />}>
-              {renderContent()}
-            </React.Suspense>
-          </div>
-        </main>
-      </div>
-    </SidebarProvider>
+    <div className="flex flex-col h-screen w-full bg-background overflow-hidden">
+      <Sidebar
+        activeSection={activeSection}
+        onSectionChange={setActiveSection}
+      />
+      <main className="flex-1 overflow-hidden flex flex-col min-w-0">
+        <div className="flex-1 overflow-y-auto">
+          <React.Suspense fallback={<PageSkeleton />}>
+            {renderContent()}
+          </React.Suspense>
+        </div>
+      </main>
+    </div>
   );
 }
 

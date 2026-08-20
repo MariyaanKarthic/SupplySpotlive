@@ -1,4 +1,12 @@
 import React, { useState } from 'react';
+import { 
+  Breadcrumb, 
+  BreadcrumbItem, 
+  BreadcrumbLink, 
+  BreadcrumbList, 
+  BreadcrumbPage, 
+  BreadcrumbSeparator 
+} from './ui/breadcrumb';
 import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -227,7 +235,11 @@ const exceptionReports = [
   }
 ];
 
-export function APAutomation() {
+interface APAutomationProps {
+  onNavigate?: (section: any) => void;
+}
+
+export function APAutomation({ onNavigate }: APAutomationProps) {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [selectedApproval, setSelectedApproval] = useState<any>(null);
   const [isApprovalModalOpen, setIsApprovalModalOpen] = useState(false);
@@ -589,28 +601,32 @@ export function APAutomation() {
   };
 
   return (
-    <div className="p-6 space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">AP Automation</h1>
-        </div>
-        <div className="flex gap-3">
-          <Button 
-            variant="outline" 
-            className="gap-2"
-            onClick={() => {
-              resetRuleForm();
-              setIsRulesModalOpen(true);
-            }}
-          >
-            <Settings className="w-4 h-4" />
-            Configure Rules
-          </Button>
-          <Button className="gap-2">
-            <BarChart3 className="w-4 h-4" />
-            Generate Report
-          </Button>
+    <div className="px-6 pb-6 space-y-6 w-full max-w-full overflow-x-hidden">
+      {/* Sticky Header section with Breadcrumbs */}
+      <div className="sticky top-0 bg-background/95 backdrop-blur z-20 border-b py-3 -mx-6 px-6 space-y-1.5 flex flex-col no-print">
+        <Breadcrumb className="text-xs">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink 
+                onClick={() => onNavigate && onNavigate("home")} 
+                className="cursor-pointer"
+              >
+                Dashboard
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Finance & Payments</BreadcrumbPage>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Ap Automation</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+        <div className="flex items-center justify-between w-full">
+          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">AP Automation Dashboard</h1>
+          
         </div>
       </div>
 

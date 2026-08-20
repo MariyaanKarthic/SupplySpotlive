@@ -1,4 +1,12 @@
 import React, { useState } from 'react';
+import { 
+  Breadcrumb, 
+  BreadcrumbItem, 
+  BreadcrumbLink, 
+  BreadcrumbList, 
+  BreadcrumbPage, 
+  BreadcrumbSeparator 
+} from './ui/breadcrumb';
 import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -120,7 +128,11 @@ const documents = [
   }
 ];
 
-export function DocumentManagement() {
+interface DocumentManagementProps {
+  onNavigate?: (section: any) => void;
+}
+
+export function DocumentManagement({ onNavigate }: DocumentManagementProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState<any>(null);
@@ -166,101 +178,33 @@ export function DocumentManagement() {
   const expired = documents.filter(doc => doc.status === 'Expired').length;
 
   return (
-    <div className="p-6 space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-semibold">Document Management</h1>
-          <p className="text-muted-foreground">Manage vendor documents and files</p>
+    <div className="px-6 pb-6 space-y-6 w-full max-w-full overflow-x-hidden">
+      {/* Sticky Header section with Breadcrumbs */}
+      <div className="sticky top-0 bg-background/95 backdrop-blur z-20 border-b py-3 -mx-6 px-6 space-y-1.5 flex flex-col no-print">
+        <Breadcrumb className="text-xs">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink 
+                onClick={() => onNavigate && onNavigate("home")} 
+                className="cursor-pointer"
+              >
+                Dashboard
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Management</BreadcrumbPage>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Documents</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+        <div className="flex items-center justify-between w-full">
+          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">Document Management</h1>
+          
         </div>
-        <Sheet open={isUploadOpen} onOpenChange={setIsUploadOpen}>
-          <SheetTrigger asChild>
-            <Button className="gap-2">
-              <Upload className="w-4 h-4" />
-              Upload Document
-            </Button>
-          </SheetTrigger>
-          <SheetContent className="sm:max-w-2xl overflow-y-auto">
-            <SheetHeader>
-              <SheetTitle>Upload New Document</SheetTitle>
-              <SheetDescription>
-                Upload a new document by selecting a file and filling out the details below.
-              </SheetDescription>
-            </SheetHeader>
-            <div className="space-y-4 mt-4">
-              <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center">
-                <Upload className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-                <p className="text-lg font-medium">Drop files here or click to browse</p>
-                <p className="text-sm text-muted-foreground">Supports PDF, DOC, XLS, JPG, PNG up to 10MB</p>
-                <Button variant="outline" className="mt-4">
-                  Choose Files
-                </Button>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="doc-vendor">Vendor</Label>
-                  <Select>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select vendor" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="techcorp">TechCorp Solutions</SelectItem>
-                      <SelectItem value="global">Global Supplies Ltd</SelectItem>
-                      <SelectItem value="premium">Premium Services Inc</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="doc-type">Document Type</Label>
-                  <Select>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="contract">Contract</SelectItem>
-                      <SelectItem value="invoice">Invoice</SelectItem>
-                      <SelectItem value="certificate">Certificate</SelectItem>
-                      <SelectItem value="quote">Quote</SelectItem>
-                      <SelectItem value="specification">Specification</SelectItem>
-                      <SelectItem value="insurance">Insurance</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="doc-category">Category</Label>
-                  <Select>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select category" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="legal">Legal</SelectItem>
-                      <SelectItem value="financial">Financial</SelectItem>
-                      <SelectItem value="compliance">Compliance</SelectItem>
-                      <SelectItem value="technical">Technical</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="doc-tags">Tags (comma separated)</Label>
-                  <Input id="doc-tags" placeholder="contract, annual, software" />
-                </div>
-                <div className="space-y-2 col-span-2">
-                  <Label htmlFor="doc-description">Description</Label>
-                  <Input id="doc-description" placeholder="Document description" />
-                </div>
-              </div>
-            </div>
-            <div className="flex justify-end gap-2 mt-4">
-              <Button variant="outline" onClick={() => setIsUploadOpen(false)}>
-                Cancel
-              </Button>
-              <Button onClick={() => setIsUploadOpen(false)}>
-                Upload Document
-              </Button>
-            </div>
-          </SheetContent>
-        </Sheet>
       </div>
 
       {/* Quick Stats */}

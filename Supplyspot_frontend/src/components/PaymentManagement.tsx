@@ -1,4 +1,12 @@
 import React, { useState } from 'react';
+import { 
+  Breadcrumb, 
+  BreadcrumbItem, 
+  BreadcrumbLink, 
+  BreadcrumbList, 
+  BreadcrumbPage, 
+  BreadcrumbSeparator 
+} from './ui/breadcrumb';
 import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -108,7 +116,11 @@ const payments = [
   }
 ];
 
-export function PaymentManagement() {
+interface PaymentManagementProps {
+  onNavigate?: (section: any) => void;
+}
+
+export function PaymentManagement({ onNavigate }: PaymentManagementProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [isAddPaymentOpen, setIsAddPaymentOpen] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState<any>(null);
@@ -162,81 +174,33 @@ export function PaymentManagement() {
   const totalFailed = payments.filter(p => p.status === 'Failed').reduce((sum, p) => sum + p.amount, 0);
 
   return (
-    <div className="p-6 space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
+    <div className="px-6 pb-6 space-y-6 w-full max-w-full overflow-x-hidden">
+      {/* Sticky Header section with Breadcrumbs */}
+      <div className="sticky top-0 bg-background/95 backdrop-blur z-20 border-b py-3 -mx-6 px-6 space-y-1.5 flex flex-col no-print">
+        <Breadcrumb className="text-xs">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink 
+                onClick={() => onNavigate && onNavigate("home")} 
+                className="cursor-pointer"
+              >
+                Dashboard
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Finance & Payments</BreadcrumbPage>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Payments</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+        <div className="flex items-center justify-between w-full">
           <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">Payment Management</h1>
+          
         </div>
-        <Sheet open={isAddPaymentOpen} onOpenChange={setIsAddPaymentOpen}>
-          <SheetTrigger asChild>
-            <Button className="gap-2">
-              <Plus className="w-4 h-4" />
-              Process Payment
-            </Button>
-          </SheetTrigger>
-          <SheetContent className="sm:max-w-xl overflow-y-auto">
-            <SheetHeader>
-              <SheetTitle>Process New Payment</SheetTitle>
-              <SheetDescription>
-                Process a new payment by entering the payment details below.
-              </SheetDescription>
-            </SheetHeader>
-            <div className="grid grid-cols-2 gap-4 mt-4">
-              <div className="space-y-2">
-                <Label htmlFor="payment-vendor">Vendor</Label>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select vendor" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="techcorp">TechCorp Solutions</SelectItem>
-                    <SelectItem value="global">Global Supplies Ltd</SelectItem>
-                    <SelectItem value="premium">Premium Services Inc</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="payment-amount">Amount</Label>
-                <Input id="payment-amount" type="number" placeholder="0.00" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="payment-date">Payment Date</Label>
-                <DatePicker id="payment-date" placeholder="Select payment date" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="payment-method">Payment Method</Label>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select method" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="wire">Bank Wire Transfer</SelectItem>
-                    <SelectItem value="ach">ACH Transfer</SelectItem>
-                    <SelectItem value="card">Corporate Card</SelectItem>
-                    <SelectItem value="check">Check</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2 col-span-2">
-                <Label htmlFor="payment-invoice">Associated Invoice</Label>
-                <Input id="payment-invoice" placeholder="INV-2023-XXX" />
-              </div>
-              <div className="space-y-2 col-span-2">
-                <Label htmlFor="payment-notes">Notes</Label>
-                <Input id="payment-notes" placeholder="Additional notes" />
-              </div>
-            </div>
-            <div className="flex justify-end gap-2 mt-4">
-              <Button variant="outline" onClick={() => setIsAddPaymentOpen(false)}>
-                Cancel
-              </Button>
-              <Button onClick={() => setIsAddPaymentOpen(false)}>
-                Process Payment
-              </Button>
-            </div>
-          </SheetContent>
-        </Sheet>
       </div>
 
       {/* Quick Stats */}

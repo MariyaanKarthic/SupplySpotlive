@@ -1,4 +1,12 @@
 import React, { useState } from 'react';
+import { 
+  Breadcrumb, 
+  BreadcrumbItem, 
+  BreadcrumbLink, 
+  BreadcrumbList, 
+  BreadcrumbPage, 
+  BreadcrumbSeparator 
+} from './ui/breadcrumb';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -404,7 +412,11 @@ const mockStats: GateEntryStats = {
   }
 };
 
-export const GateEntryIntegration: React.FC = () => {
+interface GateEntryIntegrationProps {
+  onNavigate?: (section: any) => void;
+}
+
+export const GateEntryIntegration: React.FC<GateEntryIntegrationProps> = ({ onNavigate }) => {
   const [activeTab, setActiveTab] = useState('asn-deliveries');
   const [selectedPass, setSelectedPass] = useState<GatePass | null>(null);
   const [selectedASN, setSelectedASN] = useState<ASNDelivery | null>(null);
@@ -439,25 +451,32 @@ export const GateEntryIntegration: React.FC = () => {
   };
 
   return (
-    <div className="p-6 space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
+    <div className="px-6 pb-6 space-y-6 w-full max-w-full overflow-x-hidden">
+      {/* Sticky Header section with Breadcrumbs */}
+      <div className="sticky top-0 bg-background/95 backdrop-blur z-20 border-b py-3 -mx-6 px-6 space-y-1.5 flex flex-col no-print">
+        <Breadcrumb className="text-xs">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink 
+                onClick={() => onNavigate && onNavigate("home")} 
+                className="cursor-pointer"
+              >
+                Dashboard
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Security & Access</BreadcrumbPage>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Gate Entry Integration</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+        <div className="flex items-center justify-between w-full">
           <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">Gate Entry Integration</h1>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={() => setShowSettings(true)}>
-            <Settings className="w-4 h-4 mr-2" />
-            Settings
-          </Button>
-          <Button variant="outline" onClick={() => setShowSecurityDashboard(true)}>
-            <Shield className="w-4 h-4 mr-2" />
-            Security Dashboard
-          </Button>
-          <Button onClick={() => setShowCreatePass(true)}>
-            <Plus className="w-4 h-4 mr-2" />
-            New Gate Pass
-          </Button>
+          
         </div>
       </div>
 

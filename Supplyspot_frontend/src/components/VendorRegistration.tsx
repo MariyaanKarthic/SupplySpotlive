@@ -15,6 +15,14 @@ import { DatePicker } from './ui/date-picker';
 import { vendorService } from '../services/api';
 import { Logo } from './Logo';
 import { 
+  Breadcrumb, 
+  BreadcrumbItem, 
+  BreadcrumbLink, 
+  BreadcrumbList, 
+  BreadcrumbPage, 
+  BreadcrumbSeparator 
+} from './ui/breadcrumb';
+import { 
   Building2,
   FileText,
   Shield,
@@ -166,7 +174,11 @@ const documentRequirements = {
   ]
 };
 
-export function VendorRegistration() {
+interface VendorRegistrationProps {
+  onNavigate?: (section: any) => void;
+}
+
+export function VendorRegistration({ onNavigate }: VendorRegistrationProps) {
   const [currentView, setCurrentView] = useState<'overview' | 'new-registration' | 'review-pending'>('overview');
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedRegistration, setSelectedRegistration] = useState<any>(null);
@@ -229,21 +241,6 @@ export function VendorRegistration() {
 
   const renderOverview = () => (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">Vendor Registration Management</h1>
-        </div>
-        <div className="flex gap-3">
-          <Button variant="outline" onClick={() => setCurrentView('review-pending')}>
-            Review Pending ({pendingRegistrations.filter(r => r.status !== 'Approved').length})
-          </Button>
-          <Button onClick={() => setCurrentView('new-registration')} className="gap-2">
-            <Plus className="w-4 h-4" />
-            New Registration
-          </Button>
-        </div>
-      </div>
 
       {/* Registration Statistics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
@@ -428,15 +425,6 @@ export function VendorRegistration() {
 
   const renderNewRegistration = () => (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center gap-4">
-        <Button variant="outline" onClick={() => setCurrentView('overview')}>
-          ← Back
-        </Button>
-        <div>
-          <h1>New Vendor Registration</h1>
-        </div>
-      </div>
 
       {/* Progress Steps */}
       <Card className="p-6">
@@ -806,15 +794,6 @@ export function VendorRegistration() {
 
   const renderPendingReview = () => (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center gap-4">
-        <Button variant="outline" onClick={() => setCurrentView('overview')}>
-          ← Back
-        </Button>
-        <div>
-          <h1>Pending Registrations Review</h1>
-        </div>
-      </div>
 
       {/* Filters */}
       <Card className="p-4">
@@ -1165,10 +1144,75 @@ export function VendorRegistration() {
   );
 
   return (
-    <div className="p-6">
-      {currentView === 'overview' && renderOverview()}
-      {currentView === 'new-registration' && renderNewRegistration()}
-      {currentView === 'review-pending' && renderPendingReview()}
+    <div className="px-6 pb-6 space-y-6 w-full max-w-full overflow-x-hidden">
+      {/* Sticky Header section with Breadcrumbs */}
+      <div className="sticky top-0 bg-background/95 backdrop-blur z-20 border-b py-3 -mx-6 px-6 space-y-1.5 flex flex-col no-print">
+        <Breadcrumb className="text-xs">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink 
+                onClick={() => onNavigate && onNavigate("home")} 
+                className="cursor-pointer"
+              >
+                Dashboard
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Supplier Onboarding</BreadcrumbPage>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <span
+                onClick={() => currentView !== 'overview' && setCurrentView('overview')}
+                className={currentView !== 'overview' ? 'cursor-pointer hover:text-foreground text-muted-foreground transition-colors' : 'text-foreground font-semibold'}
+              >
+                Vendor Registration
+              </span>
+            </BreadcrumbItem>
+            {currentView !== 'overview' && (
+              <>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  <BreadcrumbPage>
+                    {currentView === 'new-registration' ? 'New Registration' : 'Review Pending'}
+                  </BreadcrumbPage>
+                </BreadcrumbItem>
+              </>
+            )}
+          </BreadcrumbList>
+        </Breadcrumb>
+        <div className="flex items-center justify-between w-full">
+          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">
+            {currentView === 'overview' && 'Vendor Registration Management'}
+            {currentView === 'new-registration' && 'New Vendor Registration'}
+            {currentView === 'review-pending' && 'Pending Registrations Review'}
+          </h1>
+          <div className="flex gap-3">
+            {currentView === 'overview' && (
+              <>
+                <Button variant="outline" onClick={() => setCurrentView('review-pending')} className="h-10 px-4">
+                  Review Pending ({pendingRegistrations.filter(r => r.status !== 'Approved').length})
+                </Button>
+                <Button onClick={() => setCurrentView('new-registration')} className="h-10 px-4 bg-blue-600 hover:bg-blue-700 text-white font-bold gap-2">
+                  <Plus className="w-4 h-4 text-white" /> New Registration
+                </Button>
+              </>
+            )}
+            {currentView !== 'overview' && (
+              <Button onClick={() => setCurrentView('overview')} variant="outline" className="h-10 px-4">
+                Back to Overview
+              </Button>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div className="space-y-6 mt-4">
+        {currentView === 'overview' && renderOverview()}
+        {currentView === 'new-registration' && renderNewRegistration()}
+        {currentView === 'review-pending' && renderPendingReview()}
+      </div>
       {renderReviewModal()}
     </div>
   );
