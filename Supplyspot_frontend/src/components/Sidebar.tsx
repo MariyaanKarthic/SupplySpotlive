@@ -426,10 +426,10 @@ export function Sidebar({ activeSection, onSectionChange }: SidebarProps) {
 
       {/* Command Search Palette Dialog */}
       <CommandDialog open={open} onOpenChange={setOpen} title="Global Search" description="Search sections, actions, and transactions...">
-        <CommandInput placeholder="Search modules, features, or data records..." className="text-white bg-slate-900 border-none focus:ring-0" />
+        <CommandInput placeholder="Search modules, features, or data records..." className="text-slate-900 bg-transparent border-none focus:ring-0" />
         
         {/* Navigation Tabs inside the Search Dialog */}
-        <div className="flex items-center gap-1.5 p-2 bg-slate-950 border-b border-slate-900">
+        <div className="flex items-center gap-1.5 p-2 bg-slate-50 border-b border-slate-200">
           {(['all', 'modules', 'submodules', 'data'] as const).map((tab) => (
             <Button
               key={tab}
@@ -439,7 +439,7 @@ export function Sidebar({ activeSection, onSectionChange }: SidebarProps) {
                 "h-7 px-3 text-[10px] font-bold rounded-md capitalize transition-all",
                 searchTab === tab 
                   ? "bg-blue-600 text-white hover:bg-blue-700 shadow-sm" 
-                  : "text-slate-400 hover:text-white hover:bg-slate-900"
+                  : "text-slate-500 hover:text-slate-950 hover:bg-slate-100"
               )}
             >
               {tab === 'submodules' ? 'Actions' : tab === 'data' ? 'Records' : tab}
@@ -447,8 +447,8 @@ export function Sidebar({ activeSection, onSectionChange }: SidebarProps) {
           ))}
         </div>
 
-        <CommandList className="max-h-[380px] bg-slate-950 text-white p-1">
-          <CommandEmpty className="py-6 text-center text-xs text-slate-500 font-medium">No matches found.</CommandEmpty>
+        <CommandList className="max-h-[380px] bg-white text-slate-900 p-1">
+          <CommandEmpty className="py-6 text-center text-xs text-slate-400 font-medium">No matches found.</CommandEmpty>
           
           {/* Modules section */}
           {(searchTab === 'all' || searchTab === 'modules') && (
@@ -459,14 +459,14 @@ export function Sidebar({ activeSection, onSectionChange }: SidebarProps) {
                   <CommandItem
                     key={item.id}
                     onSelect={() => handleSearchSelect(item)}
-                    className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/5 cursor-pointer transition-all data-[selected=true]:bg-white/10"
+                    className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-slate-50 cursor-pointer transition-all data-[selected=true]:bg-slate-100 data-[selected=true]:text-slate-900"
                   >
-                    <div className="p-1.5 rounded-lg bg-blue-500/10 text-blue-400">
+                    <div className="p-1.5 rounded-lg bg-blue-500/10 text-blue-600">
                       <IconComponent className="w-4 h-4" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-xs font-semibold text-white">{item.title}</p>
-                      {item.subtitle && <p className="text-[10px] text-slate-400 mt-0.5 truncate">{item.subtitle}</p>}
+                      <p className="text-xs font-semibold text-slate-900">{item.title}</p>
+                      {item.subtitle && <p className="text-[10px] text-slate-500 mt-0.5 truncate">{item.subtitle}</p>}
                     </div>
                   </CommandItem>
                 );
@@ -483,14 +483,14 @@ export function Sidebar({ activeSection, onSectionChange }: SidebarProps) {
                   <CommandItem
                     key={item.id}
                     onSelect={() => handleSearchSelect(item)}
-                    className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/5 cursor-pointer transition-all data-[selected=true]:bg-white/10"
+                    className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-slate-50 cursor-pointer transition-all data-[selected=true]:bg-slate-100 data-[selected=true]:text-slate-900"
                   >
-                    <div className="p-1.5 rounded-lg bg-purple-500/10 text-purple-400">
+                    <div className="p-1.5 rounded-lg bg-purple-500/10 text-purple-600">
                       <IconComponent className="w-4 h-4" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-xs font-semibold text-white">{item.title}</p>
-                      {item.subtitle && <p className="text-[10px] text-slate-400 mt-0.5 truncate">{item.subtitle}</p>}
+                      <p className="text-xs font-semibold text-slate-900">{item.title}</p>
+                      {item.subtitle && <p className="text-[10px] text-slate-500 mt-0.5 truncate">{item.subtitle}</p>}
                     </div>
                   </CommandItem>
                 );
@@ -507,14 +507,14 @@ export function Sidebar({ activeSection, onSectionChange }: SidebarProps) {
                   <CommandItem
                     key={item.id}
                     onSelect={() => handleSearchSelect(item)}
-                    className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/5 cursor-pointer transition-all data-[selected=true]:bg-white/10"
+                    className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-slate-50 cursor-pointer transition-all data-[selected=true]:bg-slate-100 data-[selected=true]:text-slate-900"
                   >
-                    <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400">
+                    <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-600">
                       <IconComponent className="w-4 h-4" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-xs font-semibold text-white">{item.title}</p>
-                      {item.subtitle && <p className="text-[10px] text-slate-400 mt-0.5 truncate">{item.subtitle}</p>}
+                      <p className="text-xs font-semibold text-slate-900">{item.title}</p>
+                      {item.subtitle && <p className="text-[10px] text-slate-500 mt-0.5 truncate">{item.subtitle}</p>}
                     </div>
                   </CommandItem>
                 );
