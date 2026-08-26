@@ -991,7 +991,7 @@ export function InvoiceManagement({ onNavigate }: InvoiceManagementProps) {
                     <p className="font-medium">Upload File</p>
                     <p className="text-sm text-muted-foreground">PDF, JPG, PNG</p>
                   </div>
-                  <input
+                  <Input
                     id="file-upload"
                     type="file"
                     accept=".pdf,.jpg,.jpeg,.png"

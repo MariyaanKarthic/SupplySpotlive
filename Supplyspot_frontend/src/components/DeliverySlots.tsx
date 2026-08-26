@@ -1277,17 +1277,19 @@ export function DeliverySlots({ onNavigate }: DeliverySlotsProps) {
               Dispatch Gate Clearance
             </Button>
           </AlertDescription>
-          <button
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={() => {
               setShowAiBanner(false);
               localStorage.setItem('hide_ai_delivery_banner', 'true');
               toast.info('AI Optimization notification dismissed.');
             }}
-            className="absolute right-2 top-2 text-blue-600 hover:text-blue-900 p-1 rounded-md hover:bg-blue-100/60 transition-colors"
+            className="absolute right-2 top-2 text-blue-600 hover:text-blue-900 p-1 rounded-md hover:bg-blue-100/60 transition-colors h-auto w-auto"
             title="Close Notification"
           >
             <X className="w-4 h-4" />
-          </button>
+          </Button>
         </Alert>
       )}
 
@@ -2976,13 +2978,15 @@ export function DeliverySlots({ onNavigate }: DeliverySlotsProps) {
                     {podForm.photoUrls.map((url, i) => (
                       <div key={i} className="relative w-20 h-16 border rounded overflow-hidden group">
                         <img src={url} alt={`Evidence ${i}`} className="w-full h-full object-cover" />
-                        <button
+                        <Button
                           type="button"
+                          variant="ghost"
+                          size="icon"
                           onClick={() => setPodForm({...podForm, photoUrls: podForm.photoUrls.filter((_, idx) => idx !== i)})}
-                          className="absolute top-0.5 right-0.5 bg-rose-600 text-white rounded-full p-0.5 opacity-80 hover:opacity-100"
+                          className="absolute top-0.5 right-0.5 bg-rose-600 text-white rounded-full p-0.5 opacity-80 hover:opacity-100 h-auto w-auto hover:bg-rose-700 hover:text-white"
                         >
                           <X className="w-3 h-3" />
-                        </button>
+                        </Button>
                       </div>
                     ))}
                   </div>

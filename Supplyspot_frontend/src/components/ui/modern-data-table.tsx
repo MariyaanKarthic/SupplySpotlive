@@ -9,6 +9,7 @@ import {
 import { Checkbox } from './checkbox';
 import { Button } from './button';
 import { Input } from './input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -388,16 +389,17 @@ export function ModernDataTable<T>({
                         )}
                       >
                         {col.sortable ? (
-                          <button
+                          <Button
+                            variant="ghost"
                             onClick={() => handleSort(col.key)}
-                            className="inline-flex items-center gap-1.5 hover:text-slate-800 transition-colors"
+                            className="h-auto p-0 hover:bg-transparent font-medium text-slate-500 hover:text-slate-800 inline-flex items-center gap-1.5 transition-colors"
                           >
                             <span>{col.header}</span>
                             <ArrowUpDown className="w-3.5 h-3.5" />
                             {sortKey === col.key && (
                               sortDirection === 'asc' ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3.5 h-3.5" />
                             )}
-                          </button>
+                          </Button>
                         ) : (
                           col.header
                         )}
@@ -530,20 +532,24 @@ export function ModernDataTable<T>({
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-t border-slate-100 dark:border-slate-800 pt-4 gap-4 text-xs font-medium text-slate-500">
         <div className="flex items-center gap-2">
           <span>Rows per page:</span>
-          <select
-            value={rowsPerPage}
-            onChange={(e) => {
-              setRowsPerPage(Number(e.target.value));
+          <Select
+            value={String(rowsPerPage)}
+            onValueChange={(value) => {
+              setRowsPerPage(Number(value));
               setCurrentPage(1);
             }}
-            className="h-8 rounded-lg border border-slate-200 px-2 text-slate-700 bg-white font-medium focus:ring-1 focus:ring-blue-500 focus:outline-none"
           >
-            {rowsPerPageOptions.map((opt) => (
-              <option key={opt} value={opt}>
-                {opt}
-              </option>
-            ))}
-          </select>
+            <SelectTrigger className="h-8 w-[70px] bg-white text-slate-700 border border-slate-200 rounded-lg">
+              <SelectValue placeholder={String(rowsPerPage)} />
+            </SelectTrigger>
+            <SelectContent>
+              {rowsPerPageOptions.map((opt) => (
+                <SelectItem key={opt} value={String(opt)}>
+                  {opt}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="flex items-center gap-4">

@@ -1292,50 +1292,50 @@ export function PurchaseOrderManagement({ onNavigate }: { onNavigate?: (view: an
                         <DraggableTableHeader>
                           {visiblePoColumns.includes('poNumber') && (
                             <th className="text-left p-4 font-semibold text-slate-600 text-sm sticky left-8 z-30 bg-[#f8fafc] border-b shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)] whitespace-nowrap min-w-[200px]">
-                              <button onClick={() => requestSort('poNumber')} className="flex items-center gap-1 hover:text-primary transition-all">
+                              <Button variant="ghost" onClick={() => requestSort('poNumber')} className="h-auto p-0 hover:bg-transparent font-semibold text-slate-600 hover:text-primary text-sm flex items-center gap-1 transition-all">
                                 PO Details
                                 <ArrowUpDown className={`w-3.5 h-3.5 ${poSortConfig.key === 'poNumber' ? 'text-primary' : 'text-slate-400'}`} />
-                              </button>
+                              </Button>
                             </th>
                           )}
                           {visiblePoColumns.includes('buyer') && (
                             <th className="text-left p-4 font-semibold text-slate-600 text-sm whitespace-nowrap min-w-[150px]">
-                              <button onClick={() => requestSort('buyer')} className="flex items-center gap-1 hover:text-primary transition-all">
+                              <Button variant="ghost" onClick={() => requestSort('buyer')} className="h-auto p-0 hover:bg-transparent font-semibold text-slate-600 hover:text-primary text-sm flex items-center gap-1 transition-all">
                                 Buyer
                                 <ArrowUpDown className={`w-3.5 h-3.5 ${poSortConfig.key === 'buyer' ? 'text-primary' : 'text-slate-400'}`} />
-                              </button>
+                              </Button>
                             </th>
                           )}
                           {visiblePoColumns.includes('amount') && (
                             <th className="text-left p-4 font-semibold text-slate-600 text-sm whitespace-nowrap">
-                              <button onClick={() => requestSort('totalAmount')} className="flex items-center gap-1 hover:text-primary transition-all">
+                              <Button variant="ghost" onClick={() => requestSort('totalAmount')} className="h-auto p-0 hover:bg-transparent font-semibold text-slate-600 hover:text-primary text-sm flex items-center gap-1 transition-all">
                                 Amount
                                 <ArrowUpDown className={`w-3.5 h-3.5 ${poSortConfig.key === 'totalAmount' ? 'text-primary' : 'text-slate-400'}`} />
-                              </button>
+                              </Button>
                             </th>
                           )}
                           {visiblePoColumns.includes('deliveryDate') && (
                             <th className="text-left p-4 font-semibold text-slate-600 text-sm whitespace-nowrap">
-                              <button onClick={() => requestSort('expectedDeliveryDate')} className="flex items-center gap-1 hover:text-primary transition-all">
+                              <Button variant="ghost" onClick={() => requestSort('expectedDeliveryDate')} className="h-auto p-0 hover:bg-transparent font-semibold text-slate-600 hover:text-primary text-sm flex items-center gap-1 transition-all">
                                 Delivery Date
                                 <ArrowUpDown className={`w-3.5 h-3.5 ${poSortConfig.key === 'expectedDeliveryDate' ? 'text-primary' : 'text-slate-400'}`} />
-                              </button>
+                              </Button>
                             </th>
                           )}
                           {visiblePoColumns.includes('status') && (
                             <th className="text-left p-4 font-semibold text-slate-600 text-sm whitespace-nowrap">
-                              <button onClick={() => requestSort('status')} className="flex items-center gap-1 hover:text-primary transition-all">
+                              <Button variant="ghost" onClick={() => requestSort('status')} className="h-auto p-0 hover:bg-transparent font-semibold text-slate-600 hover:text-primary text-sm flex items-center gap-1 transition-all">
                                 Status
                                 <ArrowUpDown className={`w-3.5 h-3.5 ${poSortConfig.key === 'status' ? 'text-primary' : 'text-slate-400'}`} />
-                              </button>
+                              </Button>
                             </th>
                           )}
                           {visiblePoColumns.includes('acknowledgment') && (
                             <th className="text-left p-4 font-semibold text-slate-600 text-sm whitespace-nowrap">
-                              <button onClick={() => requestSort('acknowledgmentStatus')} className="flex items-center gap-1 hover:text-primary transition-all">
+                              <Button variant="ghost" onClick={() => requestSort('acknowledgmentStatus')} className="h-auto p-0 hover:bg-transparent font-semibold text-slate-600 hover:text-primary text-sm flex items-center gap-1 transition-all">
                                 Acknowledgment
                                 <ArrowUpDown className={`w-3.5 h-3.5 ${poSortConfig.key === 'acknowledgmentStatus' ? 'text-primary' : 'text-slate-400'}`} />
-                              </button>
+                              </Button>
                             </th>
                           )}
                           <th className="p-4 font-semibold text-slate-600 text-sm sticky right-0 z-30 bg-[#f8fafc] border-b shadow-[-2px_0_5px_-2px_rgba(0,0,0,0.1)] text-center w-24">

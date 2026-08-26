@@ -1449,66 +1449,66 @@ export function RFQManagement({ onNavigate }: RFQManagementProps) {
                         <DraggableTableHeader>
                           {visibleColumns.includes('rfqNumber') && (
                             <th className="text-left p-4 font-semibold text-slate-600 text-sm sticky left-8 z-30 bg-[#f8fafc] border-b shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)] whitespace-nowrap min-w-[200px]">
-                              <button onClick={() => requestSort('rfqNumber')} className="flex items-center gap-1 hover:text-primary transition-colors">
+                              <Button variant="ghost" onClick={() => requestSort('rfqNumber')} className="h-auto p-0 hover:bg-transparent font-semibold text-slate-600 hover:text-primary text-sm flex items-center gap-1 transition-colors">
                                 RFQ Details
                                 <ArrowUpDown className={`w-3.5 h-3.5 ${sortConfig.key === 'rfqNumber' ? 'text-primary' : 'text-slate-400'}`} />
-                              </button>
+                              </Button>
                             </th>
                           )}
                           {visibleColumns.includes('buyer') && (
                             <th className="text-left p-4 font-semibold text-slate-600 text-sm whitespace-nowrap min-w-[150px]">
-                              <button onClick={() => requestSort('buyer')} className="flex items-center gap-1 hover:text-primary transition-colors">
+                              <Button variant="ghost" onClick={() => requestSort('buyer')} className="h-auto p-0 hover:bg-transparent font-semibold text-slate-600 hover:text-primary text-sm flex items-center gap-1 transition-colors">
                                 Buyer
                                 <ArrowUpDown className={`w-3.5 h-3.5 ${sortConfig.key === 'buyer' ? 'text-primary' : 'text-slate-400'}`} />
-                              </button>
+                              </Button>
                             </th>
                           )}
                           {visibleColumns.includes('category') && (
                             <th className="text-left p-4 font-semibold text-slate-600 text-sm whitespace-nowrap">
-                              <button onClick={() => requestSort('category')} className="flex items-center gap-1 hover:text-primary transition-colors">
+                              <Button variant="ghost" onClick={() => requestSort('category')} className="h-auto p-0 hover:bg-transparent font-semibold text-slate-600 hover:text-primary text-sm flex items-center gap-1 transition-colors">
                                 Category
                                 <ArrowUpDown className={`w-3.5 h-3.5 ${sortConfig.key === 'category' ? 'text-primary' : 'text-slate-400'}`} />
-                              </button>
+                              </Button>
                             </th>
                           )}
                           {visibleColumns.includes('priority') && (
                             <th className="text-left p-4 font-semibold text-slate-600 text-sm whitespace-nowrap">
-                              <button onClick={() => requestSort('priority')} className="flex items-center gap-1 hover:text-primary transition-colors">
+                              <Button variant="ghost" onClick={() => requestSort('priority')} className="h-auto p-0 hover:bg-transparent font-semibold text-slate-600 hover:text-primary text-sm flex items-center gap-1 transition-colors">
                                 Priority
                                 <ArrowUpDown className={`w-3.5 h-3.5 ${sortConfig.key === 'priority' ? 'text-primary' : 'text-slate-400'}`} />
-                              </button>
+                              </Button>
                             </th>
                           )}
                           {visibleColumns.includes('budget') && (
                             <th className="text-left p-4 font-semibold text-slate-600 text-sm whitespace-nowrap">
-                              <button onClick={() => requestSort('budget')} className="flex items-center gap-1 hover:text-primary transition-colors">
+                              <Button variant="ghost" onClick={() => requestSort('budget')} className="h-auto p-0 hover:bg-transparent font-semibold text-slate-600 hover:text-primary text-sm flex items-center gap-1 transition-colors">
                                 Budget
                                 <ArrowUpDown className={`w-3.5 h-3.5 ${sortConfig.key === 'budget' ? 'text-primary' : 'text-slate-400'}`} />
-                              </button>
+                              </Button>
                             </th>
                           )}
                           {visibleColumns.includes('dueDate') && (
                             <th className="text-left p-4 font-semibold text-slate-600 text-sm whitespace-nowrap">
-                              <button onClick={() => requestSort('dueDate')} className="flex items-center gap-1 hover:text-primary transition-colors">
+                              <Button variant="ghost" onClick={() => requestSort('dueDate')} className="h-auto p-0 hover:bg-transparent font-semibold text-slate-600 hover:text-primary text-sm flex items-center gap-1 transition-colors">
                                 Due Date
                                 <ArrowUpDown className={`w-3.5 h-3.5 ${sortConfig.key === 'dueDate' ? 'text-primary' : 'text-slate-400'}`} />
-                              </button>
+                              </Button>
                             </th>
                           )}
                           {visibleColumns.includes('status') && (
                             <th className="text-left p-4 font-semibold text-slate-600 text-sm whitespace-nowrap">
-                              <button onClick={() => requestSort('status')} className="flex items-center gap-1 hover:text-primary transition-colors">
+                              <Button variant="ghost" onClick={() => requestSort('status')} className="h-auto p-0 hover:bg-transparent font-semibold text-slate-600 hover:text-primary text-sm flex items-center gap-1 transition-colors">
                                 Status
                                 <ArrowUpDown className={`w-3.5 h-3.5 ${sortConfig.key === 'status' ? 'text-primary' : 'text-slate-400'}`} />
-                              </button>
+                              </Button>
                             </th>
                           )}
                           {visibleColumns.includes('progress') && (
                             <th className="text-left p-4 font-semibold text-slate-600 text-sm whitespace-nowrap min-w-[120px]">
-                              <button onClick={() => requestSort('progress')} className="flex items-center gap-1 hover:text-primary transition-colors">
+                              <Button variant="ghost" onClick={() => requestSort('progress')} className="h-auto p-0 hover:bg-transparent font-semibold text-slate-600 hover:text-primary text-sm flex items-center gap-1 transition-colors">
                                 Progress
                                 <ArrowUpDown className={`w-3.5 h-3.5 ${sortConfig.key === 'progress' ? 'text-primary' : 'text-slate-400'}`} />
-                              </button>
+                              </Button>
                             </th>
                           )}
                           <th className="text-left p-4 font-semibold text-slate-600 text-sm sticky right-0 z-30 bg-[#f8fafc] border-b shadow-[-2px_0_5px_-2px_rgba(0,0,0,0.1)] whitespace-nowrap text-center">Action</th>
@@ -1938,50 +1938,50 @@ export function RFQManagement({ onNavigate }: RFQManagementProps) {
                         <DraggableTableHeader>
                           {visibleQuotationColumns.includes('quotationNumber') && (
                             <th className="text-left p-4 font-semibold text-slate-600 text-sm sticky left-8 z-30 bg-[#f8fafc] border-b shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)] whitespace-nowrap min-w-[200px]">
-                              <button onClick={() => requestQuotationSort('quotationNumber')} className="flex items-center gap-1 hover:text-primary transition-colors">
+                              <Button variant="ghost" onClick={() => requestQuotationSort('quotationNumber')} className="h-auto p-0 hover:bg-transparent font-semibold text-slate-600 hover:text-primary text-sm flex items-center gap-1 transition-colors">
                                 Quotation Details
                                 <ArrowUpDown className={`w-3.5 h-3.5 ${quotationSortConfig.key === 'quotationNumber' ? 'text-primary' : 'text-slate-400'}`} />
-                              </button>
+                              </Button>
                             </th>
                           )}
                           {visibleQuotationColumns.includes('rfqNumber') && (
                             <th className="text-left p-4 font-semibold text-slate-600 text-sm whitespace-nowrap min-w-[150px]">
-                              <button onClick={() => requestQuotationSort('rfqNumber')} className="flex items-center gap-1 hover:text-primary transition-colors">
+                              <Button variant="ghost" onClick={() => requestQuotationSort('rfqNumber')} className="h-auto p-0 hover:bg-transparent font-semibold text-slate-600 hover:text-primary text-sm flex items-center gap-1 transition-colors">
                                 RFQ Number
                                 <ArrowUpDown className={`w-3.5 h-3.5 ${quotationSortConfig.key === 'rfqNumber' ? 'text-primary' : 'text-slate-400'}`} />
-                              </button>
+                              </Button>
                             </th>
                           )}
                           {visibleQuotationColumns.includes('amount') && (
                             <th className="text-left p-4 font-semibold text-slate-600 text-sm whitespace-nowrap">
-                              <button onClick={() => requestQuotationSort('amount')} className="flex items-center gap-1 hover:text-primary transition-colors">
+                              <Button variant="ghost" onClick={() => requestQuotationSort('amount')} className="h-auto p-0 hover:bg-transparent font-semibold text-slate-600 hover:text-primary text-sm flex items-center gap-1 transition-colors">
                                 Amount
                                 <ArrowUpDown className={`w-3.5 h-3.5 ${quotationSortConfig.key === 'amount' ? 'text-primary' : 'text-slate-400'}`} />
-                              </button>
+                              </Button>
                             </th>
                           )}
                           {visibleQuotationColumns.includes('submittedDate') && (
                             <th className="text-left p-4 font-semibold text-slate-600 text-sm whitespace-nowrap">
-                              <button onClick={() => requestQuotationSort('submittedDate')} className="flex items-center gap-1 hover:text-primary transition-colors">
+                              <Button variant="ghost" onClick={() => requestQuotationSort('submittedDate')} className="h-auto p-0 hover:bg-transparent font-semibold text-slate-600 hover:text-primary text-sm flex items-center gap-1 transition-colors">
                                 Submitted Date
                                 <ArrowUpDown className={`w-3.5 h-3.5 ${quotationSortConfig.key === 'submittedDate' ? 'text-primary' : 'text-slate-400'}`} />
-                              </button>
+                              </Button>
                             </th>
                           )}
                           {visibleQuotationColumns.includes('validUntil') && (
                             <th className="text-left p-4 font-semibold text-slate-600 text-sm whitespace-nowrap">
-                              <button onClick={() => requestQuotationSort('validUntil')} className="flex items-center gap-1 hover:text-primary transition-colors">
+                              <Button variant="ghost" onClick={() => requestQuotationSort('validUntil')} className="h-auto p-0 hover:bg-transparent font-semibold text-slate-600 hover:text-primary text-sm flex items-center gap-1 transition-colors">
                                 Valid Until
                                 <ArrowUpDown className={`w-3.5 h-3.5 ${quotationSortConfig.key === 'validUntil' ? 'text-primary' : 'text-slate-400'}`} />
-                              </button>
+                              </Button>
                             </th>
                           )}
                           {visibleQuotationColumns.includes('status') && (
                             <th className="text-left p-4 font-semibold text-slate-600 text-sm whitespace-nowrap">
-                              <button onClick={() => requestQuotationSort('status')} className="flex items-center gap-1 hover:text-primary transition-colors">
+                              <Button variant="ghost" onClick={() => requestQuotationSort('status')} className="h-auto p-0 hover:bg-transparent font-semibold text-slate-600 hover:text-primary text-sm flex items-center gap-1 transition-colors">
                                 Status
                                 <ArrowUpDown className={`w-3.5 h-3.5 ${quotationSortConfig.key === 'status' ? 'text-primary' : 'text-slate-400'}`} />
-                              </button>
+                              </Button>
                             </th>
                           )}
                           <th className="text-left p-4 font-semibold text-slate-600 text-sm sticky right-0 z-30 bg-[#f8fafc] border-b shadow-[-2px_0_5px_-2px_rgba(0,0,0,0.1)] whitespace-nowrap text-center">Action</th>

@@ -1983,10 +1983,10 @@ export function GoodsReceipts({ onNavigate }: GoodsReceiptsProps) {
                                 </div>
                               </div>
                             ))}
-                            <button className="aspect-video rounded-xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center text-slate-400 hover:border-blue-400 hover:text-blue-500 hover:bg-blue-50/30 transition-all gap-2">
+                            <Button variant="outline" className="aspect-video rounded-xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center text-slate-400 hover:border-blue-400 hover:text-blue-500 hover:bg-blue-50/30 transition-all gap-2 h-auto w-full bg-transparent">
                               <Upload className="w-5 h-5" />
                               <span className="text-xs font-semibold leading-none">Upload Proof</span>
-                            </button>
+                            </Button>
                           </div>
                         </div>
                       </div>

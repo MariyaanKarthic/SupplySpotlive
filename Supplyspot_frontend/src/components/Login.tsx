@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
+import { Checkbox } from './ui/checkbox';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Alert, AlertDescription } from './ui/alert';
 import { Switch } from './ui/switch';
@@ -198,14 +199,15 @@ export default function Login() {
                     className={`h-11 pr-10 ${getFieldError('password') ? 'border-red-500' : ''}`}
                     disabled={loading}
                   />
-                  <button
+                  <Button
                     type="button"
+                    variant="ghost"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-3.5 text-gray-400 hover:text-gray-600"
+                    className="absolute right-3 top-3 text-gray-400 hover:text-gray-600 h-auto p-0 hover:bg-transparent"
                     disabled={loading}
                   >
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </button>
+                  </Button>
                 </div>
                 {getFieldError('password') && (
                   <p className="text-xs text-red-500 mt-1">{getFieldError('password')}</p>
@@ -213,8 +215,8 @@ export default function Login() {
               </div>
 
               <div className="flex items-center space-x-2 pt-1 pb-2">
-                <input type="checkbox" id="remember" className="rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
-                <label htmlFor="remember" className="text-sm text-gray-600 cursor-pointer">Remember me</label>
+                <Checkbox id="remember" />
+                <Label htmlFor="remember" className="text-sm text-gray-600 cursor-pointer font-normal">Remember me</Label>
               </div>
 
               <Button

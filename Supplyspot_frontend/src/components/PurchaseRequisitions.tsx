@@ -920,12 +920,14 @@ export function PurchaseRequisitions({ onNavigate }: PurchaseRequisitionsProps) 
             <div className="space-y-4">
               {items.map((item, idx) => (
                 <Card key={item.id} className="p-5 bg-white dark:bg-slate-950 relative overflow-visible border border-slate-200 dark:border-slate-800 shadow-sm rounded-lg">
-                  <button 
+                  <Button 
+                    variant="ghost"
+                    size="icon"
                     onClick={() => handleRemoveItem(item.id)} 
-                    className="absolute top-4 right-4 text-slate-400 hover:text-red-500 transition-colors p-1"
+                    className="absolute top-4 right-4 text-slate-400 hover:text-red-500 transition-colors p-1 h-auto w-auto hover:bg-transparent"
                   >
                     <Trash2 className="w-4 h-4" />
-                  </button>
+                  </Button>
 
                   <div className="space-y-4 pr-6">
                     {/* Row 1: Material selector, material no, description */}

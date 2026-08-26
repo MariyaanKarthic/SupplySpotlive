@@ -1147,27 +1147,30 @@ export const SupplierDashboard: React.FC<SupplierDashboardProps> = ({ onNavigate
                 </div>
                 <div className="space-y-1 text-xs">
                   <p className="font-semibold text-slate-700 mb-1.5">Frequent Help Topics:</p>
-                  <button
+                  <Button
+                    variant="ghost"
                     onClick={() => setActiveTab('rfq')}
-                    className="w-full text-left p-2 rounded hover:bg-slate-100 flex items-center justify-between transition-colors text-slate-600"
+                    className="w-full text-left p-2 rounded hover:bg-slate-100 flex items-center justify-between transition-colors text-slate-600 h-auto font-normal"
                   >
                     <span>How to respond to RFQs & Submit Quotes</span>
                     <ExternalLink className="w-3 h-3 text-muted-foreground" />
-                  </button>
-                  <button
+                  </Button>
+                  <Button
+                    variant="ghost"
                     onClick={() => setActiveTab('invoices')}
-                    className="w-full text-left p-2 rounded hover:bg-slate-100 flex items-center justify-between transition-colors text-slate-600"
+                    className="w-full text-left p-2 rounded hover:bg-slate-100 flex items-center justify-between transition-colors text-slate-600 h-auto font-normal"
                   >
                     <span>Submitting Invoices & Payment Tracking</span>
                     <ExternalLink className="w-3 h-3 text-muted-foreground" />
-                  </button>
-                  <button
+                  </Button>
+                  <Button
+                    variant="ghost"
                     onClick={() => setActiveTab('documents')}
-                    className="w-full text-left p-2 rounded hover:bg-slate-100 flex items-center justify-between transition-colors text-slate-600"
+                    className="w-full text-left p-2 rounded hover:bg-slate-100 flex items-center justify-between transition-colors text-slate-600 h-auto font-normal"
                   >
                     <span>Uploading Compliance Certificates</span>
                     <ExternalLink className="w-3 h-3 text-muted-foreground" />
-                  </button>
+                  </Button>
                 </div>
                 <div className="pt-2 border-t flex gap-2">
                   <Button

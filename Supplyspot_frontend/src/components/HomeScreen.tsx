@@ -300,20 +300,21 @@ export function HomeScreen({ onNavigate }: HomeScreenProps) {
             {modules.map((mod, idx) => {
               const IconComponent = mod.icon;
               return (
-                <button
+                <Button
                   key={`${mod.id}-${idx}`}
+                  variant="outline"
                   onClick={() => onNavigate(mod.id)}
-                  className={`group flex flex-col items-center justify-center p-5 bg-white border border-slate-200/80 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1 text-center min-h-[145px] cursor-pointer bg-gradient-to-br ${mod.gradient}`}
+                  className={`group flex flex-col items-center justify-center p-5 bg-white border border-slate-200/80 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1 text-center min-h-[145px] cursor-pointer bg-gradient-to-br ${mod.gradient} h-auto w-full`}
                 >
                   {/* Icon Frame */}
                   <div className={`p-3.5 rounded-2xl mb-3.5 transition-all duration-300 group-hover:scale-110 shadow-sm ${mod.iconBg} ${mod.iconColor}`}>
                     <IconComponent className="w-6 h-6" />
                   </div>
                   {/* Label */}
-                  <span className="text-xs font-semibold text-slate-700 group-hover:text-slate-900 line-clamp-2 max-w-[110px] leading-tight">
+                  <span className="text-xs font-semibold text-slate-700 group-hover:text-slate-900 line-clamp-2 max-w-[110px] leading-tight whitespace-normal">
                     {mod.label}
                   </span>
-                </button>
+                </Button>
               );
             })}
           </div>

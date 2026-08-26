@@ -17,15 +17,58 @@ import {
   XAxis, 
   YAxis, 
   CartesianGrid, 
-  ResponsiveContainer, 
-  LineChart, 
-  Line, 
   PieChart, 
   Pie, 
   Cell,
   AreaChart,
   Area
 } from 'recharts';
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from './ui/chart';
+
+const spendingTrendConfig = {
+  amount: {
+    label: "Spend Amount",
+    color: "hsl(var(--primary))",
+  },
+};
+
+const categorySpendConfig = {
+  rawMaterials: {
+    label: "Raw Materials",
+    color: "#3b82f6",
+  },
+  logistics: {
+    label: "Logistics",
+    color: "#10b981",
+  },
+  itEquipment: {
+    label: "IT & Equipment",
+    color: "#f59e0b",
+  },
+  officeSupplies: {
+    label: "Office Supplies",
+    color: "#8b5cf6",
+  },
+  services: {
+    label: "Services",
+    color: "#ec4899",
+  },
+};
+
+const paymentTrendConfig = {
+  onTime: {
+    label: "On Time",
+    color: "#10b981",
+  },
+  late: {
+    label: "Late",
+    color: "#f59e0b",
+  },
+  failed: {
+    label: "Failed",
+    color: "#ef4444",
+  },
+};
 import { 
   TrendingUp, 
   TrendingDown, 
@@ -185,20 +228,21 @@ export function Analytics({ onNavigate }: AnalyticsProps) {
             <p className="text-sm text-muted-foreground">Monthly spending and vendor count</p>
           </div>
           <div className="h-80">
-            <ResponsiveContainer width="100%" height="100%" minWidth={300} minHeight={320} debounce={50}>
+            <ChartContainer config={spendingTrendConfig} className="h-full w-full">
               <AreaChart data={spendingTrendData}>
                 <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
-                <XAxis dataKey="month" />
-                <YAxis />
+                <XAxis dataKey="month" tickLine={false} axisLine={false} />
+                <YAxis tickLine={false} axisLine={false} />
+                <ChartTooltip content={<ChartTooltipContent />} />
                 <Area 
                   type="monotone" 
                   dataKey="amount" 
-                  stroke="hsl(var(--primary))" 
-                  fill="hsl(var(--primary))"
+                  stroke="var(--color-amount)" 
+                  fill="var(--color-amount)"
                   fillOpacity={0.1}
                 />
               </AreaChart>
-            </ResponsiveContainer>
+            </ChartContainer>
           </div>
         </Card>
 
@@ -209,7 +253,7 @@ export function Analytics({ onNavigate }: AnalyticsProps) {
             <p className="text-sm text-muted-foreground">Distribution of spending across categories</p>
           </div>
           <div className="h-80">
-            <ResponsiveContainer width="100%" height="100%" minWidth={300} minHeight={320} debounce={50}>
+            <ChartContainer config={categorySpendConfig} className="h-full w-full">
               <PieChart>
                 <Pie
                   data={categorySpendData}
@@ -218,14 +262,15 @@ export function Analytics({ onNavigate }: AnalyticsProps) {
                   innerRadius={60}
                   outerRadius={120}
                   dataKey="amount"
-                  label={({ category, percentage }) => `${category}: ${percentage}%`}
+                  nameKey="category"
                 >
                   {categorySpendData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
+                <ChartTooltip content={<ChartTooltipContent />} />
               </PieChart>
-            </ResponsiveContainer>
+            </ChartContainer>
           </div>
         </Card>
 
@@ -236,16 +281,17 @@ export function Analytics({ onNavigate }: AnalyticsProps) {
             <p className="text-sm text-muted-foreground">On-time vs late payments trend</p>
           </div>
           <div className="h-80">
-            <ResponsiveContainer width="100%" height="100%" minWidth={300} minHeight={320} debounce={50}>
+            <ChartContainer config={paymentTrendConfig} className="h-full w-full">
               <BarChart data={paymentTrendData}>
                 <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
-                <XAxis dataKey="month" />
-                <YAxis />
-                <Bar dataKey="onTime" fill="#10b981" name="On Time" />
-                <Bar dataKey="late" fill="#f59e0b" name="Late" />
-                <Bar dataKey="failed" fill="#ef4444" name="Failed" />
+                <XAxis dataKey="month" tickLine={false} axisLine={false} />
+                <YAxis tickLine={false} axisLine={false} />
+                <ChartTooltip content={<ChartTooltipContent />} />
+                <Bar dataKey="onTime" fill="var(--color-onTime)" radius={2} />
+                <Bar dataKey="late" fill="var(--color-late)" radius={2} />
+                <Bar dataKey="failed" fill="var(--color-failed)" radius={2} />
               </BarChart>
-            </ResponsiveContainer>
+            </ChartContainer>
           </div>
         </Card>
 

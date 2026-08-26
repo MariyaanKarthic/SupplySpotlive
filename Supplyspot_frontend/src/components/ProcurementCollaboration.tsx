@@ -866,7 +866,7 @@ export default function ProcurementCollaboration({ onNavigate }: ProcurementColl
                         <Button size="icon" variant="outline" onClick={() => document.getElementById('message-file-input')?.click()}>
                           <Paperclip className="h-4 w-4" />
                         </Button>
-                        <input
+                        <Input
                           id="message-file-input"
                           type="file"
                           multiple

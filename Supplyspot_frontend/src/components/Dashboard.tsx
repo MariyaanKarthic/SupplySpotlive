@@ -13,7 +13,34 @@ import {
   Clock,
   XCircle
 } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, PieChart, Pie, Cell } from 'recharts';
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from './ui/chart';
+
+const spendChartConfig = {
+  amount: {
+    label: "Spend Amount",
+    color: "hsl(var(--primary))",
+  },
+};
+
+const performanceChartConfig = {
+  excellent: {
+    label: "Excellent",
+    color: "#22c55e",
+  },
+  good: {
+    label: "Good",
+    color: "#3b82f6",
+  },
+  average: {
+    label: "Average",
+    color: "#f59e0b",
+  },
+  poor: {
+    label: "Poor",
+    color: "#ef4444",
+  },
+};
 
 const monthlySpendData = [
   { month: 'Jan', amount: 45000 },
@@ -111,14 +138,15 @@ export function Dashboard() {
             <p className="text-sm text-muted-foreground">Vendor payments over the last 6 months</p>
           </div>
           <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%" minWidth={300} minHeight={256} debounce={50}>
+            <ChartContainer config={spendChartConfig} className="h-full w-full">
               <BarChart data={monthlySpendData}>
                 <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
-                <XAxis dataKey="month" />
-                <YAxis />
-                <Bar dataKey="amount" fill="hsl(var(--primary))" radius={4} />
+                <XAxis dataKey="month" tickLine={false} axisLine={false} />
+                <YAxis tickLine={false} axisLine={false} />
+                <ChartTooltip content={<ChartTooltipContent />} />
+                <Bar dataKey="amount" fill="var(--color-amount)" radius={4} />
               </BarChart>
-            </ResponsiveContainer>
+            </ChartContainer>
           </div>
         </Card>
 
@@ -129,7 +157,7 @@ export function Dashboard() {
             <p className="text-sm text-muted-foreground">Performance rating distribution</p>
           </div>
           <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%" minWidth={300} minHeight={256} debounce={50}>
+            <ChartContainer config={performanceChartConfig} className="h-full w-full">
               <PieChart>
                 <Pie
                   data={vendorPerformanceData}
@@ -138,13 +166,15 @@ export function Dashboard() {
                   innerRadius={60}
                   outerRadius={100}
                   dataKey="value"
+                  nameKey="name"
                 >
                   {vendorPerformanceData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
+                <ChartTooltip content={<ChartTooltipContent />} />
               </PieChart>
-            </ResponsiveContainer>
+            </ChartContainer>
           </div>
           <div className="flex flex-wrap gap-4 mt-4">
             {vendorPerformanceData.map((item) => (

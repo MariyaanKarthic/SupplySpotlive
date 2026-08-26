@@ -414,14 +414,15 @@ export default function InviteSignup() {
                     className={`pl-10 pr-10 ${getFieldError('password') ? 'border-red-500' : ''}`}
                     disabled={loading || !inviteValidation?.valid}
                   />
-                  <button
+                  <Button
                     type="button"
+                    variant="ghost"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                    className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600 h-auto p-0 hover:bg-transparent"
                     disabled={loading}
                   >
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </button>
+                  </Button>
                 </div>
                 {getFieldError('password') && (
                   <p className="text-sm text-red-500">{getFieldError('password')}</p>
@@ -452,14 +453,15 @@ export default function InviteSignup() {
                     className={`pl-10 pr-10 ${getFieldError('confirmPassword') ? 'border-red-500' : ''}`}
                     disabled={loading || !inviteValidation?.valid}
                   />
-                  <button
+                  <Button
                     type="button"
+                    variant="ghost"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                    className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600 h-auto p-0 hover:bg-transparent"
                     disabled={loading}
                   >
                     {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </button>
+                  </Button>
                 </div>
                 {getFieldError('confirmPassword') && (
                   <p className="text-sm text-red-500">{getFieldError('confirmPassword')}</p>
@@ -486,12 +488,13 @@ export default function InviteSignup() {
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
               Already have an account?{' '}
-              <button 
+              <Button 
+                variant="link"
                 onClick={() => navigate('/login')}
-                className="text-blue-600 hover:underline"
+                className="text-blue-600 hover:underline p-0 h-auto font-normal"
               >
                 Sign in
-              </button>
+              </Button>
             </p>
           </div>
         </CardContent>
