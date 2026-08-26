@@ -52,8 +52,9 @@ export const searchItems: SearchItem[] = [
   { id: 'inv-2026-001', category: 'data', title: 'INV-2026-001', subtitle: 'Steel Components Inc • $12,450.00 • Paid', targetSection: 'invoices', iconName: 'Receipt' },
   { id: 'inv-2026-002', category: 'data', title: 'INV-2026-002', subtitle: 'Apex Industrial Solutions • $8,200.00 • Pending', targetSection: 'invoices', iconName: 'Receipt' },
   { id: 'inv-2026-003', category: 'data', title: 'INV-2026-003', subtitle: 'Tashkent Metallurgical Plant • $15,100.00 • Draft', targetSection: 'invoices', iconName: 'Receipt' },
-  { id: 'vendor-steel', category: 'data', title: 'Steel Components Inc', subtitle: 'Rating: 4.8 ★ • Active Onboarded Vendor', targetSection: 'vendors', iconName: 'Users' },
-  { id: 'vendor-apex', category: 'data', title: 'Apex Industrial Solutions', subtitle: 'Rating: 4.2 ★ • Under Registration Review', targetSection: 'vendors', iconName: 'Users' },
-  { id: 'vendor-global', category: 'data', title: 'Global Logistics Co', subtitle: 'Rating: 4.5 ★ • Active Onboarded Vendor', targetSection: 'vendors', iconName: 'Users' },
-  { id: 'vendor-tashkent', category: 'data', title: 'Tashkent Metallurgical Plant', subtitle: 'Rating: 4.9 ★ • Active Onboarded Vendor', targetSection: 'vendors', iconName: 'Users' }
+  { id: 'vendor-tech', category: 'data', title: 'Tech Solution Ltd', subtitle: 'john.smith@techcorp.com • Rating: 4.8 ★ • Active', targetSection: 'vendors', iconName: 'Users' },
+  { id: 'vendor-global', category: 'data', title: 'Global Supplies Ltd', subtitle: 'maria.garcia@globalsupplies.com • Rating: 4.5 ★ • Active', targetSection: 'vendors', iconName: 'Users' },
+  { id: 'vendor-premium', category: 'data', title: 'Premium Services Inc', subtitle: 'david.wilson@premium.com • Rating: 4.2 ★ • Under Review', targetSection: 'vendors', iconName: 'Users' },
+  { id: 'vendor-quick', category: 'data', title: 'Quick Logistics', subtitle: 'sarah.johnson@quicklogistics.com • Rating: 3.8 ★ • Inactive', targetSection: 'vendors', iconName: 'Users' },
+  { id: 'vendor-digital', category: 'data', title: 'Digital Systems Co', subtitle: 'michael.brown@digitalsystems.com • Rating: 4.9 ★ • Active', targetSection: 'vendors', iconName: 'Users' }
 ];
