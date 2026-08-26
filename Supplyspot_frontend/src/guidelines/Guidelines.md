@@ -32,6 +32,7 @@ For example:
 * Never use the floating action button with the bottom toolbar
 * Chips should always come in sets of 3 or more
 * Don't use a dropdown if there are 2 or fewer options
+* Use shadcn UI components by default, for all UI components, layout, animations, charts, maps etc.. Avoid using any other UI libraries, if a component is not available in shadcn UI, ask for permission to use other libraries. if any other component or library is used, it must be compared shadcn ui , if available use first shadcn ui component.
 
 You can also create sub sections and add more specific details
 For example:
