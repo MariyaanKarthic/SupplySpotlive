@@ -86,17 +86,20 @@ const navigationGroups: NavigationGroup[] = [
     ]
   },
   {
-    title: 'Supplier Onboarding',
+    title: 'Vendor',
     items: [
       { id: 'registration' as NavigationItem, label: 'Vendor Registration', icon: UserPlus, badge: '3', badgeVariant: 'secondary' },
       { id: 'registration-review' as NavigationItem, label: 'Registration Review', icon: FileCheck, badge: '12', badgeVariant: 'destructive' },
       { id: 'vendors' as NavigationItem, label: 'Vendor Management', icon: Users },
+      { id: 'supplier-dashboard' as NavigationItem, label: 'Supplier Dashboard', icon: Monitor, badge: 'New', badgeVariant: 'default' },
     ]
   },
   {
-    title: 'Supplier Portal',
+    title: 'Finance',
     items: [
-      { id: 'supplier-dashboard' as NavigationItem, label: 'Supplier Dashboard', icon: Monitor, badge: 'New', badgeVariant: 'default' },
+      { id: 'invoices' as NavigationItem, label: 'Invoices', icon: Receipt, badge: '7', badgeVariant: 'destructive' },
+      { id: 'ap-automation' as NavigationItem, label: 'Ap Automation', icon: Zap },
+      { id: 'payments' as NavigationItem, label: 'Payments', icon: CreditCard },
     ]
   },
   {
@@ -112,34 +115,16 @@ const navigationGroups: NavigationGroup[] = [
     ]
   },
   {
-    title: 'Finance & Payments',
-    items: [
-      { id: 'invoices' as NavigationItem, label: 'Invoices', icon: Receipt, badge: '7', badgeVariant: 'destructive' },
-      { id: 'ap-automation' as NavigationItem, label: 'Ap Automation', icon: Zap },
-      { id: 'payments' as NavigationItem, label: 'Payments', icon: CreditCard },
-    ]
-  },
-  {
     title: 'Logistics',
     items: [
       { id: 'delivery-slots' as NavigationItem, label: 'Smart Delivery Slots', icon: Truck, badge: '24', badgeVariant: 'default' },
-    ]
-  },
-  {
-    title: 'Security & Access',
-    items: [
       { id: 'gate-entry' as NavigationItem, label: 'Gate Entry Integration', icon: UserCheck, badge: '4', badgeVariant: 'secondary' },
     ]
   },
   {
-    title: 'Support & Resolution',
+    title: 'More',
     items: [
       { id: 'dispute-management' as NavigationItem, label: 'Dispute & Query Management', icon: MessageSquare, badge: '8', badgeVariant: 'destructive' },
-    ]
-  },
-  {
-    title: 'Management',
-    items: [
       { id: 'documents' as NavigationItem, label: 'Documents', icon: FolderOpen },
       { id: 'databoards' as NavigationItem, label: 'Databoards', icon: Database, badge: 'New', badgeVariant: 'default' },
       { id: 'analytics' as NavigationItem, label: 'Analytics', icon: BarChart3 },
@@ -308,8 +293,43 @@ export function Sidebar({ activeSection, onSectionChange }: SidebarProps) {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56 bg-slate-900 border-slate-800 text-white p-1 shadow-xl">
-              {navigationGroups.slice(visibleCount).map((group) => {
+              {navigationGroups.slice(visibleCount).map((group, index) => {
                 const isGroupActive = group.items.some(item => activeSection === item.id);
+                
+                // If the group is 'More', render its items directly in the root dropdown
+                if (group.title === 'More') {
+                  return (
+                    <React.Fragment key={group.title}>
+                      {index > 0 && <DropdownMenuSeparator className="bg-slate-805 my-1" />}
+                      {group.items.map((item) => {
+                        const Icon = item.icon;
+                        const isActive = activeSection === item.id;
+                        return (
+                          <DropdownMenuItem
+                            key={item.id}
+                            onClick={() => onSectionChange(item.id)}
+                            className={cn(
+                              "flex items-center gap-2.5 py-2 px-2.5 rounded-md text-xs font-medium cursor-pointer text-slate-300 hover:text-white hover:bg-white/10 focus:bg-white/10 focus:text-white transition-colors",
+                              isActive && "bg-white/15 text-white"
+                            )}
+                          >
+                            <Icon className="w-4 h-4 shrink-0" />
+                            <span className="flex-1 truncate">{item.label}</span>
+                            {item.badge && (
+                              <Badge
+                                variant={item.badgeVariant === 'destructive' ? 'destructive' : item.badgeVariant === 'default' ? 'default' : 'secondary'}
+                                className="h-4.5 px-1.5 text-[9px] font-bold"
+                              >
+                                {item.badge}
+                              </Badge>
+                            )}
+                          </DropdownMenuItem>
+                        );
+                      })}
+                    </React.Fragment>
+                  );
+                }
+
                 return (
                   <DropdownMenuSub key={group.title}>
                     <DropdownMenuSubTrigger className={cn(
