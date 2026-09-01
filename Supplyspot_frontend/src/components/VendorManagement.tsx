@@ -11,7 +11,7 @@ import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Badge } from './ui/badge';
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from './ui/sheet';
+import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from './ui/drawer';
 import { Label } from './ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Textarea } from './ui/textarea';
@@ -1326,16 +1326,16 @@ export function VendorManagement({ onNavigateToRegistration, onNavigate }: Vendo
         </TabsContent>
       </Tabs>
 
-      <Sheet open={isAlertReviewOpen} onOpenChange={setIsAlertReviewOpen}>
-        <SheetContent side="right" className="sm:max-w-4xl p-0 gap-0 border-l border-slate-200 shadow-2xl flex flex-col h-full bg-white">
-          <SheetHeader className="p-6 border-b shrink-0">
+      <Drawer open={isAlertReviewOpen} onOpenChange={setIsAlertReviewOpen} direction="right">
+        <DrawerContent className="sm:max-w-4xl p-0 gap-0 border-l border-slate-200 shadow-2xl flex flex-col h-full bg-white">
+          <DrawerHeader className="p-6 border-b shrink-0">
             <div className="flex items-center justify-between pr-8">
               <div>
-                <SheetTitle className="text-xl font-bold text-slate-800">High-Risk Supplier Alert Review</SheetTitle>
-                <SheetDescription className="text-sm text-slate-500">Review and take action on supplier performance alert</SheetDescription>
+                <DrawerTitle className="text-xl font-bold text-slate-800">High-Risk Supplier Alert Review</DrawerTitle>
+                <DrawerDescription className="text-sm text-slate-500">Review and take action on supplier performance alert</DrawerDescription>
               </div>
             </div>
-          </SheetHeader>
+          </DrawerHeader>
 
           <div className="flex-1 overflow-y-auto p-6 space-y-6">
             {/* Alert Overview Header */}
@@ -1570,8 +1570,8 @@ export function VendorManagement({ onNavigateToRegistration, onNavigate }: Vendo
               </Button>
             </div>
           </div>
-        </SheetContent>
-      </Sheet>
+        </DrawerContent>
+      </Drawer>
     </div>
   );
 }

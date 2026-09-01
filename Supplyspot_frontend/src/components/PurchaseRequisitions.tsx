@@ -1094,10 +1094,7 @@ export function PurchaseRequisitions({ onNavigate }: PurchaseRequisitionsProps) 
                   Convert to Purchase Order
                 </Button>
               )}
-              <Button variant="outline" onClick={() => setCurrentView('list')} className="font-semibold gap-1.5">
-                <ArrowLeft className="w-4 h-4" />
-                Back to List
-              </Button>
+
             </div>
           </div>
         </div>        <div className="space-y-6">

@@ -592,10 +592,7 @@ export function PurchaseOrderManagement({ onNavigate }: { onNavigate?: (view: an
                 <Download className="w-4 h-4" />
                 Download
               </Button>
-              <Button variant="ghost" onClick={() => setCurrentView('list')} className="font-semibold text-slate-650 hover:bg-transparent">
-                <ArrowLeft className="w-4 h-4 mr-1.5" />
-                Back to List
-              </Button>
+
             </div>
           </div>
         </div>

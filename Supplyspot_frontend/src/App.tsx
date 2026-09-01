@@ -153,7 +153,7 @@ function Dashboard() {
       case "databoards":
         return <Databoards onNavigate={setActiveSection} />;
       case "settings":
-        return <Settings onNavigate={setActiveSection} />;
+        return <SettingsConfiguration onNavigate={setActiveSection} />;
       default:
         return <VendorManagement onNavigate={setActiveSection} />;
     }
@@ -182,13 +182,13 @@ export default function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<Login />} />
-          <Route 
-            path="/dashboard" 
+          <Route
+            path="/dashboard"
             element={
               <ProtectedRoute>
                 <Dashboard />
               </ProtectedRoute>
-            } 
+            }
           />
           <Route path="*" element={<Navigate to="/dashboard" />} />
         </Routes>

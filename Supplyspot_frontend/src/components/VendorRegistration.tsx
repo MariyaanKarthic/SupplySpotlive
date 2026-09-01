@@ -3,7 +3,7 @@ import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Badge } from './ui/badge';
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from './ui/sheet';
+import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from './ui/drawer';
 import { Label } from './ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Textarea } from './ui/textarea';
@@ -1028,14 +1028,14 @@ export function VendorRegistration({ onNavigate }: VendorRegistrationProps) {
 
   // Registration Review Sheet
   const renderReviewModal = () => (
-    <Sheet open={isReviewModalOpen} onOpenChange={setIsReviewModalOpen}>
-      <SheetContent className="sm:max-w-4xl overflow-y-auto">
-        <SheetHeader>
-          <SheetTitle>Registration Review - {selectedRegistration?.companyName}</SheetTitle>
-          <SheetDescription>
+    <Drawer open={isReviewModalOpen} onOpenChange={setIsReviewModalOpen} direction="right">
+      <DrawerContent className="sm:max-w-4xl overflow-y-auto">
+        <DrawerHeader>
+          <DrawerTitle>Registration Review - {selectedRegistration?.companyName}</DrawerTitle>
+          <DrawerDescription>
             Complete review of vendor registration details and documentation
-          </SheetDescription>
-        </SheetHeader>
+          </DrawerDescription>
+        </DrawerHeader>
         
         {selectedRegistration && (
           <div className="space-y-6 mt-4">
@@ -1139,8 +1139,8 @@ export function VendorRegistration({ onNavigate }: VendorRegistrationProps) {
             </div>
           </div>
         )}
-      </SheetContent>
-    </Sheet>
+      </DrawerContent>
+    </Drawer>
   );
 
   return (
