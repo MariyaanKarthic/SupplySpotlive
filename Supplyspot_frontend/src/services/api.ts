@@ -21,7 +21,7 @@ class ApiClient {
     const url = `${this.baseURL}${endpoint}`;
     
     // Get auth token from localStorage
-    const token = localStorage.getItem('auth_token');
+    const token = localStorage.getItem('token');
     const headers = {
       ...this.defaultHeaders,
       ...(token && { Authorization: `Bearer ${token}` }),
@@ -86,7 +86,7 @@ class ApiClient {
       });
     }
 
-    const token = localStorage.getItem('auth_token');
+    const token = localStorage.getItem('token');
     const headers: Record<string, string> = {};
     if (token) {
       headers.Authorization = `Bearer ${token}`;
@@ -394,7 +394,7 @@ export const documentService = {
 
   // Download document
   downloadDocument: (id: string) => {
-    const token = localStorage.getItem('auth_token');
+    const token = localStorage.getItem('token');
     const url = `${API_BASE_URL}/documents/${id}/download`;
     const link = document.createElement('a');
     link.href = url;

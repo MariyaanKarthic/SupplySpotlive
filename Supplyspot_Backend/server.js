@@ -16,15 +16,12 @@ const { notFound } = require('./middleware/notFound');
 const authRoutes = require('./routes/auth');
 const inviteRoutes = require('./routes/invites');
 const vendorRoutes = require('./routes/vendors');
-// const invoiceRoutes = require('./routes/invoices');
-// const purchaseOrderRoutes = require('./routes/purchaseOrders');
-// const rfqRoutes = require('./routes/rfqs');
-// const disputeRoutes = require('./routes/disputes');
-// const paymentRoutes = require('./routes/payments');
-// const analyticsRoutes = require('./routes/analytics');
-// const documentRoutes = require('./routes/documents');
-// const notificationRoutes = require('./routes/notifications');
-// const settingsRoutes = require('./routes/settings');
+const invoiceRoutes = require('./routes/invoices');
+const purchaseOrderRoutes = require('./routes/purchaseOrders');
+const rfqRoutes = require('./routes/rfqs');
+const disputeRoutes = require('./routes/disputes');
+const paymentRoutes = require('./routes/payments');
+const analyticsRoutes = require('./routes/analytics');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -103,15 +100,12 @@ const apiPrefix = `/api/${apiVersion}`;
 app.use(`${apiPrefix}/auth`, authRoutes);
 app.use(`${apiPrefix}/invites`, inviteRoutes);
 app.use(`${apiPrefix}/vendors`, vendorRoutes);
-// app.use(`${apiPrefix}/invoices`, invoiceRoutes);
-// app.use(`${apiPrefix}/purchase-orders`, purchaseOrderRoutes);
-// app.use(`${apiPrefix}/rfqs`, rfqRoutes);
-// app.use(`${apiPrefix}/disputes`, disputeRoutes);
-// app.use(`${apiPrefix}/payments`, paymentRoutes);
-// app.use(`${apiPrefix}/analytics`, analyticsRoutes);
-// app.use(`${apiPrefix}/documents`, documentRoutes);
-// app.use(`${apiPrefix}/notifications`, notificationRoutes);
-// app.use(`${apiPrefix}/settings`, settingsRoutes);
+app.use(`${apiPrefix}/invoices`, invoiceRoutes);
+app.use(`${apiPrefix}/purchase-orders`, purchaseOrderRoutes);
+app.use(`${apiPrefix}/rfqs`, rfqRoutes);
+app.use(`${apiPrefix}/disputes`, disputeRoutes);
+app.use(`${apiPrefix}/payments`, paymentRoutes);
+app.use(`${apiPrefix}/analytics`, analyticsRoutes);
 
 // API Documentation (Swagger)
 if (process.env.API_DOCS_ENABLED === 'true') {
