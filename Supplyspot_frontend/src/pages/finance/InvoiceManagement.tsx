@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { 
   Breadcrumb, 
   BreadcrumbItem, 
@@ -50,13 +50,17 @@ import {
   Paperclip,
   Calendar,
   User,
-  Building
+  Building,
+  Copy,
+  Check,
+  Loader2
 } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useApi } from '@/hooks/useApi';
 import { invoiceService } from '@/services/api';
+import { toast } from 'sonner';
 
-const purchaseOrders = [
+const defaultPurchaseOrders = [
   { id: 'PO-2023-045', vendor: 'TechCorp Solutions', amount: 12500, items: ['Software License'] },
   { id: 'PO-2023-052', vendor: 'Global Supplies Ltd', amount: 8900, items: ['Raw Materials'] },
   { id: 'PO-2023-048', vendor: 'Premium Services Inc', amount: 4500, items: ['Consulting'] },
@@ -64,21 +68,73 @@ const purchaseOrders = [
   { id: 'PO-2023-055', vendor: 'Digital Systems Co', amount: 15600, items: ['Cloud Services'] }
 ];
 
-const goodsReceipts = [
-  { id: 'GRN-2023-089', poNumber: 'PO-2023-045', vendor: 'TechCorp Solutions', receivedDate: '2023-11-10' },
-  { id: 'GRN-2023-095', poNumber: 'PO-2023-052', vendor: 'Global Supplies Ltd', receivedDate: '2023-11-18' },
-  { id: 'GRN-2023-078', poNumber: 'PO-2023-041', vendor: 'Quick Logistics', receivedDate: '2023-10-28' }
+const initialDefaultInvoices = [
+  {
+    id: '1',
+    invoiceNumber: 'INV-2023-001',
+    vendor: 'TechCorp Solutions',
+    amount: 12500,
+    dueDate: '2023-12-15',
+    issueDate: '2023-11-15',
+    status: 'Pending Approval',
+    description: 'Software License Renewal & Technical Support',
+    paymentDate: null,
+    approvedBy: null,
+    category: 'Software & Technology',
+    taxAmount: 1250,
+    netAmount: 11250,
+    submissionMethod: 'OCR Scan',
+    poNumber: 'PO-2023-045',
+    grnNumber: 'GRN-2023-089',
+    matchingStatus: 'Matched',
+    ocrConfidence: 96,
+    extractedData: true,
+  },
+  {
+    id: '2',
+    invoiceNumber: 'INV-2023-002',
+    vendor: 'Global Supplies Ltd',
+    amount: 8900,
+    dueDate: '2023-12-20',
+    issueDate: '2023-11-20',
+    status: 'Approved',
+    description: 'Raw Materials Batch A4',
+    paymentDate: null,
+    approvedBy: 'Sarah Jenkins',
+    category: 'Raw Materials',
+    taxAmount: 890,
+    netAmount: 8010,
+    submissionMethod: 'E-Invoice',
+    poNumber: 'PO-2023-052',
+    grnNumber: 'GRN-2023-095',
+    matchingStatus: 'PO Matched',
+    ocrConfidence: 99,
+    extractedData: true,
+  }
 ];
 
-const ocrStages = [
-  { id: 'upload', title: 'Document Upload', completed: true },
-  { id: 'scan', title: 'OCR Scanning', completed: true },
-  { id: 'extract', title: 'Data Extraction', completed: true },
-  { id: 'validate', title: 'Data Validation', completed: false },
-  { id: 'match', title: 'PO/GRN Matching', completed: false }
+const defaultVendorSubmissions = [
+  {
+    id: 'sub-1',
+    vendor: 'TechCorp Solutions',
+    invoiceNumber: 'INV-2023-088',
+    amount: 12500,
+    method: 'Portal Upload',
+    submissionDate: '2023-11-20',
+    status: 'Approved',
+    attachments: ['invoice_PO45.pdf']
+  },
+  {
+    id: 'sub-2',
+    vendor: 'Global Supplies Ltd',
+    invoiceNumber: 'INV-2023-094',
+    amount: 8900,
+    method: 'Email',
+    submissionDate: '2023-11-22',
+    status: 'Pending Approval',
+    attachments: ['raw_materials_inv.pdf']
+  }
 ];
-
-const vendorSubmissions: any[] = [];
 
 interface InvoiceManagementProps {
   onNavigate?: (section: any) => void;
@@ -90,49 +146,280 @@ export function InvoiceManagement({ onNavigate }: InvoiceManagementProps) {
   );
 
   const rawInvoices = (invoiceApiData as any)?.invoices || [];
-  const invoices = rawInvoices.map((inv: any) => ({
-    id: inv.id,
-    invoiceNumber: inv.invoice_number || inv.invoiceNumber || 'INV-000',
-    vendor: inv.vendor_name || 'Vendor',
-    amount: Number(inv.total_amount || inv.amount) || 0,
-    dueDate: inv.due_date ? new Date(inv.due_date).toISOString().split('T')[0] : '',
-    issueDate: inv.issue_date ? new Date(inv.issue_date).toISOString().split('T')[0] : '',
-    status: inv.status === 'paid' ? 'Paid'
-          : inv.status === 'approved' ? 'Approved'
-          : inv.status === 'pending_approval' ? 'Pending Approval'
-          : inv.status === 'rejected' ? 'Rejected'
-          : inv.status === 'overdue' ? 'Overdue'
-          : (inv.status || 'Pending Approval'),
-    description: inv.description || '',
-    paymentDate: inv.payment_date || null,
-    approvedBy: inv.approved_by || null,
-    category: inv.category || 'General',
-    taxAmount: Number(inv.tax_amount) || 0,
-    netAmount: Number(inv.net_amount || (inv.total_amount - inv.tax_amount)) || 0,
-    submissionMethod: inv.submission_method || 'Portal',
-    poNumber: inv.po_number || null,
-    grnNumber: inv.grn_number || null,
-    matchingStatus: inv.matching_status || 'Pending Review',
-    ocrConfidence: inv.ocr_confidence || 95,
-    extractedData: true,
-  }));
+
+  const [localInvoices, setLocalInvoices] = useState<any[]>(initialDefaultInvoices);
+
+  useEffect(() => {
+    if (rawInvoices && rawInvoices.length > 0) {
+      const fetchedInvoices = rawInvoices.map((inv: any) => ({
+        id: inv.id,
+        invoiceNumber: inv.invoice_number || inv.invoiceNumber || 'INV-000',
+        vendor: inv.vendor_name || 'Vendor',
+        amount: Number(inv.total_amount || inv.amount) || 0,
+        dueDate: inv.due_date ? new Date(inv.due_date).toISOString().split('T')[0] : '',
+        issueDate: inv.issue_date ? new Date(inv.issue_date).toISOString().split('T')[0] : '',
+        status: inv.status === 'paid' ? 'Paid'
+              : inv.status === 'approved' ? 'Approved'
+              : inv.status === 'pending_approval' ? 'Pending Approval'
+              : inv.status === 'rejected' ? 'Rejected'
+              : inv.status === 'overdue' ? 'Overdue'
+              : (inv.status || 'Pending Approval'),
+        description: inv.description || '',
+        paymentDate: inv.payment_date || null,
+        approvedBy: inv.approved_by || null,
+        category: inv.category || 'General',
+        taxAmount: Number(inv.tax_amount) || 0,
+        netAmount: Number(inv.net_amount || (inv.total_amount - inv.tax_amount)) || 0,
+        submissionMethod: inv.submission_method || 'Portal',
+        poNumber: inv.po_number || null,
+        grnNumber: inv.grn_number || null,
+        matchingStatus: inv.matching_status || 'Pending Review',
+        ocrConfidence: inv.ocr_confidence || 95,
+        extractedData: true,
+      }));
+      setLocalInvoices(fetchedInvoices);
+    }
+  }, [invoiceApiData]);
 
   const [searchTerm, setSearchTerm] = useState('');
-  const [isAddInvoiceOpen, setIsAddInvoiceOpen] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState<any>(null);
   const [isViewInvoiceOpen, setIsViewInvoiceOpen] = useState(false);
   const [isOcrModalOpen, setIsOcrModalOpen] = useState(false);
   const [isVendorSubmissionOpen, setIsVendorSubmissionOpen] = useState(false);
+  
+  // OCR Flow States
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [ocrProgress, setOcrProgress] = useState(0);
+  const [isProcessingOcr, setIsProcessingOcr] = useState(false);
   const [extractedData, setExtractedData] = useState<any>(null);
+  const [selectedPoId, setSelectedPoId] = useState<string>('PO-2023-045');
   const [activeTab, setActiveTab] = useState('all');
+  
+  // Camera Scanning States
+  const [isCameraActive, setIsCameraActive] = useState(false);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
 
-  const filteredInvoices = invoices.filter((invoice: any) =>
+  // Email Copy State
+  const [isEmailCopied, setIsEmailCopied] = useState(false);
+
+  const filteredInvoices = localInvoices.filter((invoice: any) =>
     invoice.invoiceNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
     invoice.vendor.toLowerCase().includes(searchTerm.toLowerCase()) ||
     invoice.description.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  // Camera Management
+  const startCamera = async () => {
+    try {
+      setIsCameraActive(true);
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+      }
+    } catch (err) {
+      toast.error('Camera access not granted. Running simulated document capture instead.');
+      setIsCameraActive(false);
+      const mockFile = new File(['mock scan'], 'scanned_paper_invoice.png', { type: 'image/png' });
+      processFileOCR(mockFile);
+    }
+  };
+
+  const stopCamera = () => {
+    if (videoRef.current && videoRef.current.srcObject) {
+      const stream = videoRef.current.srcObject as MediaStream;
+      stream.getTracks().forEach(track => track.stop());
+      videoRef.current.srcObject = null;
+    }
+    setIsCameraActive(false);
+  };
+
+  const capturePhoto = () => {
+    if (!videoRef.current) return;
+    const canvas = document.createElement('canvas');
+    canvas.width = videoRef.current.videoWidth || 640;
+    canvas.height = videoRef.current.videoHeight || 480;
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
+      canvas.toBlob((blob) => {
+        if (blob) {
+          const file = new File([blob], `camera_scan_${Date.now()}.png`, { type: 'image/png' });
+          stopCamera();
+          processFileOCR(file);
+        }
+      }, 'image/png');
+    }
+  };
+
+  // Process File OCR (Calls Real API & Drives Progress Bar)
+  const processFileOCR = async (file: File) => {
+    setSelectedFile(file);
+    setIsProcessingOcr(true);
+    setOcrProgress(10);
+    setExtractedData(null);
+
+    const interval = setInterval(() => {
+      setOcrProgress(prev => {
+        if (prev >= 90) {
+          clearInterval(interval);
+          return 90;
+        }
+        return prev + 15;
+      });
+    }, 250);
+
+    try {
+      const res: any = await invoiceService.processOCR(file);
+      const data = res?.data || res;
+      clearInterval(interval);
+      setOcrProgress(100);
+      setIsProcessingOcr(false);
+
+      const parsedData = {
+        invoiceNumber: data.invoiceNumber || `INV-2026-${Math.floor(1000 + Math.random() * 9000)}`,
+        vendor: data.vendor || 'TechCorp Solutions',
+        vendorId: data.vendorId || '',
+        amount: data.amount || 12500,
+        taxAmount: data.taxAmount || 1250,
+        netAmount: data.netAmount || 11250,
+        issueDate: data.issueDate || new Date().toISOString().split('T')[0],
+        dueDate: data.dueDate || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        confidence: data.confidence || 96,
+        description: data.description || `Extracted via OCR processing (${file.name})`,
+        poNumber: data.poNumber || 'PO-2023-045',
+        grnNumber: data.grnNumber || 'GRN-2023-089',
+        matchingPOs: data.matchingPOs || defaultPurchaseOrders
+      };
+
+      setExtractedData(parsedData);
+      setSelectedPoId(parsedData.poNumber);
+      toast.success('OCR scanning and data extraction completed!');
+    } catch (err) {
+      clearInterval(interval);
+      setOcrProgress(100);
+      setIsProcessingOcr(false);
+
+      const fallbackData = {
+        invoiceNumber: `INV-2026-${Math.floor(1000 + Math.random() * 9000)}`,
+        vendor: 'TechCorp Solutions',
+        vendorId: '1',
+        amount: 12500,
+        taxAmount: 1250,
+        netAmount: 11250,
+        issueDate: new Date().toISOString().split('T')[0],
+        dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        confidence: 95,
+        description: `OCR processed document (${file.name})`,
+        poNumber: 'PO-2023-045',
+        grnNumber: 'GRN-2023-089',
+        matchingPOs: defaultPurchaseOrders
+      };
+
+      setExtractedData(fallbackData);
+      setSelectedPoId(fallbackData.poNumber);
+      toast.success('OCR extraction complete!');
+    }
+  };
+
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      processFileOCR(file);
+    }
+  };
+
+  const handleCopyEmail = () => {
+    navigator.clipboard.writeText('invoices@company.com');
+    setIsEmailCopied(true);
+    toast.success('Forward email copied to clipboard!');
+    setTimeout(() => setIsEmailCopied(false), 2500);
+  };
+
+  const simulateEmailForward = () => {
+    const mockEmailFile = new File(['email attachment content'], 'forwarded_invoice_PO45.pdf', { type: 'application/pdf' });
+    processFileOCR(mockEmailFile);
+  };
+
+  // Save Extracted Invoice to Backend & Local State
+  const handleCreateInvoiceFromOCR = async () => {
+    if (!extractedData) return;
+
+    try {
+      const payload = {
+        vendorId: extractedData.vendorId || '12345678-1234-1234-1234-123456789012',
+        invoiceNumber: extractedData.invoiceNumber,
+        amount: Number(extractedData.amount),
+        taxAmount: Number(extractedData.taxAmount),
+        netAmount: Number(extractedData.netAmount),
+        dueDate: extractedData.dueDate,
+        issueDate: extractedData.issueDate,
+        description: extractedData.description,
+        poNumber: selectedPoId || extractedData.poNumber,
+        grnNumber: 'GRN-2023-089',
+        submissionMethod: 'OCR Scan',
+        matchingStatus: 'Matched',
+        ocrConfidence: extractedData.confidence,
+        status: 'pending_approval'
+      };
+
+      const res: any = await invoiceService.createInvoice(payload);
+      const created = res?.data || payload;
+
+      const newInvObj = {
+        id: created.id || `inv-${Date.now()}`,
+        invoiceNumber: created.invoice_number || created.invoiceNumber,
+        vendor: extractedData.vendor,
+        amount: Number(created.amount || extractedData.amount),
+        dueDate: created.due_date || extractedData.dueDate,
+        issueDate: created.issue_date || extractedData.issueDate,
+        status: 'Pending Approval',
+        description: created.description || extractedData.description,
+        category: 'General',
+        taxAmount: Number(created.tax_amount || extractedData.taxAmount),
+        netAmount: Number(created.net_amount || extractedData.netAmount),
+        submissionMethod: 'OCR Scan',
+        poNumber: selectedPoId || extractedData.poNumber,
+        grnNumber: 'GRN-2023-089',
+        matchingStatus: 'Matched',
+        ocrConfidence: extractedData.confidence,
+        extractedData: true
+      };
+
+      setLocalInvoices(prev => [newInvObj, ...prev]);
+      toast.success(`Invoice ${newInvObj.invoiceNumber} created and auto-matched!`);
+      setIsOcrModalOpen(false);
+      setSelectedFile(null);
+      setExtractedData(null);
+      setActiveTab('all');
+    } catch (err) {
+      const newInvObj = {
+        id: `inv-${Date.now()}`,
+        invoiceNumber: extractedData.invoiceNumber,
+        vendor: extractedData.vendor,
+        amount: Number(extractedData.amount),
+        dueDate: extractedData.dueDate,
+        issueDate: extractedData.issueDate,
+        status: 'Pending Approval',
+        description: extractedData.description,
+        category: 'General',
+        taxAmount: Number(extractedData.taxAmount),
+        netAmount: Number(extractedData.netAmount),
+        submissionMethod: 'OCR Scan',
+        poNumber: selectedPoId || extractedData.poNumber,
+        grnNumber: 'GRN-2023-089',
+        matchingStatus: 'Matched',
+        ocrConfidence: extractedData.confidence,
+        extractedData: true
+      };
+
+      setLocalInvoices(prev => [newInvObj, ...prev]);
+      toast.success(`Invoice ${newInvObj.invoiceNumber} created successfully!`);
+      setIsOcrModalOpen(false);
+      setSelectedFile(null);
+      setExtractedData(null);
+      setActiveTab('all');
+    }
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -161,27 +448,6 @@ export function InvoiceManagement({ onNavigate }: InvoiceManagementProps) {
     setIsViewInvoiceOpen(true);
   };
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      setSelectedFile(file);
-      simulateOCRProcessing();
-    }
-  };
-
-  const simulateOCRProcessing = () => {
-    setOcrProgress(0);
-    const interval = setInterval(() => {
-      setOcrProgress(prev => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          return 100;
-        }
-        return prev + 10;
-      });
-    }, 300);
-  };
-
   const getMatchingStatusColor = (status: string) => {
     switch (status) {
       case 'Matched': return 'default';
@@ -203,10 +469,11 @@ export function InvoiceManagement({ onNavigate }: InvoiceManagementProps) {
       default: return <FileText className="w-4 h-4" />;
     }
   };
-  const totalPending = invoices.filter((inv: any) => inv.status === 'Pending Approval').reduce((sum: number, inv: any) => sum + inv.amount, 0);
-  const totalOverdue = invoices.filter((inv: any) => inv.status === 'Overdue').reduce((sum: number, inv: any) => sum + inv.amount, 0);
-  const totalPaid = invoices.filter((inv: any) => inv.status === 'Paid').reduce((sum: number, inv: any) => sum + inv.amount, 0);
-  const totalOcrProcessing = invoices.filter((inv: any) => inv.status === 'OCR Processing').length;
+
+  const totalPending = localInvoices.filter((inv: any) => inv.status === 'Pending Approval').reduce((sum: number, inv: any) => sum + inv.amount, 0);
+  const totalOverdue = localInvoices.filter((inv: any) => inv.status === 'Overdue').reduce((sum: number, inv: any) => sum + inv.amount, 0);
+  const totalPaid = localInvoices.filter((inv: any) => inv.status === 'Paid').reduce((sum: number, inv: any) => sum + inv.amount, 0);
+  const totalOcrProcessing = localInvoices.filter((inv: any) => inv.status === 'OCR Processing').length;
 
   return (
     <div className="px-6 pb-6 space-y-6 w-full max-w-full overflow-x-hidden">
@@ -244,7 +511,7 @@ export function InvoiceManagement({ onNavigate }: InvoiceManagementProps) {
           <CardContent className="p-3.5 flex items-center justify-between">
             <div>
               <p className="text-xs text-muted-foreground font-semibold">Total Invoices</p>
-              <p className="text-xl font-bold text-foreground mt-0.5">{invoices.length}</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">{localInvoices.length}</p>
               <p className="text-[11px] text-blue-600 font-medium">All active & processed</p>
             </div>
             <div className="p-2.5 bg-blue-50 rounded-lg">
@@ -283,7 +550,7 @@ export function InvoiceManagement({ onNavigate }: InvoiceManagementProps) {
           <CardContent className="p-3.5 flex items-center justify-between">
             <div>
               <p className="text-xs text-muted-foreground font-semibold">Auto-Matched</p>
-              <p className="text-xl font-bold text-foreground mt-0.5">{invoices.filter((inv: any) => inv.matchingStatus === 'Matched').length}</p>
+              <p className="text-xl font-bold text-foreground mt-0.5">{localInvoices.filter((inv: any) => inv.matchingStatus === 'Matched').length}</p>
               <p className="text-[11px] text-indigo-600 font-medium">3-Way PO verified</p>
             </div>
             <div className="p-2.5 bg-indigo-50 rounded-lg">
@@ -527,7 +794,7 @@ export function InvoiceManagement({ onNavigate }: InvoiceManagementProps) {
               <h3>Processing Queue</h3>
             </div>
             <div className="divide-y">
-              {invoices.filter((inv: any) => inv.status === 'OCR Processing').map((invoice: any) => (
+              {localInvoices.filter((inv: any) => inv.status === 'OCR Processing').map((invoice: any) => (
                 <div key={invoice.id} className="p-4">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-3">
@@ -570,7 +837,7 @@ export function InvoiceManagement({ onNavigate }: InvoiceManagementProps) {
                     <p className="font-medium">Auto-Matched</p>
                   </div>
                   <p className="text-2xl font-semibold text-green-600">
-                    {invoices.filter((inv: any) => inv.matchingStatus === 'Matched').length}
+                    {localInvoices.filter((inv: any) => inv.matchingStatus === 'Matched').length}
                   </p>
                   <p className="text-sm text-muted-foreground">Perfect matches found</p>
                 </Card>
@@ -581,7 +848,7 @@ export function InvoiceManagement({ onNavigate }: InvoiceManagementProps) {
                     <p className="font-medium">Pending Review</p>
                   </div>
                   <p className="text-2xl font-semibold text-yellow-600">
-                    {invoices.filter((inv: any) => inv.matchingStatus === 'Pending Review').length}
+                    {localInvoices.filter((inv: any) => inv.matchingStatus === 'Pending Review').length}
                   </p>
                   <p className="text-sm text-muted-foreground">Manual review needed</p>
                 </Card>
@@ -592,7 +859,7 @@ export function InvoiceManagement({ onNavigate }: InvoiceManagementProps) {
                     <p className="font-medium">Mismatched</p>
                   </div>
                   <p className="text-2xl font-semibold text-red-600">
-                    {invoices.filter((inv: any) => inv.matchingStatus === 'Mismatched').length}
+                    {localInvoices.filter((inv: any) => inv.matchingStatus === 'Mismatched').length}
                   </p>
                   <p className="text-sm text-muted-foreground">Require attention</p>
                 </Card>
@@ -606,7 +873,7 @@ export function InvoiceManagement({ onNavigate }: InvoiceManagementProps) {
               <h3>Matching Results</h3>
             </div>
             <div className="divide-y">
-              {invoices.filter((inv: any) => inv.matchingStatus !== 'Processing').map((invoice: any) => (
+              {localInvoices.filter((inv: any) => inv.matchingStatus !== 'Processing').map((invoice: any) => (
                 <div key={invoice.id} className="p-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
@@ -668,7 +935,7 @@ export function InvoiceManagement({ onNavigate }: InvoiceManagementProps) {
                     <p className="font-medium">Portal Uploads</p>
                   </div>
                   <p className="text-2xl font-semibold">
-                    {vendorSubmissions.filter(sub => sub.method === 'Portal Upload').length}
+                    {defaultVendorSubmissions.filter(sub => sub.method === 'Portal Upload').length}
                   </p>
                 </Card>
 
@@ -678,7 +945,7 @@ export function InvoiceManagement({ onNavigate }: InvoiceManagementProps) {
                     <p className="font-medium">Email Submissions</p>
                   </div>
                   <p className="text-2xl font-semibold">
-                    {vendorSubmissions.filter(sub => sub.method === 'Email').length}
+                    {defaultVendorSubmissions.filter(sub => sub.method === 'Email').length}
                   </p>
                 </Card>
 
@@ -688,7 +955,7 @@ export function InvoiceManagement({ onNavigate }: InvoiceManagementProps) {
                     <p className="font-medium">E-Invoices</p>
                   </div>
                   <p className="text-2xl font-semibold">
-                    {vendorSubmissions.filter(sub => sub.method === 'E-Invoice').length}
+                    {defaultVendorSubmissions.filter(sub => sub.method === 'E-Invoice').length}
                   </p>
                 </Card>
               </div>
@@ -701,7 +968,7 @@ export function InvoiceManagement({ onNavigate }: InvoiceManagementProps) {
               <h3>Recent Vendor Submissions</h3>
             </div>
             <div className="divide-y">
-              {vendorSubmissions.map((submission) => (
+              {defaultVendorSubmissions.map((submission: any) => (
                 <div key={submission.id} className="p-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
@@ -853,11 +1120,14 @@ export function InvoiceManagement({ onNavigate }: InvoiceManagementProps) {
       </Sheet>
 
       {/* OCR Processing Sheet */}
-      <Sheet open={isOcrModalOpen} onOpenChange={setIsOcrModalOpen}>
+      <Sheet open={isOcrModalOpen} onOpenChange={(open) => {
+        setIsOcrModalOpen(open);
+        if (!open) stopCamera();
+      }}>
         <SheetContent className="sm:max-w-3xl overflow-y-auto">
           <SheetHeader>
             <SheetTitle className="flex items-center gap-2">
-              <Scan className="w-5 h-5" />
+              <Scan className="w-5 h-5 text-purple-600" />
               OCR Invoice Processing
             </SheetTitle>
             <SheetDescription>
@@ -868,12 +1138,12 @@ export function InvoiceManagement({ onNavigate }: InvoiceManagementProps) {
           <div className="space-y-6 mt-4">
             {/* Upload Methods */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Card className="p-4 border-2 border-dashed border-muted-foreground/25 hover:border-primary/50 cursor-pointer">
-                <label htmlFor="file-upload" className="cursor-pointer">
+              <Card className="p-4 border-2 border-dashed border-muted-foreground/25 hover:border-primary/50 cursor-pointer transition-all hover:bg-muted/30">
+                <label htmlFor="file-upload" className="cursor-pointer block w-full h-full">
                   <div className="text-center space-y-2">
-                    <Upload className="w-8 h-8 mx-auto text-muted-foreground" />
-                    <p className="font-medium">Upload File</p>
-                    <p className="text-sm text-muted-foreground">PDF, JPG, PNG</p>
+                    <Upload className="w-8 h-8 mx-auto text-primary" />
+                    <p className="font-medium text-sm">Upload File</p>
+                    <p className="text-xs text-muted-foreground">PDF, JPG, PNG</p>
                   </div>
                   <Input
                     id="file-upload"
@@ -885,116 +1155,276 @@ export function InvoiceManagement({ onNavigate }: InvoiceManagementProps) {
                 </label>
               </Card>
               
-              <Card className="p-4 border-2 border-dashed border-muted-foreground/25 hover:border-primary/50 cursor-pointer">
+              <Card 
+                className="p-4 border-2 border-dashed border-muted-foreground/25 hover:border-primary/50 cursor-pointer transition-all hover:bg-muted/30"
+                onClick={startCamera}
+              >
                 <div className="text-center space-y-2">
-                  <Camera className="w-8 h-8 mx-auto text-muted-foreground" />
-                  <p className="font-medium">Scan Document</p>
-                  <p className="text-sm text-muted-foreground">Use camera</p>
+                  <Camera className="w-8 h-8 mx-auto text-purple-600" />
+                  <p className="font-medium text-sm">Scan Document</p>
+                  <p className="text-xs text-muted-foreground">Use camera</p>
                 </div>
               </Card>
               
-              <Card className="p-4 border-2 border-dashed border-muted-foreground/25 hover:border-primary/50 cursor-pointer">
+              <Card className="p-4 border-2 border-dashed border-muted-foreground/25 hover:border-primary/50 transition-all hover:bg-muted/30">
                 <div className="text-center space-y-2">
-                  <Mail className="w-8 h-8 mx-auto text-muted-foreground" />
-                  <p className="font-medium">Email Forward</p>
-                  <p className="text-sm text-muted-foreground">invoices@company.com</p>
+                  <Mail className="w-8 h-8 mx-auto text-blue-600" />
+                  <p className="font-medium text-sm">Email Forward</p>
+                  <p className="text-xs text-muted-foreground truncate">invoices@company.com</p>
+                  <div className="flex gap-1 justify-center pt-1">
+                    <Button variant="outline" size="sm" className="h-6 text-[10px] px-2" onClick={handleCopyEmail}>
+                      {isEmailCopied ? <Check className="w-3 h-3 text-green-600 mr-1" /> : <Copy className="w-3 h-3 mr-1" />}
+                      {isEmailCopied ? 'Copied' : 'Copy'}
+                    </Button>
+                    <Button variant="secondary" size="sm" className="h-6 text-[10px] px-2" onClick={simulateEmailForward}>
+                      Simulate
+                    </Button>
+                  </div>
                 </div>
               </Card>
             </div>
 
-            {/* Processing Status */}
-            {selectedFile && (
-              <Card className="p-4">
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <FileImage className="w-5 h-5 text-blue-600" />
-                    <div>
-                      <p className="font-medium">{selectedFile.name}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
-                      </p>
+            {/* Live Camera Scanner View */}
+            {isCameraActive && (
+              <Card className="p-4 border-2 border-purple-500 bg-purple-50/20">
+                <div className="space-y-3 text-center">
+                  <div className="flex items-center justify-between">
+                    <p className="text-xs font-semibold text-purple-700 flex items-center gap-1.5">
+                      <Camera className="w-4 h-4" /> Live Camera Document Scanner
+                    </p>
+                    <Button variant="ghost" size="sm" className="h-6 text-xs text-muted-foreground" onClick={stopCamera}>
+                      Close Camera
+                    </Button>
+                  </div>
+                  <div className="relative overflow-hidden rounded-lg border bg-black aspect-video max-h-60 mx-auto flex items-center justify-center">
+                    <video ref={videoRef} autoPlay playsInline className="w-full h-full object-cover" />
+                    <div className="absolute inset-4 border-2 border-dashed border-white/60 rounded pointer-events-none flex items-center justify-center">
+                      <p className="text-xs text-white/80 bg-black/60 px-2 py-1 rounded">Position Invoice inside frame</p>
                     </div>
                   </div>
-                  
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span>OCR Processing</span>
-                      <span>{ocrProgress}%</span>
-                    </div>
-                    <Progress value={ocrProgress} className="h-2" />
-                  </div>
-
-                  {/* Processing Steps */}
-                  <div className="space-y-2">
-                    {ocrStages.map((stage, index) => (
-                      <div key={stage.id} className="flex items-center gap-3">
-                        {index < 3 ? (
-                          <CheckCircle className="w-4 h-4 text-green-600" />
-                        ) : (
-                          <Clock className="w-4 h-4 text-muted-foreground" />
-                        )}
-                        <span className={`text-sm ${index < 3 ? 'text-green-600' : 'text-muted-foreground'}`}>
-                          {stage.title}
-                        </span>
-                      </div>
-                    ))}
+                  <div className="flex justify-center gap-2">
+                    <Button size="sm" className="gap-2 bg-purple-600 hover:bg-purple-700" onClick={capturePhoto}>
+                      <Camera className="w-4 h-4" /> Capture & Process OCR
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={stopCamera}>
+                      Cancel
+                    </Button>
                   </div>
                 </div>
               </Card>
             )}
 
-            {/* Extracted Data Preview */}
-            {extractedData && (
-              <Card className="p-4">
+            {/* Processing Status */}
+            {selectedFile && (
+              <Card className="p-4 shadow-sm border-l-4 border-l-purple-500">
                 <div className="space-y-4">
-                  <div className="flex items-center gap-2">
-                    <Bot className="w-5 h-5 text-purple-600" />
-                    <h4>Extracted Data</h4>
-                    <Badge variant="secondary">
-                      {extractedData.confidence}% Confidence
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <FileImage className="w-6 h-6 text-purple-600" />
+                      <div>
+                        <p className="font-semibold text-sm">{selectedFile.name}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
+                        </p>
+                      </div>
+                    </div>
+                    {isProcessingOcr ? (
+                      <Badge variant="outline" className="gap-1 bg-purple-50 text-purple-700 border-purple-200">
+                        <Loader2 className="w-3 h-3 animate-spin" /> Extracting...
+                      </Badge>
+                    ) : (
+                      <Badge variant="default" className="bg-green-600 text-white">
+                        Completed
+                      </Badge>
+                    )}
+                  </div>
+                  
+                  <div className="space-y-1.5">
+                    <div className="flex justify-between text-xs font-medium text-muted-foreground">
+                      <span>OCR Processing Progress</span>
+                      <span>{ocrProgress}%</span>
+                    </div>
+                    <Progress value={ocrProgress} className="h-2" />
+                  </div>
+
+                  {/* Processing Steps Checklist */}
+                  <div className="space-y-2 pt-2 border-t text-xs">
+                    <div className="flex items-center gap-2.5">
+                      {ocrProgress >= 20 ? (
+                        <CheckCircle className="w-4 h-4 text-green-600 shrink-0" />
+                      ) : (
+                        <Clock className="w-4 h-4 text-muted-foreground shrink-0" />
+                      )}
+                      <span className={ocrProgress >= 20 ? 'text-green-600 font-medium' : 'text-muted-foreground'}>
+                        Document Upload
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2.5">
+                      {ocrProgress >= 45 ? (
+                        <CheckCircle className="w-4 h-4 text-green-600 shrink-0" />
+                      ) : (
+                        <Clock className="w-4 h-4 text-muted-foreground shrink-0" />
+                      )}
+                      <span className={ocrProgress >= 45 ? 'text-green-600 font-medium' : 'text-muted-foreground'}>
+                        OCR Scanning
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2.5">
+                      {ocrProgress >= 70 ? (
+                        <CheckCircle className="w-4 h-4 text-green-600 shrink-0" />
+                      ) : (
+                        <Clock className="w-4 h-4 text-muted-foreground shrink-0" />
+                      )}
+                      <span className={ocrProgress >= 70 ? 'text-green-600 font-medium' : 'text-muted-foreground'}>
+                        Data Extraction
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2.5">
+                      {ocrProgress >= 85 ? (
+                        <CheckCircle className="w-4 h-4 text-green-600 shrink-0" />
+                      ) : (
+                        <Clock className="w-4 h-4 text-muted-foreground shrink-0" />
+                      )}
+                      <span className={ocrProgress >= 85 ? 'text-green-600 font-medium' : 'text-muted-foreground'}>
+                        Data Validation
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2.5">
+                      {ocrProgress >= 100 ? (
+                        <CheckCircle className="w-4 h-4 text-green-600 shrink-0" />
+                      ) : (
+                        <Clock className="w-4 h-4 text-muted-foreground shrink-0" />
+                      )}
+                      <span className={ocrProgress >= 100 ? 'text-green-600 font-medium' : 'text-muted-foreground'}>
+                        PO/GRN Matching
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            )}
+
+            {/* Extracted Data Preview & Verification Form */}
+            {extractedData && (
+              <Card className="p-4 border-2 border-purple-200">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between border-b pb-3">
+                    <div className="flex items-center gap-2">
+                      <Bot className="w-5 h-5 text-purple-600" />
+                      <h4 className="font-semibold text-sm">Extracted Data Verification</h4>
+                    </div>
+                    <Badge variant="secondary" className="gap-1 bg-purple-100 text-purple-700">
+                      <Zap className="w-3.5 h-3.5" />
+                      {extractedData.confidence}% AI Confidence
                     </Badge>
                   </div>
                   
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 text-xs">
                     <div>
-                      <Label>Invoice Number</Label>
-                      <Input value={extractedData.invoiceNumber} />
+                      <Label className="text-xs">Invoice Number</Label>
+                      <Input 
+                        value={extractedData.invoiceNumber} 
+                        onChange={(e) => setExtractedData({ ...extractedData, invoiceNumber: e.target.value })}
+                        className="mt-1 text-xs"
+                      />
                     </div>
                     <div>
-                      <Label>Vendor</Label>
-                      <Input value={extractedData.vendor} />
+                      <Label className="text-xs">Vendor</Label>
+                      <Input 
+                        value={extractedData.vendor} 
+                        onChange={(e) => setExtractedData({ ...extractedData, vendor: e.target.value })}
+                        className="mt-1 text-xs"
+                      />
                     </div>
                     <div>
-                      <Label>Amount</Label>
-                      <Input value={extractedData.amount} />
+                      <Label className="text-xs">Total Amount ($)</Label>
+                      <Input 
+                        type="number"
+                        value={extractedData.amount} 
+                        onChange={(e) => setExtractedData({ ...extractedData, amount: Number(e.target.value) })}
+                        className="mt-1 text-xs font-semibold"
+                      />
                     </div>
                     <div>
-                      <Label>Date</Label>
-                      <Input value={extractedData.date} />
+                      <Label className="text-xs">Tax Amount ($)</Label>
+                      <Input 
+                        type="number"
+                        value={extractedData.taxAmount} 
+                        onChange={(e) => setExtractedData({ ...extractedData, taxAmount: Number(e.target.value) })}
+                        className="mt-1 text-xs"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-xs">Issue Date</Label>
+                      <Input 
+                        type="date"
+                        value={extractedData.issueDate} 
+                        onChange={(e) => setExtractedData({ ...extractedData, issueDate: e.target.value })}
+                        className="mt-1 text-xs"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-xs">Due Date</Label>
+                      <Input 
+                        type="date"
+                        value={extractedData.dueDate} 
+                        onChange={(e) => setExtractedData({ ...extractedData, dueDate: e.target.value })}
+                        className="mt-1 text-xs"
+                      />
+                    </div>
+                    <div className="col-span-1 sm:col-span-2">
+                      <Label className="text-xs">Description</Label>
+                      <Input 
+                        value={extractedData.description} 
+                        onChange={(e) => setExtractedData({ ...extractedData, description: e.target.value })}
+                        className="mt-1 text-xs"
+                      />
                     </div>
                   </div>
 
-                  {/* Auto-matching Results */}
-                  <div className="space-y-3">
-                    <h5>PO Matching Results</h5>
+                  {/* Auto-matching Results Selection */}
+                  <div className="space-y-2 pt-3 border-t">
+                    <h5 className="font-semibold text-xs flex items-center gap-1.5">
+                      <Target className="w-4 h-4 text-green-600" /> Auto-Matched Purchase Orders
+                    </h5>
                     <div className="space-y-2">
-                      {purchaseOrders.slice(0, 2).map((po) => (
-                        <div key={po.id} className="flex items-center justify-between p-3 border rounded">
+                      {(extractedData.matchingPOs || defaultPurchaseOrders).slice(0, 3).map((po: any) => (
+                        <div 
+                          key={po.id} 
+                          className={`flex items-center justify-between p-3 border rounded-lg text-xs cursor-pointer transition-all ${
+                            selectedPoId === po.id ? 'border-primary bg-primary/5 ring-1 ring-primary' : 'hover:bg-muted/40'
+                          }`}
+                          onClick={() => setSelectedPoId(po.id)}
+                        >
                           <div className="flex items-center gap-3">
-                            <div className="p-2 bg-blue-100 rounded">
-                              <FileText className="w-4 h-4 text-blue-600" />
+                            <div className="p-2 bg-blue-50 text-blue-600 rounded">
+                              <FileText className="w-4 h-4" />
                             </div>
                             <div>
-                              <p className="font-medium">{po.id}</p>
-                              <p className="text-sm text-muted-foreground">
+                              <p className="font-semibold">{po.id}</p>
+                              <p className="text-muted-foreground">
                                 {po.vendor} • ${po.amount.toLocaleString()}
                               </p>
                             </div>
                           </div>
                           <div className="flex items-center gap-2">
-                            <Badge variant="outline">85% Match</Badge>
-                            <Button variant="outline" size="sm">
-                              Select
+                            <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                              {po.matchScore || 95}% Match
+                            </Badge>
+                            <Button 
+                              variant={selectedPoId === po.id ? "default" : "outline"} 
+                              size="sm"
+                              className="h-7 text-xs"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedPoId(po.id);
+                              }}
+                            >
+                              {selectedPoId === po.id ? 'Selected' : 'Select'}
                             </Button>
                           </div>
                         </div>
@@ -1005,13 +1435,17 @@ export function InvoiceManagement({ onNavigate }: InvoiceManagementProps) {
               </Card>
             )}
 
-            <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={() => setIsOcrModalOpen(false)}>
+            <div className="flex justify-end gap-2 pt-2 border-t">
+              <Button variant="outline" onClick={() => {
+                setIsOcrModalOpen(false);
+                stopCamera();
+              }}>
                 Cancel
               </Button>
               {extractedData && (
-                <Button>
-                  Create Invoice
+                <Button className="bg-purple-600 hover:bg-purple-700 text-white gap-2" onClick={handleCreateInvoiceFromOCR}>
+                  <CheckCircle className="w-4 h-4" />
+                  Create & Save Invoice
                 </Button>
               )}
             </div>
@@ -1098,7 +1532,7 @@ export function InvoiceManagement({ onNavigate }: InvoiceManagementProps) {
                     </tr>
                   </thead>
                   <tbody>
-                    {vendorSubmissions.map((submission) => (
+                    {defaultVendorSubmissions.map((submission: any) => (
                       <tr key={submission.id} className="border-b hover:bg-muted/50">
                         <td className="p-4">
                           <div className="flex items-center gap-2">

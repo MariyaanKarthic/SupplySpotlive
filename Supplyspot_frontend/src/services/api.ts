@@ -147,6 +147,26 @@ export const vendorService = {
 
   // Update vendor compliance
   updateCompliance: (id: string, data: any) => api.put(`/vendors/${id}/compliance`, data),
+
+  // Send vendor invite
+  sendVendorInvite: (data: {
+    email: string;
+    role?: string;
+    vendorType: 'company' | 'individual';
+    companyCode: string;
+    purchaseOrg: string;
+    vendorName: string;
+    natureOfVendor: string;
+    businessPartnerCategory: string;
+    contactPersonName: string;
+    yearOfIncorporation: string;
+  }) => api.post('/invites', { ...data, role: 'supplier' }),
+
+  // Get vendor registration invite info by token
+  getVendorRegistrationByToken: (token: string) => api.get(`/invites/verify/${token}`),
+
+  // Submit complete vendor registration
+  submitVendorRegistration: (data: any) => api.post('/vendors', data),
 };
 
 // Invoice Service

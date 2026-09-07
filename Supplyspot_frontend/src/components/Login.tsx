@@ -143,20 +143,52 @@ export default function Login() {
             </p>
 
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="flex items-center space-x-2 bg-blue-50/50 p-3 rounded-lg mb-2 border border-blue-100">
-                <Switch
-                  id="test-supplier"
-                  onCheckedChange={(checked: boolean) => {
-                    if (checked) {
-                      setFormData({ email: 'test_supplier@example.com', password: 'password123' });
-                    } else {
-                      setFormData({ email: '', password: '' });
-                    }
-                  }}
-                />
-                <Label htmlFor="test-supplier" className="text-sm font-medium text-blue-800 cursor-pointer">
-                  [Testing] Auto-fill Supplier Login
-                </Label>
+              <div className="bg-blue-50/50 p-3 rounded-lg border border-blue-100 space-y-2">
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    id="test-supplier"
+                    onCheckedChange={(checked: boolean) => {
+                      if (checked) {
+                        setFormData({ email: 'admin@supplierspot.com', password: 'password123' });
+                      } else {
+                        setFormData({ email: '', password: '' });
+                      }
+                    }}
+                  />
+                  <Label htmlFor="test-supplier" className="text-sm font-medium text-blue-800 cursor-pointer">
+                    Auto-fill Admin Login
+                  </Label>
+                </div>
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  <button 
+                    type="button" 
+                    className="text-[11px] bg-blue-100 hover:bg-blue-200 text-blue-800 px-2 py-0.5 rounded font-medium transition-colors"
+                    onClick={() => setFormData({ email: 'admin@supplierspot.com', password: 'password123' })}
+                  >
+                    Admin
+                  </button>
+                  <button 
+                    type="button" 
+                    className="text-[11px] bg-purple-100 hover:bg-purple-200 text-purple-800 px-2 py-0.5 rounded font-medium transition-colors"
+                    onClick={() => setFormData({ email: 'procurement.manager@supplierspot.com', password: 'password123' })}
+                  >
+                    Procurement
+                  </button>
+                  <button 
+                    type="button" 
+                    className="text-[11px] bg-emerald-100 hover:bg-emerald-200 text-emerald-800 px-2 py-0.5 rounded font-medium transition-colors"
+                    onClick={() => setFormData({ email: 'finance.manager@supplierspot.com', password: 'password123' })}
+                  >
+                    Finance
+                  </button>
+                  <button 
+                    type="button" 
+                    className="text-[11px] bg-amber-100 hover:bg-amber-200 text-amber-800 px-2 py-0.5 rounded font-medium transition-colors"
+                    onClick={() => setFormData({ email: 'supplier@techcorp.com', password: 'password123' })}
+                  >
+                    Supplier
+                  </button>
+                </div>
               </div>
 
               {error && (

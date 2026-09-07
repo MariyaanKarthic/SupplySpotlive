@@ -1,3 +1,5 @@
+const bcrypt = require('bcryptjs');
+
 /**
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> } 
@@ -6,12 +8,14 @@ exports.seed = async function(knex) {
   // Deletes ALL existing entries
   await knex('users').del();
 
+  const defaultPasswordHash = bcrypt.hashSync('password123', 10);
+
   // Insert sample users
   await knex('users').insert([
     {
       id: 'a0000000-0000-0000-0000-000000000001',
       email: 'admin@supplierspot.com',
-      password_hash: '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj6QJw/2Ej7W', // password123
+      password_hash: defaultPasswordHash, // password123
       name: 'System Administrator',
       role: 'admin',
       department: 'IT',
@@ -25,7 +29,7 @@ exports.seed = async function(knex) {
     {
       id: 'a0000000-0000-0000-0000-000000000002',
       email: 'procurement.manager@supplierspot.com',
-      password_hash: '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj6QJw/2Ej7W', // password123
+      password_hash: defaultPasswordHash, // password123
       name: 'John Smith',
       role: 'procurement_manager',
       department: 'Procurement',
@@ -39,7 +43,7 @@ exports.seed = async function(knex) {
     {
       id: 'a0000000-0000-0000-0000-000000000003',
       email: 'finance.manager@supplierspot.com',
-      password_hash: '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj6QJw/2Ej7W', // password123
+      password_hash: defaultPasswordHash, // password123
       name: 'Sarah Johnson',
       role: 'finance_manager',
       department: 'Finance',
@@ -53,7 +57,7 @@ exports.seed = async function(knex) {
     {
       id: 'a0000000-0000-0000-0000-000000000004',
       email: 'ap.clerk@supplierspot.com',
-      password_hash: '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj6QJw/2Ej7W', // password123
+      password_hash: defaultPasswordHash, // password123
       name: 'Mike Wilson',
       role: 'ap_clerk',
       department: 'Accounts Payable',
@@ -67,7 +71,7 @@ exports.seed = async function(knex) {
     {
       id: 'a0000000-0000-0000-0000-000000000005',
       email: 'supplier@techcorp.com',
-      password_hash: '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj6QJw/2Ej7W', // password123
+      password_hash: defaultPasswordHash, // password123
       name: 'TechCorp Representative',
       role: 'supplier',
       department: 'External',
@@ -81,7 +85,7 @@ exports.seed = async function(knex) {
     {
       id: 'a0000000-0000-0000-0000-000000000006',
       email: 'viewer@supplierspot.com',
-      password_hash: '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj6QJw/2Ej7W', // password123
+      password_hash: defaultPasswordHash, // password123
       name: 'Jane Doe',
       role: 'viewer',
       department: 'Management',
@@ -94,3 +98,4 @@ exports.seed = async function(knex) {
     }
   ]);
 };
+

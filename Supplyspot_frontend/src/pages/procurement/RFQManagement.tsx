@@ -1,13 +1,13 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useApi } from '@/hooks/useApi';
 import { rfqService } from '@/services/api';
-import { 
-  Breadcrumb, 
-  BreadcrumbItem, 
-  BreadcrumbLink, 
-  BreadcrumbList, 
-  BreadcrumbPage, 
-  BreadcrumbSeparator 
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator
 } from '@/components/ui/breadcrumb';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -838,8 +838,8 @@ export function RFQManagement({ onNavigate }: RFQManagementProps) {
         issuedDate: rfq.issue_date ? new Date(rfq.issue_date).toISOString().split('T')[0] : '',
         dueDate: rfq.due_date ? new Date(rfq.due_date).toISOString().split('T')[0] : '',
         status: rfq.status === 'published' ? 'Open'
-              : rfq.status === 'closed' ? 'Closed'
-              : rfq.status === 'awarded' ? 'Awarded'
+          : rfq.status === 'closed' ? 'Closed'
+            : rfq.status === 'awarded' ? 'Awarded'
               : (rfq.status || 'Draft'),
         priority: rfq.priority || 'Medium',
         suppliers: typeof rfq.target_vendors === 'string' ? JSON.parse(rfq.target_vendors || '[]') : (rfq.target_vendors || []),
@@ -881,33 +881,33 @@ export function RFQManagement({ onNavigate }: RFQManagementProps) {
 
     return (
       <div className="px-6 pb-6 space-y-6 w-full max-w-full overflow-x-hidden">
-      {/* Sticky Header section with Breadcrumbs */}
-      <div className="sticky top-0 bg-background/95 backdrop-blur z-20 border-b py-3 -mx-6 px-6 space-y-1.5 flex flex-col no-print">
-        <Breadcrumb className="text-xs">
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink 
-                onClick={() => onNavigate && onNavigate("home")} 
-                className="cursor-pointer"
-              >
-                Dashboard
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage>Procurement</BreadcrumbPage>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage>RFQ Management</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-        <div className="flex items-center justify-between w-full">
-          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">RFQ Management</h1>
-          
+        {/* Sticky Header section with Breadcrumbs */}
+        <div className="sticky top-0 bg-background/95 backdrop-blur z-20 border-b py-3 -mx-6 px-6 space-y-1.5 flex flex-col no-print">
+          <Breadcrumb className="text-xs">
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink
+                  onClick={() => onNavigate && onNavigate("home")}
+                  className="cursor-pointer"
+                >
+                  Dashboard
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage>Procurement</BreadcrumbPage>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage>RFQ Management</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+          <div className="flex items-center justify-between w-full">
+            <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">RFQ Management</h1>
+
+          </div>
         </div>
-      </div>
 
         <span className="font-medium whitespace-nowrap">{from}–{to} of {totalItems}</span>
 
@@ -1013,6 +1013,96 @@ export function RFQManagement({ onNavigate }: RFQManagementProps) {
       case 'Answered': return 'default';
       case 'Pending': return 'outline';
       default: return 'outline';
+    }
+  };
+
+  const renderModernStatusBadge = (status: string) => {
+    switch (status) {
+      case 'Open':
+        return (
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/60 shadow-sm">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            </span>
+            Open
+          </span>
+        );
+      case 'Under Review':
+        return (
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200/60 shadow-sm">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+            </span>
+            Under Review
+          </span>
+        );
+      case 'Awarded':
+        return (
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-purple-50 text-purple-700 border border-purple-200/60 shadow-sm">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-purple-500"></span>
+            </span>
+            Awarded
+          </span>
+        );
+      case 'Closed':
+        return (
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-600 border border-slate-200 shadow-sm">
+            <span className="inline-flex rounded-full h-2 w-2 bg-slate-400"></span>
+            Closed
+          </span>
+        );
+      default:
+        return (
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-600 border border-slate-200 shadow-sm">
+            <span className="inline-flex rounded-full h-2 w-2 bg-slate-400"></span>
+            {status}
+          </span>
+        );
+    }
+  };
+
+  const renderModernPriorityBadge = (priority: string) => {
+    switch (priority) {
+      case 'High':
+        return (
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-bold bg-rose-50 text-rose-600 border border-rose-200 uppercase tracking-wider">
+            High
+          </span>
+        );
+      case 'Medium':
+        return (
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-bold bg-blue-50 text-blue-600 border border-blue-200 uppercase tracking-wider">
+            Medium
+          </span>
+        );
+      default:
+        return (
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-bold bg-slate-100 text-slate-600 border border-slate-200 uppercase tracking-wider">
+            Low
+          </span>
+        );
+    }
+  };
+
+  const [selectedRFQIds, setSelectedRFQIds] = useState<number[]>([]);
+
+  const toggleSelectAllRFQs = (filteredList: any[]) => {
+    if (selectedRFQIds.length === filteredList.length) {
+      setSelectedRFQIds([]);
+    } else {
+      setSelectedRFQIds(filteredList.map(r => r.id));
+    }
+  };
+
+  const toggleSelectRFQ = (id: number) => {
+    if (selectedRFQIds.includes(id)) {
+      setSelectedRFQIds(selectedRFQIds.filter(i => i !== id));
+    } else {
+      setSelectedRFQIds([...selectedRFQIds, id]);
     }
   };
 
@@ -1201,8 +1291,8 @@ export function RFQManagement({ onNavigate }: RFQManagementProps) {
         <Breadcrumb className="text-xs">
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink 
-                onClick={() => onNavigate && onNavigate("home")} 
+              <BreadcrumbLink
+                onClick={() => onNavigate && onNavigate("home")}
                 className="cursor-pointer"
               >
                 Dashboard
@@ -1221,11 +1311,11 @@ export function RFQManagement({ onNavigate }: RFQManagementProps) {
         <div className="flex items-center justify-between w-full">
           <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">RFQ Management</h1>
           <div className="flex gap-3">
-          <Button variant="outline" className="gap-2 h-10 border-slate-200" onClick={() => window.location.reload()}>
-            <RefreshCw className="w-4 h-4" />
-            Refresh
-          </Button>
-        </div>
+            <Button variant="outline" className="gap-2 h-10 border-slate-200" onClick={() => window.location.reload()}>
+              <RefreshCw className="w-4 h-4" />
+              Refresh
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -1481,6 +1571,12 @@ export function RFQManagement({ onNavigate }: RFQManagementProps) {
                     <table className="w-full">
                       <thead>
                         <DraggableTableHeader>
+                          <th className="p-4 w-10 text-center sticky left-0 z-30 bg-[#f8fafc] border-b">
+                            <Checkbox 
+                              checked={filteredRFQs.length > 0 && selectedRFQIds.length === filteredRFQs.length} 
+                              onCheckedChange={() => toggleSelectAllRFQs(filteredRFQs)} 
+                            />
+                          </th>
                           {visibleColumns.includes('rfqNumber') && (
                             <th className="text-left p-4 font-semibold text-slate-600 text-sm sticky left-8 z-30 bg-[#f8fafc] border-b shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)] whitespace-nowrap min-w-[200px]">
                               <Button variant="ghost" onClick={() => requestSort('rfqNumber')} className="h-auto p-0 hover:bg-transparent font-semibold text-slate-600 hover:text-primary text-sm flex items-center gap-1 transition-colors">
@@ -1560,84 +1656,95 @@ export function RFQManagement({ onNavigate }: RFQManagementProps) {
                           >
                             {pagedRFQs.map((rfq) => (
                               <DraggableTableRow key={rfq.id} id={rfq.id}>
+                                <td className="p-4 w-10 text-center sticky left-0 z-20 bg-white group-hover:bg-slate-50 transition-colors">
+                                  <Checkbox 
+                                    checked={selectedRFQIds.includes(rfq.id)} 
+                                    onCheckedChange={() => toggleSelectRFQ(rfq.id)} 
+                                  />
+                                </td>
                                 {visibleColumns.includes('rfqNumber') && (
                                   <td className="p-4 sticky left-8 z-20 bg-white shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)] group-hover:bg-slate-50 transition-colors whitespace-nowrap">
                                     <div>
-                                      <p className="font-medium text-slate-900 leading-tight">{rfq.rfqNumber}</p>
-                                      <p className="text-xs text-muted-foreground line-clamp-1">{rfq.title}</p>
+                                      <p className="font-bold text-slate-900 font-mono text-sm leading-tight tracking-tight">{rfq.rfqNumber}</p>
+                                      <p className="text-xs text-slate-500 font-medium line-clamp-1 mt-0.5">{rfq.title}</p>
                                     </div>
                                   </td>
                                 )}
                                 {visibleColumns.includes('buyer') && (
                                   <td className="p-4 whitespace-nowrap">
-                                    <div className="flex items-center gap-2">
-                                      <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center shrink-0">
-                                        <Building className="w-4 h-4 text-slate-500" />
+                                    <div className="flex items-center gap-2.5">
+                                      <div className="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center shrink-0 border border-slate-200">
+                                        <Building className="w-3.5 h-3.5 text-slate-600" />
                                       </div>
-                                      <span className="font-medium text-sm text-slate-700">{rfq.buyer}</span>
+                                      <span className="font-semibold text-xs text-slate-800">{rfq.buyer}</span>
                                     </div>
                                   </td>
                                 )}
                                 {visibleColumns.includes('category') && (
                                   <td className="p-4 whitespace-nowrap">
-                                    <Badge variant="outline" className="text-xs font-medium border-slate-200">
+                                    <Badge variant="outline" className="text-xs font-medium border-slate-200 bg-slate-50 text-slate-700">
                                       {rfq.category}
                                     </Badge>
                                   </td>
                                 )}
                                 {visibleColumns.includes('priority') && (
                                   <td className="p-4 whitespace-nowrap">
-                                    <Badge variant={getPriorityColor(rfq.priority)} className="text-[10px] uppercase tracking-wider font-bold h-5">
-                                      {rfq.priority}
-                                    </Badge>
+                                    {renderModernPriorityBadge(rfq.priority)}
                                   </td>
                                 )}
                                 {visibleColumns.includes('budget') && (
                                   <td className="p-4 whitespace-nowrap">
-                                    <p className="font-bold text-slate-900">{rfq.currency} {rfq.budget.toLocaleString()}</p>
+                                    <p className="font-semibold text-slate-900 font-mono text-sm tracking-tight">{rfq.currency} {rfq.budget.toLocaleString()}</p>
                                   </td>
                                 )}
                                 {visibleColumns.includes('dueDate') && (
                                   <td className="p-4 whitespace-nowrap">
-                                    <div className="flex items-center gap-2 text-slate-600">
-                                      <Calendar className="w-4 h-4" />
-                                      <span className="text-sm">{rfq.dueDate}</span>
+                                    <div className="flex items-center gap-2 text-slate-600 text-xs">
+                                      <Calendar className="w-3.5 h-3.5 text-slate-400" />
+                                      <span className="font-medium">{rfq.dueDate}</span>
                                     </div>
                                   </td>
                                 )}
                                 {visibleColumns.includes('status') && (
                                   <td className="p-4 whitespace-nowrap">
-                                    <Badge variant={getStatusColor(rfq.status)}>
-                                      {rfq.status}
-                                    </Badge>
+                                    {renderModernStatusBadge(rfq.status)}
                                   </td>
                                 )}
                                 {visibleColumns.includes('progress') && (
                                   <td className="p-4">
-                                    <div className="space-y-1.5 w-full min-w-[100px]">
-                                      <div className="flex justify-between text-[10px] font-medium text-slate-500">
+                                    <div className="space-y-1.5 w-full min-w-[110px]">
+                                      <div className="flex justify-between text-[11px] font-semibold text-slate-600">
                                         <span>Bids</span>
-                                        <span>{rfq.quotationsReceived}/{rfq.totalQuotations}</span>
+                                        <span className="font-mono text-blue-600 font-bold">{rfq.quotationsReceived}/{rfq.totalQuotations}</span>
                                       </div>
-                                      <Progress
-                                        value={(rfq.quotationsReceived / rfq.totalQuotations) * 100}
-                                        className="h-1.5"
-                                      />
+                                      <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden p-0.5 border border-slate-200/50">
+                                        <div 
+                                          className="h-full bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full transition-all duration-300" 
+                                          style={{ width: `${Math.min(100, (rfq.quotationsReceived / rfq.totalQuotations) * 100)}%` }} 
+                                        />
+                                      </div>
                                     </div>
                                   </td>
                                 )}
                                 <td className="p-4 sticky right-0 z-20 bg-white shadow-[-2px_0_5px_-2px_rgba(0,0,0,0.1)] group-hover:bg-slate-50 transition-colors whitespace-nowrap text-center">
-                                  <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={() => {
-                                      setSelectedRFQ(rfq);
-                                      setIsRFQModalOpen(true);
-                                    }}
-                                    className="h-8 w-8 p-0 bg-white hover:bg-slate-50 rounded-full border-slate-200"
-                                  >
-                                    <Eye className="w-3.5 h-3.5 text-slate-600" />
-                                  </Button>
+                                  <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-full hover:bg-slate-100">
+                                        <MoreHorizontal className="w-4 h-4 text-slate-600" />
+                                      </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end" className="w-44">
+                                      <DropdownMenuItem onClick={() => { setSelectedRFQ(rfq); setIsRFQModalOpen(true); }} className="gap-2 text-xs cursor-pointer">
+                                        <Eye className="w-3.5 h-3.5 text-blue-600" /> View Details
+                                      </DropdownMenuItem>
+                                      <DropdownMenuItem onClick={() => handleSubmitQuotation(rfq.id)} className="gap-2 text-xs cursor-pointer">
+                                        <Send className="w-3.5 h-3.5 text-emerald-600" /> Submit Quote
+                                      </DropdownMenuItem>
+                                      <DropdownMenuItem onClick={() => handleClarificationRequest(rfq.id)} className="gap-2 text-xs cursor-pointer">
+                                        <MessageSquare className="w-3.5 h-3.5 text-amber-600" /> Clarification
+                                      </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                  </DropdownMenu>
                                 </td>
                               </DraggableTableRow>
                             ))}
@@ -1646,6 +1753,35 @@ export function RFQManagement({ onNavigate }: RFQManagementProps) {
                       </tbody>
                     </table>
                   </div>
+
+                  {/* Floating Bulk Action Bar */}
+                  {selectedRFQIds.length > 0 && (
+                    <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 bg-slate-900 text-white px-5 py-3 rounded-full shadow-2xl flex items-center gap-4 border border-slate-700 animate-in fade-in slide-in-from-bottom-5 duration-200">
+                      <span className="text-xs font-semibold bg-slate-800 px-3 py-1 rounded-full border border-slate-700">
+                        {selectedRFQIds.length} Selected
+                      </span>
+                      <div className="h-4 w-px bg-slate-700" />
+                      <Button size="sm" variant="ghost" onClick={handleExportCSV} className="text-xs text-slate-200 hover:text-white hover:bg-slate-800 h-8 gap-1.5">
+                        <Download className="w-3.5 h-3.5" /> Export Selected
+                      </Button>
+                      <Button size="sm" variant="ghost" onClick={() => {
+                        setRFQs(prev => prev.map(r => selectedRFQIds.includes(r.id) ? {...r, status: 'Closed'} : r));
+                        setSelectedRFQIds([]);
+                      }} className="text-xs text-amber-300 hover:text-amber-200 hover:bg-slate-800 h-8 gap-1.5">
+                        <CheckCircle className="w-3.5 h-3.5" /> Close RFQs
+                      </Button>
+                      <Button size="sm" variant="ghost" onClick={() => {
+                        setRFQs(prev => prev.filter(r => !selectedRFQIds.includes(r.id)));
+                        setSelectedRFQIds([]);
+                      }} className="text-xs text-rose-400 hover:text-rose-300 hover:bg-slate-800 h-8 gap-1.5">
+                        <Trash2 className="w-3.5 h-3.5" /> Delete
+                      </Button>
+                      <Button size="sm" variant="ghost" onClick={() => setSelectedRFQIds([])} className="text-xs text-slate-400 hover:text-white h-8">
+                        <X className="w-3.5 h-3.5" />
+                      </Button>
+                    </div>
+                  )}
+
                   <MaterialPagination
                     currentPage={currentPage}
                     totalItems={filteredRFQs.length}
@@ -2617,9 +2753,9 @@ export function RFQManagement({ onNavigate }: RFQManagementProps) {
                 </div>
                 <div className="space-y-2">
                   <Label>Valid Until</Label>
-                  <DatePicker 
-                    value={currentQuotationForForm.validUntil} 
-                    onChange={(e) => setCurrentQuotationForForm({...currentQuotationForForm, validUntil: e.target.value})}
+                  <DatePicker
+                    value={currentQuotationForForm.validUntil}
+                    onChange={(e) => setCurrentQuotationForForm({ ...currentQuotationForForm, validUntil: e.target.value })}
                     placeholder="Select expiration date"
                   />
                 </div>
@@ -2628,12 +2764,12 @@ export function RFQManagement({ onNavigate }: RFQManagementProps) {
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <Label>Line Items</Label>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
+                  <Button
+                    variant="outline"
+                    size="sm"
                     onClick={() => {
                       const items = [...currentQuotationForForm.lineItems, { item: '', unitPrice: 0, quantity: 1, total: 0 }];
-                      setCurrentQuotationForForm({...currentQuotationForForm, lineItems: items});
+                      setCurrentQuotationForForm({ ...currentQuotationForForm, lineItems: items });
                     }}
                   >
                     Add Item
@@ -2654,43 +2790,43 @@ export function RFQManagement({ onNavigate }: RFQManagementProps) {
                       {currentQuotationForForm.lineItems.map((item: any, idx: number) => (
                         <tr key={idx}>
                           <td className="p-2">
-                            <Input 
-                              value={item.item} 
+                            <Input
+                              value={item.item}
                               onChange={(e) => {
                                 const newItems = [...currentQuotationForForm.lineItems];
                                 newItems[idx].item = e.target.value;
-                                setCurrentQuotationForForm({...currentQuotationForForm, lineItems: newItems});
+                                setCurrentQuotationForForm({ ...currentQuotationForForm, lineItems: newItems });
                               }}
                               placeholder="Item description"
                               className="h-8 text-xs"
                             />
                           </td>
                           <td className="p-2 text-right">
-                            <Input 
+                            <Input
                               type="number"
-                              value={item.unitPrice} 
+                              value={item.unitPrice}
                               onChange={(e) => {
                                 const val = parseFloat(e.target.value) || 0;
                                 const newItems = [...currentQuotationForForm.lineItems];
                                 newItems[idx].unitPrice = val;
                                 newItems[idx].total = val * newItems[idx].quantity;
                                 const newTotal = newItems.reduce((acc, i) => acc + i.total, 0);
-                                setCurrentQuotationForForm({...currentQuotationForForm, lineItems: newItems, totalAmount: newTotal});
+                                setCurrentQuotationForForm({ ...currentQuotationForForm, lineItems: newItems, totalAmount: newTotal });
                               }}
                               className="h-8 text-xs text-right pr-1"
                             />
                           </td>
                           <td className="p-2 text-right">
-                            <Input 
+                            <Input
                               type="number"
-                              value={item.quantity} 
+                              value={item.quantity}
                               onChange={(e) => {
                                 const val = parseInt(e.target.value) || 0;
                                 const newItems = [...currentQuotationForForm.lineItems];
                                 newItems[idx].quantity = val;
                                 newItems[idx].total = val * newItems[idx].unitPrice;
                                 const newTotal = newItems.reduce((acc, i) => acc + i.total, 0);
-                                setCurrentQuotationForForm({...currentQuotationForForm, lineItems: newItems, totalAmount: newTotal});
+                                setCurrentQuotationForForm({ ...currentQuotationForForm, lineItems: newItems, totalAmount: newTotal });
                               }}
                               className="h-8 text-xs text-right pr-1"
                             />
@@ -2699,15 +2835,15 @@ export function RFQManagement({ onNavigate }: RFQManagementProps) {
                             {currentQuotationForForm.currency} {item.total.toLocaleString()}
                           </td>
                           <td className="p-2">
-                            <Button 
-                              variant="ghost" 
-                              size="icon" 
-                              className="h-6 w-6 text-red-500" 
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-6 w-6 text-red-500"
                               onClick={() => {
                                 if (currentQuotationForForm.lineItems.length > 1) {
                                   const newItems = currentQuotationForForm.lineItems.filter((_: any, i: number) => i !== idx);
                                   const newTotal = newItems.reduce((acc: number, i: any) => acc + i.total, 0);
-                                  setCurrentQuotationForForm({...currentQuotationForForm, lineItems: newItems, totalAmount: newTotal});
+                                  setCurrentQuotationForForm({ ...currentQuotationForForm, lineItems: newItems, totalAmount: newTotal });
                                 }
                               }}
                             >
@@ -2732,9 +2868,9 @@ export function RFQManagement({ onNavigate }: RFQManagementProps) {
 
               <div className="space-y-2">
                 <Label>Internal Notes</Label>
-                <Textarea 
-                  value={currentQuotationForForm.notes} 
-                  onChange={(e) => setCurrentQuotationForForm({...currentQuotationForForm, notes: e.target.value})}
+                <Textarea
+                  value={currentQuotationForForm.notes}
+                  onChange={(e) => setCurrentQuotationForForm({ ...currentQuotationForForm, notes: e.target.value })}
                   placeholder="Special terms, delivery conditions, etc."
                   rows={3}
                   className="text-sm"

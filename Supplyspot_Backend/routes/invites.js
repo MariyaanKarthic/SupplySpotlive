@@ -102,33 +102,50 @@ router.post('/', [
       });
     }
 
-    const { email, role, maxUses, expiresAt, notes } = req.body;
+    const { email, role, maxUses, expiresAt, notes, vendorType, companyCode, purchaseOrg, vendorName, natureOfVendor, businessPartnerCategory, contactPersonName, yearOfIncorporation } = req.body;
 
     // Create invite
     const invite = await new Invite(db).create({
       email,
-      role,
+      role: role || 'supplier',
       max_uses: maxUses || 1,
       expires_at: expiresAt,
-      notes,
+      notes: notes || (vendorName ? `Vendor invite for ${vendorName}` : undefined),
       created_by: req.user.id
     });
 
-    // Generate invite link
-    const inviteLink = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/signup?invite=${invite.invite_code}`;
+    const vendorMetadata = {
+      vendorType: vendorType || 'company',
+      companyCode: companyCode || '',
+      purchaseOrg: purchaseOrg || '',
+      vendorName: vendorName || '',
+      vendorEmail: email || '',
+      natureOfVendor: natureOfVendor || '',
+      businessPartnerCategory: businessPartnerCategory || '',
+      contactPersonName: contactPersonName || '',
+      yearOfIncorporation: yearOfIncorporation || ''
+    };
+
+    // Generate invite link with token
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+    const inviteLink = `${frontendUrl}/vendor-registration-details?token=${invite.invite_code}&type=${vendorType || 'company'}`;
 
     logger.logAudit('INVITE_CREATED', req.user.id, {
       inviteId: invite.id,
       inviteCode: invite.invite_code,
       email: invite.email,
       role: invite.role,
+      vendorMetadata,
       ip: req.ip
     });
 
     res.status(201).json({
       success: true,
       data: {
-        invite,
+        invite: {
+          ...invite,
+          vendorMetadata
+        },
         inviteLink
       }
     });
