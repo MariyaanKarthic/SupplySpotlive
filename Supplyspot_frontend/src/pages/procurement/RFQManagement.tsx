@@ -1,6 +1,7 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { useApi } from '@/hooks/useApi';
 import { rfqService } from '@/services/api';
+import { rfqData, quotationData, clarificationData } from '@/data/rfqMockData';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -77,738 +78,7 @@ import {
 } from '@dnd-kit/sortable';
 import { DraggableTableRow, DraggableTableHeader } from '@/components/ui/draggable-table-row';
 
-// Mock data for RFQs
-const rfqData = [
-  {
-    id: 9991,
-    rfqNumber: 'RFQ-2025-001',
-    title: 'Office Furniture Supply RFQ',
-    buyer: 'TechCorp Inc.',
-    description: 'Need office furniture for new office setup as discussed in collaboration dashboard',
-    category: 'Furniture',
-    budget: 60000,
-    currency: 'USD',
-    issuedDate: '2025-09-01',
-    dueDate: '2025-10-15',
-    status: 'Open',
-    priority: 'High',
-    suppliers: ['Premium Office Solutions', 'OfficeMax Solutions', 'Global Office Co'],
-    quotationsReceived: 1,
-    totalQuotations: 3,
-    attachments: ['specifications.pdf'],
-    clarifications: 1
-  },
-  {
-    id: 9992,
-    rfqNumber: 'RFQ-2025-002',
-    title: 'Raw Materials Sourcing',
-    buyer: 'BuildCorp',
-    description: 'Bulk supply of raw materials for production',
-    category: 'Construction',
-    budget: 150000,
-    currency: 'USD',
-    issuedDate: '2025-09-10',
-    dueDate: '2025-10-25',
-    status: 'Awarded',
-    priority: 'Low',
-    suppliers: ['MaterialSource Inc', 'Global Building'],
-    quotationsReceived: 2,
-    totalQuotations: 2,
-    attachments: ['site_plan.dwg'],
-    clarifications: 0,
-    awardedTo: 'MaterialSource Inc',
-    awardedAmount: 145000
-  },
-  {
-    id: 1,
-    rfqNumber: 'RFQ-2023-001',
-    title: 'Office Equipment Procurement',
-    buyer: 'TechCorp Inc.',
-    description: 'Need laptops, monitors, and office chairs for new office setup',
-    category: 'IT Equipment',
-    budget: 50000,
-    currency: 'USD',
-    issuedDate: '2023-11-01',
-    dueDate: '2023-11-15',
-    status: 'Open',
-    priority: 'High',
-    suppliers: ['OfficeMax Solutions', 'Tech Suppliers Ltd', 'Global Office Co'],
-    quotationsReceived: 2,
-    totalQuotations: 3,
-    attachments: ['specifications.pdf', 'requirements.xlsx'],
-    clarifications: 1
-  },
-  {
-    id: 2,
-    rfqNumber: 'RFQ-2023-002',
-    title: 'Software Licensing',
-    buyer: 'StartupCorp',
-    description: 'Enterprise software licenses for productivity and collaboration tools',
-    category: 'Software',
-    budget: 25000,
-    currency: 'USD',
-    issuedDate: '2023-10-28',
-    dueDate: '2023-11-12',
-    status: 'Under Review',
-    priority: 'Medium',
-    suppliers: ['Microsoft Partner', 'Adobe Reseller', 'Google Workspace'],
-    quotationsReceived: 3,
-    totalQuotations: 3,
-    attachments: ['user_requirements.pdf'],
-    clarifications: 0
-  },
-  {
-    id: 3,
-    rfqNumber: 'RFQ-2023-003',
-    title: 'Catering Services',
-    buyer: 'EventCorp',
-    description: 'Corporate event catering for 200 people, lunch and dinner',
-    category: 'Services',
-    budget: 15000,
-    currency: 'USD',
-    issuedDate: '2023-11-05',
-    dueDate: '2023-11-20',
-    status: 'Awarded',
-    priority: 'Low',
-    suppliers: ['Premium Catering', 'Local Food Co', 'Gourmet Events'],
-    quotationsReceived: 3,
-    totalQuotations: 3,
-    attachments: ['menu_requirements.pdf', 'venue_details.pdf'],
-    clarifications: 2,
-    awardedTo: 'Premium Catering',
-    awardedAmount: 12500
-  },
-  {
-    id: 4,
-    rfqNumber: 'RFQ-2023-004',
-    title: 'Construction Materials',
-    buyer: 'BuildCorp',
-    description: 'Bulk supply of cement, steel rods, and bricks for new site',
-    category: 'Construction',
-    budget: 75000,
-    currency: 'USD',
-    issuedDate: '2023-11-10',
-    dueDate: '2023-11-25',
-    status: 'Rejected',
-    priority: 'High',
-    suppliers: ['Materials Plus', 'Global Building', 'Solid Foundation'],
-    quotationsReceived: 1,
-    totalQuotations: 3,
-    attachments: ['site_plan.dwg'],
-    clarifications: 0
-  },
-  {
-    id: 5,
-    rfqNumber: 'RFQ-2023-005',
-    title: 'Janitorial Services',
-    buyer: 'CleanState',
-    description: 'Daily cleaning of 5000 sq ft office space',
-    category: 'Services',
-    budget: 5000,
-    currency: 'USD',
-    issuedDate: '2023-11-12',
-    dueDate: '2023-11-28',
-    status: 'Open',
-    priority: 'Low',
-    suppliers: ['Sparkle Cleaning', 'EcoService', 'Shine Bright'],
-    quotationsReceived: 5,
-    totalQuotations: 8,
-    attachments: ['service_scope.pdf'],
-    clarifications: 3
-  },
-  {
-    id: 6,
-    rfqNumber: 'RFQ-2024-001',
-    title: 'Network Switch Upgrade',
-    buyer: 'NetSync Solutions',
-    description: 'High-performance 10Gb switches for data center',
-    category: 'IT Equipment',
-    budget: 35000,
-    currency: 'USD',
-    issuedDate: '2024-01-05',
-    dueDate: '2024-01-20',
-    status: 'Open',
-    priority: 'High',
-    suppliers: ['Cisco Partner', 'Juniper Systems', 'Global Tech'],
-    quotationsReceived: 0,
-    totalQuotations: 5,
-    attachments: ['network_layout.pdf'],
-    clarifications: 1
-  },
-  {
-    id: 7,
-    rfqNumber: 'RFQ-2024-002',
-    title: 'Marketing Agency Retainer',
-    buyer: 'BrandBoost',
-    description: 'Digital marketing and social media management for brand relaunch',
-    category: 'Services',
-    budget: 12000,
-    currency: 'USD',
-    issuedDate: '2024-01-08',
-    dueDate: '2024-01-22',
-    status: 'Under Review',
-    priority: 'Medium',
-    suppliers: ['Creative Hub', 'Social Ninja', 'AdMasters'],
-    quotationsReceived: 4,
-    totalQuotations: 4,
-    attachments: ['brand_guidelines.pdf', 'campaign_v1.pptx'],
-    clarifications: 5
-  },
-  {
-    id: 8,
-    rfqNumber: 'RFQ-2024-003',
-    title: 'Packaging Supplies',
-    buyer: 'EcoPack Co.',
-    description: 'Recyclable cardboard boxes and biodegradable bubble wrap',
-    category: 'Industrial',
-    budget: 8500,
-    currency: 'USD',
-    issuedDate: '2024-01-10',
-    dueDate: '2024-01-25',
-    status: 'Awarded',
-    priority: 'Low',
-    suppliers: ['GreenBox', 'EarthPack', 'NatureSave'],
-    quotationsReceived: 2,
-    totalQuotations: 3,
-    attachments: ['packaging_specs.pdf'],
-    clarifications: 0
-  },
-  {
-    id: 9,
-    rfqNumber: 'RFQ-2024-004',
-    title: 'Bulk Office Furniture',
-    buyer: 'FutureWorks',
-    description: '50 ergonomic desks and 50 executive chairs',
-    category: 'Furniture',
-    budget: 45000,
-    currency: 'USD',
-    issuedDate: '2024-01-12',
-    dueDate: '2024-01-30',
-    status: 'Open',
-    priority: 'Medium',
-    suppliers: ['Office Depot', 'Herman Miller', 'ChairExpert'],
-    quotationsReceived: 1,
-    totalQuotations: 10,
-    attachments: ['office_layout.dwg'],
-    clarifications: 2
-  },
-  {
-    id: 10,
-    rfqNumber: 'RFQ-2024-005',
-    title: 'Industrial Generator Repair',
-    buyer: 'HeavyPower',
-    description: 'Repair and maintenance of 500kVa standby generator',
-    category: 'Maintenance',
-    budget: 15000,
-    currency: 'USD',
-    issuedDate: '2024-01-15',
-    dueDate: '2024-01-28',
-    status: 'Under Review',
-    priority: 'High',
-    suppliers: ['GenRepair', 'PowerPlus', 'Maintenance Pro'],
-    quotationsReceived: 3,
-    totalQuotations: 3,
-    attachments: ['generator_logs.pdf'],
-    clarifications: 4
-  },
-  {
-    id: 11,
-    rfqNumber: 'RFQ-2024-006',
-    title: 'Solar Panel Installation',
-    buyer: 'GreenEnergy',
-    description: '100kW rooftop solar array installation for main warehouse',
-    category: 'Industrial',
-    budget: 120000,
-    currency: 'USD',
-    issuedDate: '2024-01-20',
-    dueDate: '2024-02-15',
-    status: 'Open',
-    priority: 'High',
-    suppliers: ['SunPower', 'EcoEnergy', 'SolarWay'],
-    quotationsReceived: 0,
-    totalQuotations: 6,
-    attachments: ['roof_specs.pdf'],
-    clarifications: 2
-  },
-  {
-    id: 12,
-    rfqNumber: 'RFQ-2024-007',
-    title: 'Corporate Travel Management',
-    buyer: 'GlobalCorp',
-    description: 'Enterprise travel agency services for global employee base',
-    category: 'Services',
-    budget: 250000,
-    currency: 'USD',
-    issuedDate: '2024-01-22',
-    dueDate: '2024-02-28',
-    status: 'Under Review',
-    priority: 'Medium',
-    suppliers: ['AMEX GBT', 'BCD Travel', 'CWT'],
-    quotationsReceived: 4,
-    totalQuotations: 4,
-    attachments: ['travel_policy.pdf'],
-    clarifications: 8
-  },
-  {
-    id: 13,
-    rfqNumber: 'RFQ-2024-008',
-    title: 'Lab Supplies Q2',
-    buyer: 'BioTech Labs',
-    description: 'Consolidated lab consumables and reagents for Q2 2024',
-    category: 'Chemicals',
-    budget: 45000,
-    currency: 'USD',
-    issuedDate: '2024-01-25',
-    dueDate: '2024-02-10',
-    status: 'Open',
-    priority: 'High',
-    suppliers: ['Thermo Fisher', 'VWR', 'Sigma Aldrich'],
-    quotationsReceived: 2,
-    totalQuotations: 5,
-    attachments: ['item_list_q2.xlsx'],
-    clarifications: 1
-  },
-  {
-    id: 14,
-    rfqNumber: 'RFQ-2024-009',
-    title: 'Heavy Machinery Rental',
-    buyer: 'Industrial Solutions',
-    description: 'Excavators and cranes for 3-month construction project',
-    category: 'Industrial',
-    budget: 85000,
-    currency: 'USD',
-    issuedDate: '2024-01-28',
-    dueDate: '2024-02-12',
-    status: 'Awarded',
-    priority: 'High',
-    suppliers: ['United Rentals', 'Sunbelt', 'Herc Rentals'],
-    quotationsReceived: 3,
-    totalQuotations: 3,
-    attachments: ['project_timeline.pdf'],
-    clarifications: 0
-  },
-  {
-    id: 15,
-    rfqNumber: 'RFQ-2024-010',
-    title: 'Cybersecurity Audit',
-    buyer: 'CyberDefense',
-    description: 'Social engineering and penetration testing for retail network',
-    category: 'Services',
-    budget: 35000,
-    currency: 'USD',
-    issuedDate: '2024-02-01',
-    dueDate: '2024-02-25',
-    status: 'Under Review',
-    priority: 'Medium',
-    suppliers: ['FireEye', 'CrowdStrike', 'Palo Alto'],
-    quotationsReceived: 2,
-    totalQuotations: 2,
-    attachments: ['network_scope.pdf'],
-    clarifications: 3
-  },
-  {
-    id: 16,
-    rfqNumber: 'RFQ-2024-011',
-    title: 'Employee Insurance Renewal',
-    buyer: 'HR Solutions',
-    description: 'Annual health and life insurance for 500+ employees',
-    category: 'Services',
-    budget: 1500000,
-    currency: 'USD',
-    issuedDate: '2024-02-05',
-    dueDate: '2024-03-15',
-    status: 'Open',
-    priority: 'High',
-    suppliers: ['Aetna', 'UnitedHealth', 'Cigna'],
-    quotationsReceived: 1,
-    totalQuotations: 5,
-    attachments: ['employee_census_2024.xlsx'],
-    clarifications: 4
-  },
-  {
-    id: 17,
-    rfqNumber: 'RFQ-2024-012',
-    title: 'Cloud Data Storage',
-    buyer: 'SaaS Innovators',
-    description: 'Multi-region S3 compatible storage for backup systems',
-    category: 'IT Equipment',
-    budget: 25000,
-    currency: 'USD',
-    issuedDate: '2024-02-10',
-    dueDate: '2024-02-24',
-    status: 'Open',
-    priority: 'Medium',
-    suppliers: ['AWS', 'Azure', 'Google Cloud'],
-    quotationsReceived: 0,
-    totalQuotations: 3,
-    attachments: ['storage_requirements.pdf'],
-    clarifications: 0
-  },
-  {
-    id: 18,
-    rfqNumber: 'RFQ-2024-013',
-    title: 'Water Treatment Chemicals',
-    buyer: 'H2O Systems',
-    description: 'Annual supply of industrial water filtration resins',
-    category: 'Chemicals',
-    budget: 65000,
-    currency: 'USD',
-    issuedDate: '2024-02-12',
-    dueDate: '2024-03-01',
-    status: 'Under Review',
-    priority: 'Low',
-    suppliers: ['Ecolab', 'Veolia', 'Suez'],
-    quotationsReceived: 3,
-    totalQuotations: 3,
-    attachments: ['water_analysis_report.pdf'],
-    clarifications: 2
-  },
-  {
-    id: 19,
-    rfqNumber: 'RFQ-2024-014',
-    title: 'Electric Vehicle Fleet',
-    buyer: 'EcoLogistics',
-    description: 'Purchase of 10 electric delivery vans for urban routes',
-    category: 'Industrial',
-    budget: 550000,
-    currency: 'USD',
-    issuedDate: '2024-02-15',
-    dueDate: '2024-03-20',
-    status: 'Open',
-    priority: 'High',
-    suppliers: ['Tesla', 'Rivian', 'Ford Pro'],
-    quotationsReceived: 2,
-    totalQuotations: 10,
-    attachments: ['fleet_specifications.pdf'],
-    clarifications: 5
-  },
-  {
-    id: 20,
-    rfqNumber: 'RFQ-2024-015',
-    title: 'Precision CNC Machining',
-    buyer: 'AutoParts Inc.',
-    description: 'Production of specialty aluminum engine components',
-    category: 'Industrial',
-    budget: 95000,
-    currency: 'USD',
-    issuedDate: '2024-02-18',
-    dueDate: '2024-03-10',
-    status: 'Open',
-    priority: 'Medium',
-    suppliers: ['ToolCraft', 'MegaMachining', 'PrecisionParts'],
-    quotationsReceived: 1,
-    totalQuotations: 4,
-    attachments: ['cad_drawings_v2.zip'],
-    clarifications: 3
-  }
-];
-
-// Mock quotation data
-const quotationData = [
-  {
-    id: 9991,
-    rfqId: 9993, // matching a potential QUO ID
-    rfqNumber: 'RFQ-2025-003',
-    supplierName: 'CleanPro Services',
-    quotationNumber: 'QUO-2025-089',
-    totalAmount: 15000,
-    currency: 'USD',
-    submittedDate: '2025-10-01',
-    validUntil: '2025-11-01',
-    status: 'Submitted',
-    lineItems: [
-      { item: 'Cleaning Services', unitPrice: 15000, quantity: 1, total: 15000 }
-    ],
-    notes: 'Quotation for Cleaning Services.',
-    attachments: ['quotation_details.pdf']
-  },
-  {
-    id: 1,
-    rfqId: 1,
-    rfqNumber: 'RFQ-2023-001',
-    supplierName: 'Tech Suppliers Ltd',
-    quotationNumber: 'QUO-2023-001',
-    totalAmount: 47500,
-    currency: 'USD',
-    submittedDate: '2023-11-08',
-    validUntil: '2023-12-08',
-    status: 'Submitted',
-    lineItems: [
-      { item: 'Laptops (10 units)', unitPrice: 1200, quantity: 10, total: 12000 },
-      { item: 'Monitors (15 units)', unitPrice: 300, quantity: 15, total: 4500 },
-      { item: 'Office Chairs (20 units)', unitPrice: 250, quantity: 20, total: 5000 }
-    ],
-    notes: 'All items include 2-year warranty. Delivery within 5 business days.',
-    attachments: ['quotation_details.pdf', 'warranty_terms.pdf']
-  },
-  {
-    id: 2,
-    rfqId: 2,
-    rfqNumber: 'RFQ-2023-002',
-    supplierName: 'Microsoft Partner',
-    quotationNumber: 'QUO-2023-002',
-    totalAmount: 22000,
-    currency: 'USD',
-    submittedDate: '2023-11-05',
-    validUntil: '2023-12-05',
-    status: 'Under Review',
-    lineItems: [
-      { item: 'Office 365 E3 (50 licenses)', unitPrice: 300, quantity: 50, total: 15000 },
-      { item: 'Teams Premium (50 licenses)', unitPrice: 140, quantity: 50, total: 7000 }
-    ],
-    notes: 'Annual subscription with enterprise support included.',
-    attachments: ['license_agreement.pdf']
-  },
-  {
-    id: 3,
-    rfqId: 8,
-    rfqNumber: 'RFQ-2024-003',
-    supplierName: 'EcoPack Co.',
-    quotationNumber: 'QUO-2024-003',
-    totalAmount: 8200,
-    currency: 'USD',
-    submittedDate: '2024-02-12',
-    validUntil: '2024-03-12',
-    status: 'Awarded',
-    lineItems: [{ item: 'Cardboard Boxes', unitPrice: 1, quantity: 5000, total: 5000 }],
-    notes: 'Sustainable options included.'
-  },
-  {
-    id: 4,
-    rfqId: 4,
-    rfqNumber: 'RFQ-2023-004',
-    supplierName: 'Solid Foundation',
-    quotationNumber: 'QUO-2023-004',
-    totalAmount: 72000,
-    currency: 'USD',
-    submittedDate: '2023-11-20',
-    validUntil: '2023-12-20',
-    status: 'Rejected',
-    lineItems: [{ item: 'Steel Rods', unitPrice: 100, quantity: 500, total: 50000 }],
-    notes: 'Standard delivery.'
-  },
-  {
-    id: 5,
-    rfqId: 5,
-    rfqNumber: 'RFQ-2023-005',
-    title: 'Janitorial Services',
-    supplierName: 'EcoService',
-    quotationNumber: 'QUO-2023-005',
-    totalAmount: 4800,
-    currency: 'USD',
-    submittedDate: '2023-11-22',
-    validUntil: '2023-12-22',
-    status: 'Submitted',
-    lineItems: [{ item: 'Monthly Cleaning', unitPrice: 4800, quantity: 1, total: 4800 }],
-    notes: 'Full commercial cleaning service.'
-  },
-  {
-    id: 6,
-    rfqId: 10,
-    rfqNumber: 'RFQ-2024-005',
-    supplierName: 'PowerPlus',
-    quotationNumber: 'QUO-2024-010',
-    totalAmount: 14500,
-    currency: 'USD',
-    submittedDate: '2024-02-05',
-    validUntil: '2024-03-05',
-    status: 'Under Review',
-    lineItems: [{ item: 'Generator Overhaul', unitPrice: 14500, quantity: 1, total: 14500 }],
-    notes: 'Includes 6 months warranty on parts.'
-  },
-  {
-    id: 7,
-    rfqId: 14,
-    rfqNumber: 'RFQ-2024-009',
-    supplierName: 'Sunbelt',
-    quotationNumber: 'QUO-2024-014',
-    totalAmount: 82000,
-    currency: 'USD',
-    submittedDate: '2024-02-01',
-    validUntil: '2024-03-01',
-    status: 'Awarded',
-    lineItems: [{ item: 'Machinery Rental', unitPrice: 82000, quantity: 1, total: 82000 }],
-    notes: 'Priority maintenance included.'
-  },
-  {
-    id: 8,
-    rfqId: 18,
-    rfqNumber: 'RFQ-2024-013',
-    supplierName: 'Veolia',
-    quotationNumber: 'QUO-2024-018',
-    totalAmount: 63000,
-    currency: 'USD',
-    submittedDate: '2024-02-15',
-    validUntil: '2024-03-15',
-    status: 'Under Review',
-    lineItems: [{ item: 'Filtration Resins', unitPrice: 63000, quantity: 1, total: 63000 }],
-    notes: 'Premium grade materials.'
-  },
-  {
-    id: 9,
-    rfqId: 7,
-    rfqNumber: 'RFQ-2024-002',
-    supplierName: 'Social Ninja',
-    quotationNumber: 'QUO-2024-002',
-    totalAmount: 11000,
-    currency: 'USD',
-    submittedDate: '2024-01-15',
-    validUntil: '2024-02-15',
-    status: 'Under Review',
-    lineItems: [{ item: 'Marketing Retainer', unitPrice: 11000, quantity: 1, total: 11000 }],
-    notes: 'Includes weekly performance reports.'
-  },
-  {
-    id: 10,
-    rfqId: 11,
-    rfqNumber: 'RFQ-2024-006',
-    supplierName: 'SunPower',
-    quotationNumber: 'QUO-2024-006',
-    totalAmount: 115000,
-    currency: 'USD',
-    submittedDate: '2024-02-05',
-    validUntil: '2024-03-05',
-    status: 'Submitted',
-    lineItems: [{ item: 'Solar Installation', unitPrice: 115000, quantity: 1, total: 115000 }],
-    notes: 'Max efficiency panels proposed.'
-  }
-];
-
-// Mock clarification data
-const clarificationData = [
-  {
-    id: 1,
-    rfqId: 1,
-    rfqNumber: 'RFQ-2023-001',
-    supplierName: 'OfficeMax Solutions',
-    question: 'Can we substitute the requested laptop model with a similar specification but different brand?',
-    askedDate: '2023-11-03',
-    response: 'Yes, as long as the specifications meet or exceed the minimum requirements stated in the RFQ.',
-    respondedDate: '2023-11-04',
-    status: 'Answered'
-  },
-  {
-    id: 2,
-    rfqId: 1,
-    rfqNumber: 'RFQ-2023-001',
-    supplierName: 'Tech Suppliers Ltd',
-    question: 'What is the exact model number for the monitors specified in the requirements? The document lists "27-inch 4K monitors" but no specific model.',
-    askedDate: '2023-11-06',
-    response: null,
-    respondedDate: null,
-    status: 'Pending'
-  },
-  {
-    id: 3,
-    rfqId: 1,
-    rfqNumber: 'RFQ-2023-001',
-    supplierName: 'Global Office Co',
-    question: 'Can the delivery be split into two phases - laptops first, then furniture? We have the laptops in stock but chairs require 2 weeks lead time.',
-    askedDate: '2023-11-08',
-    response: null,
-    respondedDate: null,
-    status: 'Pending'
-  },
-  {
-    id: 4,
-    rfqId: 3,
-    rfqNumber: 'RFQ-2023-003',
-    supplierName: 'Gourmet Events',
-    question: 'Is there a preferred menu style, and can we include vegetarian/vegan options?',
-    askedDate: '2023-11-07',
-    response: 'International cuisine preferred. Please include 20% vegetarian and 10% vegan options.',
-    respondedDate: '2023-11-08',
-    status: 'Answered'
-  },
-  {
-    id: 5,
-    rfqId: 2,
-    rfqNumber: 'RFQ-2023-002',
-    supplierName: 'Microsoft Partner',
-    question: 'Does the enterprise software license requirement include mobile device access? If so, how many mobile users should we account for?',
-    askedDate: '2023-11-05',
-    response: null,
-    respondedDate: null,
-    status: 'Pending'
-  },
-  {
-    id: 6,
-    rfqId: 2,
-    rfqNumber: 'RFQ-2023-002',
-    supplierName: 'Adobe Reseller',
-    question: 'Are you open to a hybrid licensing model with some cloud-based and some on-premise solutions to reduce overall costs?',
-    askedDate: '2023-11-09',
-    response: null,
-    respondedDate: null,
-    status: 'Pending'
-  },
-  {
-    id: 7,
-    rfqId: 1,
-    rfqNumber: 'RFQ-2023-001',
-    supplierName: 'Tech Suppliers Ltd',
-    question: 'Is installation and setup service required for the office equipment, or is delivery-only acceptable?',
-    askedDate: '2023-11-10',
-    response: null,
-    respondedDate: null,
-    status: 'Pending'
-  },
-  {
-    id: 8,
-    rfqId: 4,
-    rfqNumber: 'RFQ-2023-004',
-    supplierName: 'Steel Works Inc',
-    question: 'The blueprints show Grade 60 steel specifications, but Grade 50 would be sufficient for this application and cost 15% less. Can we propose this alternative?',
-    askedDate: '2023-11-12',
-    response: null,
-    respondedDate: null,
-    status: 'Pending'
-  },
-  {
-    id: 9,
-    rfqId: 3,
-    rfqNumber: 'RFQ-2023-003',
-    supplierName: 'Local Food Co',
-    question: 'What are the on-site kitchen facilities available at the venue? This will affect our equipment needs and pricing.',
-    askedDate: '2023-11-11',
-    response: null,
-    respondedDate: null,
-    status: 'Pending'
-  },
-  {
-    id: 10,
-    rfqId: 2,
-    rfqNumber: 'RFQ-2023-002',
-    supplierName: 'Google Workspace',
-    question: 'Will you require data migration services from your existing productivity suite? If yes, what is the current platform and data volume?',
-    askedDate: '2023-11-10',
-    response: null,
-    respondedDate: null,
-    status: 'Pending'
-  },
-  {
-    id: 11,
-    rfqId: 1,
-    rfqNumber: 'RFQ-2023-001',
-    supplierName: 'OfficeMax Solutions',
-    question: 'Are warranty extensions available as an add-on? We can offer 3-year extended warranty at additional 12% cost.',
-    askedDate: '2023-11-13',
-    response: null,
-    respondedDate: null,
-    status: 'Pending'
-  },
-  {
-    id: 12,
-    rfqId: 4,
-    rfqNumber: 'RFQ-2023-004',
-    supplierName: 'Concrete Masters',
-    question: 'The material specifications require delivery on a specific date. Can you accommodate a 3-day delivery window instead to optimize logistics and reduce costs?',
-    askedDate: '2023-11-14',
-    response: null,
-    respondedDate: null,
-    status: 'Pending'
-  }
-];
+// Mock datasets imported from '@/data/rfqMockData'
 
 
 
@@ -1090,21 +360,17 @@ export function RFQManagement({ onNavigate }: RFQManagementProps) {
 
   const [selectedRFQIds, setSelectedRFQIds] = useState<number[]>([]);
 
-  const toggleSelectAllRFQs = (filteredList: any[]) => {
-    if (selectedRFQIds.length === filteredList.length) {
-      setSelectedRFQIds([]);
-    } else {
-      setSelectedRFQIds(filteredList.map(r => r.id));
-    }
-  };
+  const toggleSelectAllRFQs = useCallback((filteredList: any[]) => {
+    setSelectedRFQIds(prev => 
+      prev.length === filteredList.length ? [] : filteredList.map(r => r.id)
+    );
+  }, []);
 
-  const toggleSelectRFQ = (id: number) => {
-    if (selectedRFQIds.includes(id)) {
-      setSelectedRFQIds(selectedRFQIds.filter(i => i !== id));
-    } else {
-      setSelectedRFQIds([...selectedRFQIds, id]);
-    }
-  };
+  const toggleSelectRFQ = useCallback((id: number) => {
+    setSelectedRFQIds(prev => 
+      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+    );
+  }, []);
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
@@ -1115,61 +381,69 @@ export function RFQManagement({ onNavigate }: RFQManagementProps) {
     }
   };
 
-  const filteredRFQs = rfqs.filter(rfq => {
-    const matchesSearch = rfq.rfqNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      rfq.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      rfq.buyer.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === 'all' || rfq.status === statusFilter;
-    return matchesSearch && matchesStatus;
-  }).sort((a, b) => {
-    if (!sortConfig.direction || !sortConfig.key) return 0;
+  const filteredRFQs = useMemo(() => {
+    return rfqs.filter(rfq => {
+      const matchesSearch = rfq.rfqNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        rfq.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        rfq.buyer.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesStatus = statusFilter === 'all' || rfq.status === statusFilter;
+      return matchesSearch && matchesStatus;
+    }).sort((a, b) => {
+      if (!sortConfig.direction || !sortConfig.key) return 0;
 
-    let aValue: any = a[sortConfig.key as keyof typeof a];
-    let bValue: any = b[sortConfig.key as keyof typeof b];
+      let aValue: any = a[sortConfig.key as keyof typeof a];
+      let bValue: any = b[sortConfig.key as keyof typeof b];
 
-    // Special handling for progress
-    if (sortConfig.key === 'progress') {
-      aValue = a.quotationsReceived / a.totalQuotations;
-      bValue = b.quotationsReceived / b.totalQuotations;
-    }
+      // Special handling for progress
+      if (sortConfig.key === 'progress') {
+        aValue = a.quotationsReceived / a.totalQuotations;
+        bValue = b.quotationsReceived / b.totalQuotations;
+      }
 
-    if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
-    if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
-    return 0;
-  });
+      if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
+      if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }, [rfqs, searchTerm, statusFilter, sortConfig]);
 
-  const filteredQuotations = quotations.filter(quo => {
-    const matchesSearch = quo.quotationNumber.toLowerCase().includes(quotationSearchTerm.toLowerCase()) ||
-      quo.rfqNumber.toLowerCase().includes(quotationSearchTerm.toLowerCase()) ||
-      quo.supplierName.toLowerCase().includes(quotationSearchTerm.toLowerCase());
-    const matchesStatus = quotationStatusFilter === 'all' || quo.status === quotationStatusFilter;
-    return matchesSearch && matchesStatus;
-  }).sort((a, b) => {
-    if (!quotationSortConfig.direction || !quotationSortConfig.key) return 0;
+  const filteredQuotations = useMemo(() => {
+    return quotations.filter(quo => {
+      const matchesSearch = quo.quotationNumber.toLowerCase().includes(quotationSearchTerm.toLowerCase()) ||
+        quo.rfqNumber.toLowerCase().includes(quotationSearchTerm.toLowerCase()) ||
+        quo.supplierName.toLowerCase().includes(quotationSearchTerm.toLowerCase());
+      const matchesStatus = quotationStatusFilter === 'all' || quo.status === quotationStatusFilter;
+      return matchesSearch && matchesStatus;
+    }).sort((a, b) => {
+      if (!quotationSortConfig.direction || !quotationSortConfig.key) return 0;
 
-    let aValue: any = a[quotationSortConfig.key as keyof typeof a];
-    let bValue: any = b[quotationSortConfig.key as keyof typeof b];
+      let aValue: any = a[quotationSortConfig.key as keyof typeof a];
+      let bValue: any = b[quotationSortConfig.key as keyof typeof b];
 
-    // Special handling for amount
-    if (quotationSortConfig.key === 'amount') {
-      aValue = a.totalAmount;
-      bValue = b.totalAmount;
-    }
+      // Special handling for amount
+      if (quotationSortConfig.key === 'amount') {
+        aValue = a.totalAmount;
+        bValue = b.totalAmount;
+      }
 
-    if (aValue < bValue) return quotationSortConfig.direction === 'asc' ? -1 : 1;
-    if (aValue > bValue) return quotationSortConfig.direction === 'asc' ? 1 : -1;
-    return 0;
-  });
+      if (aValue < bValue) return quotationSortConfig.direction === 'asc' ? -1 : 1;
+      if (aValue > bValue) return quotationSortConfig.direction === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }, [quotations, quotationSearchTerm, quotationStatusFilter, quotationSortConfig]);
 
-  const pagedRFQs = filteredRFQs.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  const pagedRFQs = useMemo(() => {
+    return filteredRFQs.slice(
+      (currentPage - 1) * itemsPerPage,
+      currentPage * itemsPerPage
+    );
+  }, [filteredRFQs, currentPage, itemsPerPage]);
 
-  const pagedQuotations = filteredQuotations.slice(
-    (quotationPage - 1) * itemsPerPage,
-    quotationPage * itemsPerPage
-  );
+  const pagedQuotations = useMemo(() => {
+    return filteredQuotations.slice(
+      (quotationPage - 1) * itemsPerPage,
+      quotationPage * itemsPerPage
+    );
+  }, [filteredQuotations, quotationPage, itemsPerPage]);
 
   const handleSubmitQuotation = (rfqId: number) => {
     const rfq = rfqs.find(r => r.id === rfqId);

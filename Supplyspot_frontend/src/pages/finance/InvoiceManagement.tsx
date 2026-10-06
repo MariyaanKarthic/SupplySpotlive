@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react';
+import React, { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import { 
   Breadcrumb, 
   BreadcrumbItem, 
@@ -470,10 +470,10 @@ export function InvoiceManagement({ onNavigate }: InvoiceManagementProps) {
     }
   };
 
-  const totalPending = localInvoices.filter((inv: any) => inv.status === 'Pending Approval').reduce((sum: number, inv: any) => sum + inv.amount, 0);
-  const totalOverdue = localInvoices.filter((inv: any) => inv.status === 'Overdue').reduce((sum: number, inv: any) => sum + inv.amount, 0);
-  const totalPaid = localInvoices.filter((inv: any) => inv.status === 'Paid').reduce((sum: number, inv: any) => sum + inv.amount, 0);
-  const totalOcrProcessing = localInvoices.filter((inv: any) => inv.status === 'OCR Processing').length;
+  const totalPending = useMemo(() => localInvoices.filter((inv: any) => inv.status === 'Pending Approval').reduce((sum: number, inv: any) => sum + (inv.amount || 0), 0), [localInvoices]);
+  const totalOverdue = useMemo(() => localInvoices.filter((inv: any) => inv.status === 'Overdue').reduce((sum: number, inv: any) => sum + (inv.amount || 0), 0), [localInvoices]);
+  const totalPaid = useMemo(() => localInvoices.filter((inv: any) => inv.status === 'Paid').reduce((sum: number, inv: any) => sum + (inv.amount || 0), 0), [localInvoices]);
+  const totalOcrProcessing = useMemo(() => localInvoices.filter((inv: any) => inv.status === 'OCR Processing').length, [localInvoices]);
 
   return (
     <div className="px-6 pb-6 space-y-6 w-full max-w-full overflow-x-hidden">
