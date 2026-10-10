@@ -3,11 +3,37 @@ const { body, validationResult, query } = require('express-validator');
 const { v4: uuidv4 } = require('uuid');
 const { authenticate, authorize, canAccessResource } = require('../middleware/auth');
 const logger = require('../config/logger');
-const { cacheResponse, getCachedResponse } = require('../config/redis');
+const { cacheResponse, getCachedResponse, del, delByPrefix } = require('../config/redis');
+
+const clearVendorCache = async (id) => {
+  await delByPrefix('vendors:');
+  if (id) await del(`vendor:${id}`);
+};
+
+// Request field -> vendors column. Accepts both the API's camelCase and raw column names.
+const UPDATABLE_FIELDS = {
+  name: 'name',
+  category: 'category',
+  status: 'status',
+  taxId: 'tax_id', tax_id: 'tax_id',
+  registrationNumber: 'registration_number', registration_number: 'registration_number',
+  website: 'website',
+  description: 'description',
+  totalSpend: 'total_spend', total_spend: 'total_spend',
+  rating: 'rating',
+  contractsCount: 'contracts_count', contracts_count: 'contracts_count',
+  onboardDate: 'onboard_date', onboard_date: 'onboard_date',
+  isActive: 'is_active', is_active: 'is_active',
+  contact: 'contact_info', contact_info: 'contact_info',
+  bankDetails: 'bank_details', bank_details: 'bank_details',
+  complianceInfo: 'compliance_info', compliance_info: 'compliance_info'
+};
+const JSON_COLUMNS = ['contact_info', 'bank_details', 'compliance_info'];
 
 const router = express.Router();
 
 const { db } = require('../config/database');
+const { getVendorPerformance, getPerformanceOverview } = require('../services/vendorPerformance');
 
 class Vendor {
   static async findAll(filters = {}) {
@@ -162,6 +188,69 @@ router.get('/', [
       success: false,
       error: 'Internal server error'
     });
+  }
+});
+
+/**
+ * @swagger
+ * /vendors/performance/overview:
+ *   get:
+ *     summary: Performance, scoring and risk for every vendor, derived from vendor, PO, invoice, quotation and dispute records
+ *     tags: [Vendors]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Portfolio summary plus one scored row per vendor
+ */
+router.get('/performance/overview', [
+  authenticate,
+  authorize('admin', 'procurement_manager', 'finance_manager', 'ap_clerk', 'viewer')
+], async (req, res) => {
+  try {
+    const data = await getPerformanceOverview();
+    res.json({ success: true, data });
+  } catch (error) {
+    logger.error('Get vendor performance overview error:', error);
+    res.status(500).json({ success: false, error: 'Internal server error' });
+  }
+});
+
+/**
+ * @swagger
+ * /vendors/{id}/performance:
+ *   get:
+ *     summary: Performance, analytics, scorecard, insights and actions for one vendor
+ *     tags: [Vendors]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Vendor performance retrieved
+ *       404:
+ *         description: Vendor not found
+ */
+router.get('/:id/performance', [
+  authenticate,
+  authorize('admin', 'procurement_manager', 'finance_manager', 'ap_clerk', 'viewer'),
+  canAccessResource('vendor', 'id')
+], async (req, res) => {
+  try {
+    const data = await getVendorPerformance(req.params.id);
+    if (!data) {
+      return res.status(404).json({ success: false, error: 'Vendor not found' });
+    }
+    res.json({ success: true, data });
+  } catch (error) {
+    logger.error('Get vendor performance error:', error);
+    res.status(500).json({ success: false, error: 'Internal server error' });
   }
 });
 
@@ -346,15 +435,18 @@ router.post('/', [
       name: req.body.name,
       category: req.body.category || 'technology',
       contact_info: JSON.stringify(req.body.contact || {}),
+      tax_id: req.body.taxId || null,
+      registration_number: req.body.registrationNumber || null,
+      website: req.body.website || null,
+      description: req.body.description || null,
+      bank_details: req.body.bankDetails ? JSON.stringify(req.body.bankDetails) : null,
       status: 'under_review',
       created_by: req.user.id
     };
 
     const vendor = await Vendor.create(vendorData);
 
-    // Clear cache
-    const cachePattern = 'vendors:*';
-    // Implementation would clear all vendor-related caches
+    await clearVendorCache();
 
     logger.logAudit('VENDOR_CREATED', req.user.id, {
       vendorId: vendor.id,
@@ -456,10 +548,16 @@ router.put('/:id', [
 
     const { id } = req.params;
     const updateData = {
-      ...req.body,
       updated_by: req.user.id,
       updated_at: new Date()
     };
+    for (const [field, value] of Object.entries(req.body)) {
+      const column = UPDATABLE_FIELDS[field];
+      if (!column) continue;
+      updateData[column] = JSON_COLUMNS.includes(column) && value !== null && typeof value === 'object'
+        ? JSON.stringify(value)
+        : value;
+    }
 
     const vendor = await Vendor.update(id, updateData);
     if (!vendor) {
@@ -469,9 +567,7 @@ router.put('/:id', [
       });
     }
 
-    // Clear caches
-    await require('../config/redis').del(`vendor:${id}`);
-    // Clear vendor list cache
+    await clearVendorCache(id);
 
     logger.logAudit('VENDOR_UPDATED', req.user.id, {
       vendorId: id,
@@ -541,17 +637,16 @@ router.delete('/:id', [
   try {
     const { id } = req.params;
 
-    const deleted = await Vendor.delete(id);
-    if (!deleted) {
+    const existing = await Vendor.findById(id);
+    if (!existing) {
       return res.status(404).json({
         success: false,
         error: 'Vendor not found'
       });
     }
 
-    // Clear caches
-    await require('../config/redis').del(`vendor:${id}`);
-    // Clear vendor list cache
+    await Vendor.delete(id);
+    await clearVendorCache(id);
 
     logger.logAudit('VENDOR_DELETED', req.user.id, {
       vendorId: id,

@@ -18,10 +18,17 @@ const inviteRoutes = require('./routes/invites');
 const vendorRoutes = require('./routes/vendors');
 const invoiceRoutes = require('./routes/invoices');
 const purchaseOrderRoutes = require('./routes/purchaseOrders');
+const purchaseRequestRoutes = require('./routes/purchaseRequests');
 const rfqRoutes = require('./routes/rfqs');
+const quotationRoutes = require('./routes/quotations');
+const shipmentRoutes = require('./routes/shipments');
 const disputeRoutes = require('./routes/disputes');
 const paymentRoutes = require('./routes/payments');
 const analyticsRoutes = require('./routes/analytics');
+const financeRoutes = require('./routes/finance');
+const reportRoutes = require('./routes/reports');
+const complianceRoutes = require('./routes/compliance');
+const aiRoutes = require('./routes/ai');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -93,6 +100,15 @@ const authLimiter = rateLimit({
   skipSuccessfulRequests: true,
 });
 
+// Claude calls cost money per request, so they get their own, lower limit.
+const aiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: parseInt(process.env.AI_RATE_LIMIT_MAX_REQUESTS) || 30,
+  message: { success: false, error: 'Too many AI requests, please try again in a few minutes.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 app.use('/api/', limiter);
 app.use('/api/v1/auth/login', authLimiter);
 app.use('/api/v1/auth/register', authLimiter);
@@ -117,10 +133,17 @@ app.use(`${apiPrefix}/invites`, inviteRoutes);
 app.use(`${apiPrefix}/vendors`, vendorRoutes);
 app.use(`${apiPrefix}/invoices`, invoiceRoutes);
 app.use(`${apiPrefix}/purchase-orders`, purchaseOrderRoutes);
+app.use(`${apiPrefix}/purchase-requests`, purchaseRequestRoutes);
 app.use(`${apiPrefix}/rfqs`, rfqRoutes);
+app.use(`${apiPrefix}/quotations`, quotationRoutes);
+app.use(`${apiPrefix}/shipments`, shipmentRoutes);
 app.use(`${apiPrefix}/disputes`, disputeRoutes);
 app.use(`${apiPrefix}/payments`, paymentRoutes);
 app.use(`${apiPrefix}/analytics`, analyticsRoutes);
+app.use(`${apiPrefix}/finance`, financeRoutes);
+app.use(`${apiPrefix}/reports`, reportRoutes);
+app.use(`${apiPrefix}/compliance`, complianceRoutes);
+app.use(`${apiPrefix}/ai`, aiLimiter, aiRoutes);
 
 // API Documentation (Swagger)
 if (process.env.API_DOCS_ENABLED === 'true') {

@@ -158,7 +158,7 @@ export function HomeScreen({ onNavigate }: HomeScreenProps) {
     },
     {
       id: "purchase-requisitions" as NavigationItem,
-      label: "Purchase Requisitions",
+      label: "Purchase Requests",
       icon: ClipboardList,
       gradient: "from-teal-500/10 to-emerald-500/10 hover:from-teal-500/20 hover:to-emerald-500/20",
       iconColor: "text-teal-600",

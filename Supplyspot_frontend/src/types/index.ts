@@ -21,6 +21,7 @@ export type UserRole =
   | 'admin' 
   | 'procurement_manager' 
   | 'finance_manager' 
+  | 'compliance_manager'
   | 'ap_clerk' 
   | 'supplier'
   | 'viewer';
@@ -540,6 +541,7 @@ export type NavigationItem =
   | 'analytics'
   | 'audit-trail'
   | 'regulatory-compliance'
+  | 'compliance'
   | 'delivery-slots'
   | 'dispute-management'
   | 'gate-entry'

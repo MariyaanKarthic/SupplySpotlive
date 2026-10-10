@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useApi } from '@/hooks/useApi';
+import { useSearchParams } from 'react-router-dom';
 import { disputeService } from '@/services/api';
 import { 
   Breadcrumb, 
@@ -952,6 +953,8 @@ interface DisputeManagementProps {
 export function DisputeManagement({ onNavigate }: DisputeManagementProps) {
   const [disputes, setDisputes] = useState<Dispute[]>(mockDisputes);
   const [selectedDispute, setSelectedDispute] = useState<Dispute | null>(null);
+  const [searchParams] = useSearchParams();
+  const linkedDisputeId = searchParams.get('dispute');
   const { data: disputeApiData } = useApi(
     useCallback(() => disputeService.getDisputes({ page: 1, limit: 100 }) as any, [])
   );
@@ -991,8 +994,11 @@ export function DisputeManagement({ onNavigate }: DisputeManagementProps) {
         tags: []
       }));
       setDisputes(fetchedDisputes);
+      // ?dispute=<id> (linked from the compliance dashboard) narrows the list to that dispute.
+      const linked = fetchedDisputes.find((d: Dispute) => d.id === linkedDisputeId);
+      if (linked) setSearchQuery(linked.title);
     }
-  }, [disputeApiData]);
+  }, [disputeApiData]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const [activeTab, setActiveTab] = useState('disputes');
   const [searchQuery, setSearchQuery] = useState('');

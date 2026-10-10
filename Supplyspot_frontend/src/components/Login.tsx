@@ -7,9 +7,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/
 import { Alert, AlertDescription } from './ui/alert';
 import { Switch } from './ui/switch';
 import { Loader2, Eye, EyeOff, Lock, Mail, AlertCircle } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Logo } from './Logo';
+import { API_CONFIG } from '../constants';
 
 interface LoginData {
   email: string;
@@ -82,7 +83,7 @@ export default function Login() {
     setError(null);
 
     try {
-      const response = await fetch('http://localhost:3001/api/v1/auth/login', {
+      const response = await fetch(`${API_CONFIG.BASE_URL}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -291,7 +292,7 @@ export default function Login() {
             </div>
 
             <div className="mt-auto pt-6 text-center text-sm text-gray-500">
-              Don't have an account? <a href="#" className="text-blue-600 hover:underline">Create one</a>
+              Don't have an account? <Link to="/register" className="text-blue-600 hover:underline">Create one</Link>
             </div>
           </div>
         </div>

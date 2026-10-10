@@ -38,6 +38,13 @@ const del = async (key) => {
   return true;
 };
 
+const delByPrefix = async (prefix) => {
+  for (const key of memoryStore.keys()) {
+    if (key.startsWith(prefix)) memoryStore.delete(key);
+  }
+  return true;
+};
+
 const exists = async (key) => {
   const item = memoryStore.get(key);
   if (!item) return false;
@@ -138,6 +145,7 @@ module.exports = {
   set,
   get,
   del,
+  delByPrefix,
   exists,
   expire,
   incr,

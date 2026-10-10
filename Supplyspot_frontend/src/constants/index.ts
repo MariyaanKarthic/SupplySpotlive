@@ -2,7 +2,7 @@
 
 // API Configuration
 export const API_CONFIG = {
-  BASE_URL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api',
+  BASE_URL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api/v1',
   TIMEOUT: 30000, // 30 seconds
   RETRY_ATTEMPTS: 3,
   RETRY_DELAY: 1000, // 1 second
@@ -120,6 +120,7 @@ export const USER_ROLES = {
   ADMIN: 'admin',
   PROCUREMENT_MANAGER: 'procurement_manager',
   FINANCE_MANAGER: 'finance_manager',
+  COMPLIANCE_MANAGER: 'compliance_manager',
   AP_CLERK: 'ap_clerk',
   SUPPLIER: 'supplier',
   VIEWER: 'viewer',

@@ -7,6 +7,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Badge } from '@/components/ui/badge';
+import { API_CONFIG } from '@/constants';
 import { 
   Loader2, 
   Plus, 
@@ -76,8 +77,8 @@ export default function InviteManager() {
 
   const fetchInvites = async () => {
     try {
-      const token = localStorage.getItem('accessToken');
-      const response = await fetch('http://localhost:3001/api/invites', {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_CONFIG.BASE_URL}/invites`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -98,8 +99,8 @@ export default function InviteManager() {
 
   const fetchStats = async () => {
     try {
-      const token = localStorage.getItem('accessToken');
-      const response = await fetch('http://localhost:3001/api/invites/stats', {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_CONFIG.BASE_URL}/invites/stats`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -124,8 +125,8 @@ export default function InviteManager() {
     setSuccess(null);
 
     try {
-      const token = localStorage.getItem('accessToken');
-      const response = await fetch('http://localhost:3001/api/invites', {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_CONFIG.BASE_URL}/invites`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -164,8 +165,8 @@ export default function InviteManager() {
     setError(null);
 
     try {
-      const token = localStorage.getItem('accessToken');
-      const response = await fetch(`http://localhost:3001/api/invites/${inviteId}`, {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_CONFIG.BASE_URL}/invites/${inviteId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -218,6 +219,7 @@ export default function InviteManager() {
       admin: 'bg-purple-100 text-purple-800',
       procurement_manager: 'bg-orange-100 text-orange-800',
       finance_manager: 'bg-green-100 text-green-800',
+      compliance_manager: 'bg-teal-100 text-teal-800',
       ap_clerk: 'bg-blue-100 text-blue-800',
       supplier: 'bg-yellow-100 text-yellow-800',
       viewer: 'bg-gray-100 text-gray-800'
@@ -298,6 +300,7 @@ export default function InviteManager() {
                     <SelectItem value="admin">Administrator</SelectItem>
                     <SelectItem value="procurement_manager">Procurement Manager</SelectItem>
                     <SelectItem value="finance_manager">Finance Manager</SelectItem>
+                    <SelectItem value="compliance_manager">Compliance Manager</SelectItem>
                     <SelectItem value="ap_clerk">AP Clerk</SelectItem>
                     <SelectItem value="supplier">Supplier</SelectItem>
                     <SelectItem value="viewer">Viewer</SelectItem>

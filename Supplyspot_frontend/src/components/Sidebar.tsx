@@ -7,6 +7,7 @@ import {
   CreditCard, 
   FolderOpen, 
   BarChart3, 
+  FileBarChart2,
   Settings,
   UserPlus,
   Zap,
@@ -32,7 +33,9 @@ import {
   PanelLeft,
   ClipboardList,
   Search,
-  Upload
+  Upload,
+  Navigation,
+  LayoutDashboard
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { NavigationItem } from '../App';
@@ -83,6 +86,7 @@ const navigationGroups: NavigationGroup[] = [
     title: 'Overview',
     items: [
       { id: 'home' as NavigationItem, label: 'Home', icon: Home },
+      { id: 'reports' as NavigationItem, label: 'Reports', icon: FileBarChart2 },
     ]
   },
   {
@@ -97,7 +101,8 @@ const navigationGroups: NavigationGroup[] = [
   {
     title: 'Finance',
     items: [
-      { id: 'invoices' as NavigationItem, label: 'Invoices', icon: Receipt, badge: '7', badgeVariant: 'destructive' },
+      { id: 'finance' as NavigationItem, label: 'Finance Dashboard', icon: LayoutDashboard },
+      { id: 'invoices' as NavigationItem, label: 'Invoices', icon: Receipt },
       { id: 'ap-automation' as NavigationItem, label: 'Ap Automation', icon: Zap },
       { id: 'payments' as NavigationItem, label: 'Payments', icon: CreditCard },
     ]
@@ -106,9 +111,9 @@ const navigationGroups: NavigationGroup[] = [
     title: 'Procurement',
     items: [
       { id: 'sourcing-rfx' as NavigationItem, label: 'Sourcing & RFx', icon: Target, badge: '5', badgeVariant: 'default' },
-      { id: 'rfq' as NavigationItem, label: 'RFQ Management', icon: Quote, badge: '2', badgeVariant: 'secondary' },
+      { id: 'rfq' as NavigationItem, label: 'RFQs & Quotations', icon: Quote },
       { id: 'purchase-orders' as NavigationItem, label: 'Purchase Orders', icon: ShoppingCart },
-      { id: 'purchase-requisitions' as NavigationItem, label: 'Purchase Requisitions', icon: ClipboardList, badge: 'New', badgeVariant: 'default' },
+      { id: 'purchase-requisitions' as NavigationItem, label: 'Purchase Requests', icon: ClipboardList },
       { id: 'goods-receipts' as NavigationItem, label: 'Goods Receipts', icon: PackageCheck, badge: '3', badgeVariant: 'secondary' },
       { id: 'procurement-collaboration' as NavigationItem, label: 'Collaboration Dashboard', icon: Users2, badge: '8', badgeVariant: 'destructive' },
       { id: 'contracts' as NavigationItem, label: 'Contracts', icon: FileText },
@@ -117,6 +122,7 @@ const navigationGroups: NavigationGroup[] = [
   {
     title: 'Logistics',
     items: [
+      { id: 'shipments' as NavigationItem, label: 'Shipment Tracking', icon: Navigation },
       { id: 'delivery-slots' as NavigationItem, label: 'Smart Delivery Slots', icon: Truck, badge: '24', badgeVariant: 'default' },
       { id: 'gate-entry' as NavigationItem, label: 'Gate Entry Integration', icon: UserCheck, badge: '4', badgeVariant: 'secondary' },
     ]
@@ -128,6 +134,7 @@ const navigationGroups: NavigationGroup[] = [
       { id: 'documents' as NavigationItem, label: 'Documents', icon: FolderOpen },
       { id: 'databoards' as NavigationItem, label: 'Databoards', icon: Database, badge: 'New', badgeVariant: 'default' },
       { id: 'analytics' as NavigationItem, label: 'Analytics', icon: BarChart3 },
+      { id: 'compliance' as NavigationItem, label: 'Compliance Dashboard', icon: ShieldCheck },
       { id: 'audit-trail' as NavigationItem, label: 'Audit Trail', icon: Shield, badge: '12', badgeVariant: 'secondary' },
       { id: 'regulatory-compliance' as NavigationItem, label: 'Regulatory & Sustainability', icon: ShieldCheck, badge: '4', badgeVariant: 'destructive' },
       { id: 'settings' as NavigationItem, label: 'Settings', icon: Settings },
@@ -148,7 +155,7 @@ export function Sidebar({ activeSection, onSectionChange }: SidebarProps) {
     Home, Users, FileText, Receipt, CreditCard, FolderOpen, BarChart3, Settings,
     UserPlus, Zap, Quote, ShoppingCart, ChevronDown, ChevronRight, Bell, LogOut,
     User, Shield, HelpCircle, FileCheck, Target, ShieldCheck, Truck, MessageSquare,
-    UserCheck, Monitor, Database, Users2, PackageCheck, ClipboardList, Upload, Search
+    UserCheck, Monitor, Database, Users2, PackageCheck, ClipboardList, Upload, Search, LayoutDashboard, FileBarChart2
   };
 
   // Keyboard shortcut listener for Ctrl+K / Cmd+K

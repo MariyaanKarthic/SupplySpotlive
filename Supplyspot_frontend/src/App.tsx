@@ -25,12 +25,17 @@ const SupplierDashboard = lazy(() => import("./pages/supplier/SupplierDashboard"
 const Databoards = lazy(() => import("./pages/analytics/Databoards").then(m => ({ default: m.Databoards })));
 const RegistrationReview = lazy(() => import("./pages/vendor/RegistrationReview").then(m => ({ default: m.RegistrationReview })));
 const ProcurementCollaboration = lazy(() => import("./pages/procurement/ProcurementCollaboration"));
+const ShipmentTracking = lazy(() => import("./pages/logistics/ShipmentTracking").then(m => ({ default: m.ShipmentTracking })));
+const FinanceDashboard = lazy(() => import("./pages/dashboard/FinanceDashboard").then(m => ({ default: m.FinanceDashboard })));
+const ReportsDashboard = lazy(() => import("./pages/dashboard/ReportsDashboard").then(m => ({ default: m.ReportsDashboard })));
+const ComplianceDashboard = lazy(() => import("./pages/dashboard/ComplianceDashboard").then(m => ({ default: m.ComplianceDashboard })));
 const PurchaseRequisitions = lazy(() => import("./pages/procurement/PurchaseRequisitions").then(m => ({ default: m.PurchaseRequisitions })));
 
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useSearchParams } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Login from './components/Login';
+import Register from './components/Register';
 import { PageSkeleton } from "./components/PageSkeleton";
 import { Analytics as VercelAnalytics } from "@vercel/analytics/react";
 
@@ -46,6 +51,9 @@ export type NavigationItem =
   | "goods-receipts"
   | "purchase-requisitions"
   | "procurement-collaboration"
+  | "finance"
+  | "reports"
+  | "compliance"
   | "invoices"
   | "ap-automation"
   | "payments"
@@ -54,6 +62,7 @@ export type NavigationItem =
   | "audit-trail"
   | "regulatory-compliance"
   | "delivery-slots"
+  | "shipments"
   | "dispute-management"
   | "gate-entry"
   | "supplier-dashboard"
@@ -76,11 +85,14 @@ const sectionTitles: Record<NavigationItem, string> = {
   vendors: "Vendor Management",
   contracts: "Contract Management",
   "sourcing-rfx": "Sourcing & RFx",
-  rfq: "RFQ Management",
+  rfq: "RFQs & Quotations",
   "purchase-orders": "Purchase Orders",
   "goods-receipts": "Goods Receipts",
-  "purchase-requisitions": "Purchase Requisitions",
+  "purchase-requisitions": "Purchase Requests",
   "procurement-collaboration": "Procurement Collaboration",
+  finance: "Finance Dashboard",
+  reports: "Reports",
+  compliance: "Compliance Dashboard",
   invoices: "Invoice Management",
   "ap-automation": "Ap Automation",
   payments: "Payment Management",
@@ -89,6 +101,7 @@ const sectionTitles: Record<NavigationItem, string> = {
   "audit-trail": "Audit Trail",
   "regulatory-compliance": "Regulatory Compliance",
   "delivery-slots": "Delivery Slots",
+  shipments: "Shipment Tracking",
   "dispute-management": "Dispute Management",
   "gate-entry": "Gate Entry Integration",
   "supplier-dashboard": "Supplier Dashboard",
@@ -97,8 +110,13 @@ const sectionTitles: Record<NavigationItem, string> = {
 };
 
 function Dashboard() {
-  const [activeSection, setActiveSection] =
-    useState<NavigationItem>("home");
+  // The active section lives in the URL (?section=...) so pages can be linked to and Back works.
+  const [searchParams, setSearchParams] = useSearchParams();
+  const sectionParam = searchParams.get("section") as NavigationItem | null;
+  const activeSection: NavigationItem =
+    sectionParam && sectionParam in sectionTitles ? sectionParam : "home";
+  const setActiveSection = (section: NavigationItem) =>
+    setSearchParams(section === "home" ? {} : { section });
 
   const renderContent = () => {
     switch (activeSection) {
@@ -131,6 +149,12 @@ function Dashboard() {
         return <PurchaseRequisitions onNavigate={setActiveSection} />;
       case "procurement-collaboration":
         return <ProcurementCollaboration onNavigate={setActiveSection} />;
+      case "finance":
+        return <FinanceDashboard onNavigate={setActiveSection} />;
+      case "reports":
+        return <ReportsDashboard onNavigate={setActiveSection} />;
+      case "compliance":
+        return <ComplianceDashboard onNavigate={setActiveSection} />;
       case "invoices":
         return <InvoiceManagement onNavigate={setActiveSection} />;
       case "ap-automation":
@@ -145,6 +169,8 @@ function Dashboard() {
         return <AuditTrail onNavigate={setActiveSection} />;
       case "regulatory-compliance":
         return <RegulatoryCompliance onNavigate={setActiveSection} />;
+      case "shipments":
+        return <ShipmentTracking onNavigate={setActiveSection} />;
       case "delivery-slots":
         return <DeliverySlots onNavigate={setActiveSection} />;
       case "dispute-management":
@@ -185,6 +211,8 @@ export default function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/signup" element={<Navigate to="/register" replace />} />
           <Route
             path="/dashboard"
             element={

@@ -22,7 +22,7 @@ const router = express.Router();
  *           description: Optional email to restrict invite to specific user
  *         role:
  *           type: string
- *           enum: [admin, procurement_manager, finance_manager, ap_clerk, supplier, viewer]
+ *           enum: [admin, procurement_manager, finance_manager, compliance_manager, ap_clerk, supplier, viewer]
  *           description: Role assigned to user who uses this invite
  *         maxUses:
  *           type: integer
@@ -86,7 +86,7 @@ router.post('/', [
   authenticate,
   authorize('admin', 'procurement_manager'),
   body('email').optional().isEmail().normalizeEmail(),
-  body('role').isIn(['admin', 'procurement_manager', 'finance_manager', 'ap_clerk', 'supplier', 'viewer']),
+  body('role').isIn(['admin', 'procurement_manager', 'finance_manager', 'compliance_manager', 'ap_clerk', 'supplier', 'viewer']),
   body('maxUses').optional().isInt({ min: 1, max: 100 }),
   body('expiresAt').optional().isISO8601().toDate(),
   body('notes').optional().trim().isLength({ max: 500 })

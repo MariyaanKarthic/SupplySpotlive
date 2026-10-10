@@ -22,6 +22,7 @@
   "author": "Supplier Spot Team",
   "license": "MIT",
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.131.0",
     "aws-sdk": "^2.1499.0",
     "bcryptjs": "^2.4.3",
     "bull": "^4.12.2",

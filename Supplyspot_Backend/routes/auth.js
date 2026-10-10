@@ -47,7 +47,7 @@ const router = express.Router();
  *           description: User full name
  *         role:
  *           type: string
- *           enum: [admin, procurement_manager, finance_manager, ap_clerk, supplier, viewer]
+ *           enum: [admin, procurement_manager, finance_manager, compliance_manager, ap_clerk, supplier, viewer]
  *           description: User role
  *         department:
  *           type: string
@@ -204,7 +204,6 @@ router.post('/login', [
  *               - email
  *               - password
  *               - name
- *               - inviteCode
  *             properties:
  *               email:
  *                 type: string
@@ -219,7 +218,10 @@ router.post('/login', [
  *                 description: User full name
  *               inviteCode:
  *                 type: string
- *                 description: Invite code for registration
+ *                 description: Invite code. Optional; without one the account is a self-service supplier signup and companyName is required.
+ *               companyName:
+ *                 type: string
+ *                 description: Company the user belongs to (required for self-service signup)
  *               department:
  *                 type: string
  *                 description: User department
@@ -260,7 +262,12 @@ router.post('/register', [
   body('email').isEmail().normalizeEmail(),
   body('password').isLength({ min: 8 }),
   body('name').trim().isLength({ min: 2, max: 100 }),
-  body('inviteCode').trim().isLength({ min: 8, max: 8 }),
+  body('inviteCode').optional({ checkFalsy: true }).trim().isLength({ min: 8, max: 8 }),
+  body('companyName')
+    .if((value, { req }) => !req.body.inviteCode)
+    .trim()
+    .isLength({ min: 2, max: 150 })
+    .withMessage('Company name is required'),
   body('department').optional().trim().isLength({ max: 100 }),
   body('phone').optional().isMobilePhone()
 ], async (req, res) => {
@@ -275,7 +282,7 @@ router.post('/register', [
       });
     }
 
-    const { email, password, name, inviteCode, department, phone } = req.body;
+    const { email, password, name, inviteCode, companyName, department, phone } = req.body;
 
     // Validate password strength
     const passwordValidation = validatePassword(password);
@@ -296,16 +303,19 @@ router.post('/register', [
       });
     }
 
-    // Validate invite code
-    const inviteValidation = await new Invite(db).isValid(inviteCode);
-    if (!inviteValidation.valid) {
-      return res.status(400).json({
-        success: false,
-        error: inviteValidation.reason
-      });
+    // Validate invite code when one is given; self-service signups get the
+    // least-privileged supplier role
+    let invite = null;
+    if (inviteCode) {
+      const inviteValidation = await new Invite(db).isValid(inviteCode);
+      if (!inviteValidation.valid) {
+        return res.status(400).json({
+          success: false,
+          error: inviteValidation.reason
+        });
+      }
+      invite = inviteValidation.invite;
     }
-
-    const invite = inviteValidation.invite;
 
     // Hash password
     const passwordHash = await hashPassword(password);
@@ -315,7 +325,8 @@ router.post('/register', [
       email,
       password_hash: passwordHash,
       name,
-      role: invite.role,
+      role: invite ? invite.role : 'supplier',
+      company_name: companyName || null,
       department,
       phone,
       email_verified: true,
@@ -325,7 +336,9 @@ router.post('/register', [
     }).returning('*');
 
     // Mark invite as used
-    await new Invite(db).markAsUsed(invite.id, newUser.id);
+    if (invite) {
+      await new Invite(db).markAsUsed(invite.id, newUser.id);
+    }
 
     // Generate token
     const accessToken = generateToken(newUser);
@@ -336,7 +349,7 @@ router.post('/register', [
     logger.logAudit('USER_REGISTER', newUser.id, {
       ip: req.ip,
       userAgent: req.get('User-Agent'),
-      inviteCode
+      inviteCode: inviteCode || null
     });
 
     res.status(201).json({
@@ -347,6 +360,13 @@ router.post('/register', [
       }
     });
   } catch (error) {
+    // Two signups racing on the same email hit the unique constraint
+    if (error.code === '23505' || (error.code === 'SQLITE_CONSTRAINT' && /users\.email/.test(error.message))) {
+      return res.status(409).json({
+        success: false,
+        error: 'Email already registered'
+      });
+    }
     logger.error('Registration error:', error);
     res.status(500).json({
       success: false,

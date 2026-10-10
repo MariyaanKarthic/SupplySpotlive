@@ -7,6 +7,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Loader2, Eye, EyeOff, Mail, Lock, User, Phone, Building, CheckCircle, AlertCircle, X } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { API_CONFIG } from '@/constants';
 
 interface SignupData {
   name: string;
@@ -76,7 +77,7 @@ export default function InviteSignup() {
 
     setValidatingInvite(true);
     try {
-      const response = await fetch('http://localhost:3001/api/auth/validate-invite', {
+      const response = await fetch(`${API_CONFIG.BASE_URL}/auth/validate-invite`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -190,7 +191,7 @@ export default function InviteSignup() {
     setSuccess(null);
 
     try {
-      const response = await fetch('http://localhost:3001/api/auth/register', {
+      const response = await fetch(`${API_CONFIG.BASE_URL}/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -209,7 +210,7 @@ export default function InviteSignup() {
 
       if (result.success && result.data) {
         // Store token and user data
-        localStorage.setItem('accessToken', result.data.accessToken);
+        localStorage.setItem('token', result.data.accessToken);
         localStorage.setItem('user', JSON.stringify(result.data.user));
         
         setSuccess('Account created successfully! Redirecting...');

@@ -1,6 +1,8 @@
 // Centralized API service for Supplier Spot application
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api/v1';
+import { API_CONFIG } from '../constants';
+
+const API_BASE_URL = API_CONFIG.BASE_URL;
 
 // Generic API client
 class ApiClient {
@@ -36,7 +38,7 @@ class ApiClient {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+        throw new Error(errorData.error || errorData.message || `HTTP error! status: ${response.status}`);
       }
 
       return await response.json();
@@ -101,7 +103,7 @@ class ApiClient {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+        throw new Error(errorData.error || errorData.message || `HTTP error! status: ${response.status}`);
       }
 
       return await response.json();
@@ -138,6 +140,12 @@ export const vendorService = {
   // Delete/deactivate vendor
   deleteVendor: (id: string) => api.delete(`/vendors/${id}`),
 
+  // Performance, scoring and risk for every vendor
+  getPerformanceOverview: () => api.get('/vendors/performance/overview'),
+
+  // Performance, analytics, scorecard, insights and actions for one vendor
+  getVendorPerformance: (id: string) => api.get(`/vendors/${id}/performance`),
+
   // Upload vendor document
   uploadDocument: (vendorId: string, file: File, documentType: string) =>
     api.upload(`/vendors/${vendorId}/documents`, file, { documentType }),
@@ -171,44 +179,66 @@ export const vendorService = {
 
 // Invoice Service
 export const invoiceService = {
-  // Get all invoices
+  // List invoices; status also accepts 'overdue' (unpaid and past due) and 'open' (unpaid)
   getInvoices: (params?: {
     page?: number;
     limit?: number;
     search?: string;
     status?: string;
-    vendorId?: string;
-    dateFrom?: string;
-    dateTo?: string;
+    po_id?: string;
+    grn_id?: string;
+    vendor_id?: string;
+    date_from?: string;
+    date_to?: string;
+    due_from?: string;
+    due_to?: string;
   }) => api.get('/invoices', params),
 
-  // Get single invoice
+  // Invoice with lines, payments, history and its PO / GRN
   getInvoice: (id: string) => api.get(`/invoices/${id}`),
 
-  // Create invoice
+  // Totals, paid and outstanding, plus a PO / GRN match check per line
+  getPaymentSummary: (id: string) => api.get(`/invoices/${id}/payment-summary`),
+
+  // Lines still left to bill on a PO or GRN, with suggested dates
+  getPrefill: (params: { po_id?: string; grn_id?: string }) => api.get('/invoices/prefill', params),
+
+  // Goods receipts with how much of each is already invoiced
+  getBillableGrns: (params?: { po_id?: string }) => api.get('/invoices/grns', params),
+
+  // Totals, recent invoices and payments for one vendor
+  getVendorSummary: (vendorId: string) => api.get(`/invoices/vendor/${vendorId}/summary`),
+
+  // Create a draft from a PO (poId), a GRN (grnId) or by hand (vendorId)
   createInvoice: (data: any) => api.post('/invoices', data),
 
-  // Update invoice
+  // Update a draft
   updateInvoice: (id: string, data: any) => api.put(`/invoices/${id}`, data),
 
-  // Approve invoice
-  approveInvoice: (id: string, data?: { notes?: string }) =>
-    api.post(`/invoices/${id}/approve`, data),
+  // Delete a draft
+  deleteInvoice: (id: string) => api.delete(`/invoices/${id}`),
 
-  // Reject invoice
-  rejectInvoice: (id: string, data: { reason: string }) =>
-    api.post(`/invoices/${id}/reject`, data),
+  // draft -> submitted
+  submitInvoice: (id: string) => api.post(`/invoices/${id}/submit`),
+
+  // submitted -> approved
+  approveInvoice: (id: string, data?: { notes?: string }) => api.post(`/invoices/${id}/approve`, data),
+
+  // submitted -> draft, with what needs correcting
+  returnInvoice: (id: string, data: { reason: string }) => api.post(`/invoices/${id}/return`, data),
+
+  // Record a payment; amount omitted = everything outstanding
+  payInvoice: (id: string, data: { amount?: number; paymentDate?: string; method?: string; reference?: string; notes?: string }) =>
+    api.post(`/invoices/${id}/pay`, data),
+
+  // submitted / approved -> disputed
+  disputeInvoice: (id: string, data: { reason: string }) => api.post(`/invoices/${id}/dispute`, data),
+
+  // disputed -> submitted
+  resolveDispute: (id: string, data?: { note?: string }) => api.post(`/invoices/${id}/resolve`, data),
 
   // Process invoice with OCR
   processOCR: (file: File) => api.upload('/invoices/ocr-process', file),
-
-  // Upload invoice attachment
-  uploadAttachment: (invoiceId: string, file: File) =>
-    api.upload(`/invoices/${invoiceId}/attachments`, file),
-
-  // Match invoice with PO
-  matchWithPO: (id: string, poNumber: string) =>
-    api.post(`/invoices/${id}/match-po`, { poNumber }),
 };
 
 // Purchase Order Service
@@ -231,50 +261,163 @@ export const purchaseOrderService = {
   // Update PO
   updatePurchaseOrder: (id: string, data: any) => api.put(`/purchase-orders/${id}`, data),
 
+  // Submit a draft PO for approval
+  submitPO: (id: string) => api.post(`/purchase-orders/${id}/submit`),
+
   // Send PO to vendor
   sendToVendor: (id: string) => api.post(`/purchase-orders/${id}/send`),
 
   // Approve PO
-  approvePO: (id: string, data: { comments?: string }) =>
+  approvePO: (id: string, data: { comments?: string } = {}) =>
     api.post(`/purchase-orders/${id}/approve`, data),
 
-  // Receive goods
-  receiveGoods: (id: string, data: { items: any[] }) =>
+  // Record the vendor's acknowledgment
+  acknowledgePO: (id: string) => api.post(`/purchase-orders/${id}/acknowledge`),
+
+  // Receive goods; items are cumulative received quantities per line index, omit to receive everything
+  receiveGoods: (id: string, data: { items?: { index: number; receivedQuantity: number }[] } = {}) =>
     api.post(`/purchase-orders/${id}/receive-goods`, data),
+
+  // Close a received PO
+  closePO: (id: string) => api.post(`/purchase-orders/${id}/close`),
+
+  // Cancel PO
+  cancelPO: (id: string) => api.post(`/purchase-orders/${id}/cancel`),
 };
 
-// RFQ Service
+// Shipment tracking Service
+export const shipmentService = {
+  // List shipments; status 'delayed' also matches shipments past their expected date, 'open' = not delivered/cancelled
+  getShipments: (params?: {
+    po_id?: string;
+    vendor_id?: string;
+    status?: string;
+    search?: string;
+    due_from?: string;
+    due_to?: string;
+    overdue?: string;
+    limit?: number;
+  }) => api.get('/shipments', params),
+
+  // Counts per status plus delivery performance (on-time rate); pass vendor_id for one vendor
+  getStats: (params?: { vendor_id?: string }) => api.get('/shipments/stats', params),
+
+  // Shipment with tracking events, GRNs and its PO
+  getShipment: (id: string) => api.get(`/shipments/${id}`),
+
+  // What is still left to ship on a PO (prefills the create form)
+  getRemainingForPO: (poId: string) => api.get(`/shipments/po/${poId}/remaining`),
+
+  // Create a shipment for a PO; items omitted = everything still outstanding
+  createShipment: (data: any) => api.post('/shipments', data),
+
+  // Update carrier, tracking number, dates, addresses, notes
+  updateShipment: (id: string, data: any) => api.put(`/shipments/${id}`, data),
+
+  // Add a tracking event (picked_up, in_transit, out_for_delivery, delivered, exception)
+  addTrackingEvent: (id: string, data: any) => api.post(`/shipments/${id}/track`, data),
+
+  // Record part of the shipment arriving; quantities are what arrived in this delivery
+  partialReceive: (id: string, data: any) => api.post(`/shipments/${id}/partial-receive`, data),
+
+  // Receive the rest and close the shipment; writes a GRN
+  receive: (id: string, data: any) => api.post(`/shipments/${id}/receive`, data),
+
+  // Cancel a shipment that has nothing received
+  cancelShipment: (id: string, reason?: string) => api.post(`/shipments/${id}/cancel`, { reason }),
+
+  // Goods receipt note data; receipt_id picks one GRN
+  getGRN: (id: string, receiptId?: string) => api.get(`/shipments/${id}/grn`, receiptId ? { receipt_id: receiptId } : undefined),
+};
+
+// Purchase Request Service
+export const purchaseRequestService = {
+  getPurchaseRequests: (params?: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    status?: string;
+    priority?: string;
+    department?: string;
+    mine?: boolean;
+  }) => api.get('/purchase-requests', params),
+
+  getPurchaseRequest: (id: string) => api.get(`/purchase-requests/${id}`),
+
+  // Creates a draft; pass submit: true to send it straight for approval
+  createPurchaseRequest: (data: any) => api.post('/purchase-requests', data),
+
+  // Drafts only
+  updatePurchaseRequest: (id: string, data: any) => api.put(`/purchase-requests/${id}`, data),
+
+  // Drafts only
+  deletePurchaseRequest: (id: string) => api.delete(`/purchase-requests/${id}`),
+
+  submitPR: (id: string) => api.post(`/purchase-requests/${id}/submit`),
+
+  approvePR: (id: string, data: { comment?: string } = {}) => api.post(`/purchase-requests/${id}/approve`, data),
+
+  rejectPR: (id: string, data: { reason: string }) => api.post(`/purchase-requests/${id}/reject`, data),
+
+  // Reopens a rejected request as a draft
+  revisePR: (id: string) => api.post(`/purchase-requests/${id}/revise`),
+
+  // Turns an approved request into a draft RFQ
+  createRFQ: (id: string, data: { dueDate: string; title?: string; description?: string }) =>
+    api.post(`/purchase-requests/${id}/create-rfq`, data),
+};
+
+// RFQ Service (lifecycle: draft → sent → quotations_received → under_review → awarded → closed)
 export const rfqService = {
-  // Get all RFQs
   getRFQs: (params?: {
     page?: number;
     limit?: number;
     search?: string;
     status?: string;
-    category?: string;
+    purchase_request_id?: string;
+    vendor_id?: string;
   }) => api.get('/rfqs', params),
 
-  // Get single RFQ
+  // Includes the RFQ's quotations
   getRFQ: (id: string) => api.get(`/rfqs/${id}`),
 
-  // Create RFQ
+  // From an approved purchase request: { purchaseRequestId, dueDate, title?, notes?, vendorIds?, send? }
   createRFQ: (data: any) => api.post('/rfqs', data),
 
-  // Update RFQ
+  // Drafts only
   updateRFQ: (id: string, data: any) => api.put(`/rfqs/${id}`, data),
 
-  // Publish RFQ
-  publishRFQ: (id: string) => api.post(`/rfqs/${id}/publish`),
+  deleteRFQ: (id: string) => api.delete(`/rfqs/${id}`),
 
-  // Submit RFQ response
-  submitResponse: (id: string, data: any) => api.post(`/rfqs/${id}/responses`, data),
+  sendRFQ: (id: string, data: { vendorIds?: string[] } = {}) => api.post(`/rfqs/${id}/send`, data),
 
-  // Get RFQ responses
-  getResponses: (id: string) => api.get(`/rfqs/${id}/responses`),
+  startReview: (id: string) => api.post(`/rfqs/${id}/start-review`),
 
-  // Award RFQ
-  awardRFQ: (id: string, responseId: string) =>
-    api.post(`/rfqs/${id}/award`, { responseId }),
+  closeRFQ: (id: string, data: { reason?: string } = {}) => api.post(`/rfqs/${id}/close`, data),
+
+  getComparison: (id: string) => api.get(`/rfqs/${id}/comparison`),
+};
+
+// Quotation Service
+export const quotationService = {
+  getQuotations: (params?: { rfq_id?: string; vendor_id?: string; status?: string; include_archived?: boolean }) =>
+    api.get('/quotations', params),
+
+  getQuotation: (id: string) => api.get(`/quotations/${id}`),
+
+  // { rfqId, vendorId, items: [{ rfqItemIndex?, description?, quantity?, unitPrice }], deliveryDate, paymentTerms?, validUntil?, notes? }
+  submitQuotation: (data: any) => api.post('/quotations', data),
+
+  reviewQuotation: (id: string) => api.post(`/quotations/${id}/review`),
+
+  // Awards the RFQ and creates a draft purchase order; the response carries purchase_order { id, po_number }
+  acceptQuotation: (id: string, data: { notes?: string } = {}) => api.post(`/quotations/${id}/accept`, data),
+
+  rejectQuotation: (id: string, data: { reason: string }) => api.post(`/quotations/${id}/reject`, data),
+
+  archiveQuotation: (id: string) => api.post(`/quotations/${id}/archive`),
+
+  unarchiveQuotation: (id: string) => api.post(`/quotations/${id}/unarchive`),
 };
 
 // Dispute Service
@@ -317,6 +460,91 @@ export const disputeService = {
   // Upload dispute attachment
   uploadAttachment: (disputeId: string, file: File) =>
     api.upload(`/disputes/${disputeId}/attachments`, file),
+};
+
+// Finance dashboard: KPIs, spending by vendor, invoice status, recent invoices and aging for a date range
+export const financeService = {
+  getDashboard: (params?: { from?: string; to?: string }) => {
+    const clean = Object.fromEntries(Object.entries(params || {}).filter(([, v]) => v));
+    return api.get('/finance/dashboard', clean);
+  },
+};
+
+// Claude-powered helpers. Each answer is generated on request and cached on the server until the data changes.
+export interface AiMeta { model: string; generatedAt: string; cached: boolean }
+export interface AiVendorRecommendation { vendorId: string; vendorName: string; category: string; fit: 'strong' | 'good' | 'possible'; reason: string }
+export interface AiVendorRecommendations extends AiMeta { summary: string; recommendations: AiVendorRecommendation[]; cautions: string[] }
+export interface AiInvoiceFlag { severity: 'info' | 'warning' | 'critical'; title: string; detail: string }
+export interface AiInvoiceReview extends AiMeta { riskLevel: 'low' | 'medium' | 'high'; summary: string; flags: AiInvoiceFlag[]; recommendation: string }
+export interface AiFinanceSummary extends AiMeta { headline: string; highlights: string[]; risks: string[]; actions: string[] }
+
+export const aiService = {
+  // { enabled, model }: whether ANTHROPIC_API_KEY is set on the server
+  getStatus: () => api.get<{ success: boolean; data: { enabled: boolean; model: string } }>('/ai/status'),
+
+  // Shortlist of vendors to invite to an RFQ, from a saved RFQ or the purchase request it will be raised from
+  recommendVendors: (data: { rfqId?: string; purchaseRequestId?: string }) =>
+    api.post<{ success: boolean; data: AiVendorRecommendations }>('/ai/rfq-vendor-recommendations', data),
+
+  // Anomaly check on one invoice: duplicates, unusual amounts, PO / GRN mismatches
+  reviewInvoice: (id: string) => api.post<{ success: boolean; data: AiInvoiceReview }>(`/ai/invoices/${id}/review`),
+
+  // Plain-language briefing on the finance dashboard for a date range
+  summarizeFinance: (params: { from?: string; to?: string }) =>
+    api.post<{ success: boolean; data: AiFinanceSummary }>('/ai/finance-summary', params),
+};
+
+// Compliance dashboard: vendor certification, certificate expiry, audits and compliance disputes
+const cleanParams = (params?: Record<string, string | undefined>) =>
+  Object.fromEntries(Object.entries(params || {}).filter(([, v]) => v)) as Record<string, string>;
+
+export const complianceService = {
+  getDashboard: (params?: { from?: string; to?: string }) => api.get('/compliance/dashboard', cleanParams(params)),
+  getVendors: (params?: { level?: string; certification_status?: string; search?: string }) =>
+    api.get('/compliance/vendors', cleanParams(params)),
+  getCertifications: (params?: { state?: string; vendor_id?: string }) => api.get('/compliance/certifications', cleanParams(params)),
+  getAudits: (params?: { from?: string; to?: string; vendor_id?: string }) => api.get('/compliance/audits', cleanParams(params)),
+  getDisputes: (params?: { from?: string; to?: string; category?: string }) => api.get('/compliance/disputes', cleanParams(params)),
+  recordAudit: (vendorId: string, data: any) => api.post(`/compliance/audits/${vendorId}`, data),
+  updateCertification: (certId: string, data: any) => api.put(`/compliance/certifications/${certId}`, data),
+  resolveDispute: (id: string, resolution?: string) => api.post(`/compliance/disputes/${id}/resolve`, { resolution }),
+  closeDispute: (id: string, resolution?: string) => api.post(`/compliance/disputes/${id}/close`, { resolution }),
+};
+
+export type ReportType = 'spend' | 'suppliers' | 'delivery' | 'pr-approval' | 'invoice-payment' | 'compliance';
+const REPORT_PATHS: Record<ReportType, string> = {
+  spend: '/reports/spend',
+  suppliers: '/reports/suppliers/performance',
+  delivery: '/reports/delivery/performance',
+  'pr-approval': '/reports/pr-approval',
+  'invoice-payment': '/reports/invoice-payment',
+  compliance: '/reports/compliance',
+};
+export const reportsService = {
+  getMeta: () => api.get('/reports/meta'),
+  getReport: (type: ReportType, params?: { from?: string; to?: string; department?: string }) => {
+    const clean = Object.fromEntries(Object.entries(params || {}).filter(([, v]) => v));
+    return api.get(REPORT_PATHS[type], clean);
+  },
+  exportReport: async (body: { report_type: ReportType; format: 'csv' | 'pdf'; date_from?: string; date_to?: string; department?: string }) => {
+    const token = localStorage.getItem('token');
+    const response = await fetch(`${API_BASE_URL}/reports/export`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...(token && { Authorization: `Bearer ${token}` }) },
+      body: JSON.stringify(body),
+    });
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || errorData.message || `Export failed (${response.status})`);
+    }
+    const disposition = response.headers.get('Content-Disposition') || '';
+    const fileName = /filename="([^"]+)"/.exec(disposition)?.[1] || `${body.report_type}-report.${body.format}`;
+    return { blob: await response.blob(), fileName };
+  },
+  getSchedules: () => api.get('/reports/schedules'),
+  saveSchedule: (type: ReportType, data: { frequency: 'weekly' | 'monthly'; format: 'csv' | 'pdf'; email: string; filters?: { period?: string; department?: string } }) =>
+    api.put(`/reports/schedules/${type}`, data),
+  deleteSchedule: (type: ReportType) => api.delete(`/reports/schedules/${type}`),
 };
 
 // Payment Service
