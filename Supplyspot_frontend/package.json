@@ -77,7 +77,8 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "vite build"
+    "build": "vite build",
+    "test": "playwright test"
   },
   "description": "This is a code bundle for Supplier Spot. The original project is available at https://www.figma.com/design/s46zTZdUZocLOdUE5UZ8Nt/Supplier-Spot.",
   "main": "index.js",
