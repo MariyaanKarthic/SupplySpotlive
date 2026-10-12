@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { EVENT_META, Shipment, TrackingEventType, formatDate, formatQty } from './shipmentModel';
+import { FormAlert } from '@/components/common';
 
 const nowLocal = () => {
   const d = new Date();
@@ -104,9 +105,9 @@ export function TrackingEventDialog({
         {event === 'exception' && <p className="text-xs text-red-600">An exception marks the shipment as delayed until the next movement is logged.</p>}
         {event === 'delivered' && <p className="text-xs text-muted-foreground">This records the arrival. Record the goods receipt afterwards to check quantities and issue a GRN.</p>}
         <DialogFooter className="items-center">
-          <p className="text-sm text-destructive mr-auto" role="alert">{error}</p>
+          {error ? <FormAlert className="mr-auto">{error}</FormAlert> : null}
           <Button variant="ghost" onClick={() => onOpenChange(false)} disabled={busy}>Cancel</Button>
-          <Button onClick={submit} disabled={busy}>{busy ? 'Saving…' : 'Add update'}</Button>
+          <Button onClick={submit} disabled={busy} loading={busy}>{busy ? 'Saving…' : 'Add update'}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -219,9 +220,9 @@ export function ReceiveDialog({
           </label>
         </div>
         <DialogFooter className="items-center">
-          <p className="text-sm text-destructive mr-auto" role="alert">{error}</p>
+          {error ? <FormAlert className="mr-auto">{error}</FormAlert> : null}
           <Button variant="ghost" onClick={() => onOpenChange(false)} disabled={busy}>Cancel</Button>
-          <Button onClick={submit} disabled={busy}>{busy ? 'Saving…' : mode === 'full' ? 'Receive and issue GRN' : 'Save partial delivery'}</Button>
+          <Button onClick={submit} disabled={busy} loading={busy}>{busy ? 'Saving…' : mode === 'full' ? 'Receive and issue GRN' : 'Save partial delivery'}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

@@ -82,6 +82,8 @@ import { vendorService } from '@/services/api';
 import { VendorDeliveryPerformance } from './VendorDeliveryPerformance';
 import { VendorInvoiceSummary } from './VendorInvoiceSummary';
 import { VendorPerformancePanel, VendorPanelTab, formatScore, scoreColor, gradeVariant, riskVariant, priorityColor } from './VendorPerformancePanel';
+import { toast } from 'sonner';
+import { EmptyTableRow, FormAlert, KpiCard, PageHeader, SortableHeader, SortState, StatusBadge, sortRows } from '@/components/common';
 
 const yesNo = (value: any) => (value === undefined || value === null ? '' : value ? 'Yes' : 'No');
 
@@ -207,6 +209,19 @@ export function VendorManagement({ onNavigateToRegistration, onNavigate }: Vendo
     vendor.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
     vendor.contact.toLowerCase().includes(searchTerm.toLowerCase())
   );
+  type VendorSortKey = 'name' | 'category' | 'status' | 'contracts' | 'totalSpend' | 'rating';
+  const [vendorSort, setVendorSort] = useState<SortState<VendorSortKey>>({ key: 'name', dir: 'asc' });
+  const toggleVendorSort = (key: VendorSortKey) => setVendorSort(s => (s.key === key
+    ? { key, dir: s.dir === 'asc' ? 'desc' : 'asc' }
+    : { key, dir: ['contracts', 'totalSpend', 'rating'].includes(key) ? 'desc' : 'asc' }));
+  const sortedVendors = sortRows(filteredVendors, (v: any) => {
+    const val = v[vendorSort.key];
+    return ['contracts', 'totalSpend', 'rating'].includes(vendorSort.key) ? Number(val) || 0 : val;
+  }, vendorSort.dir);
+  const vendorCounts = {
+    active: vendors.filter((v: any) => v.status === 'Active').length,
+    review: vendors.filter((v: any) => v.status === 'Under Review').length,
+  };
 
   // ── Helper functions ────────────────────────────────────────────────────────
   const getStatusColor = (status: string) => {
@@ -264,9 +279,11 @@ export function VendorManagement({ onNavigateToRegistration, onNavigate }: Vendo
         description: editForm.description,
       });
       setIsEditOpen(false);
+      toast.success(`${editForm.name.trim()} updated.`);
       await Promise.all([refetchVendors(), refetchOverview()]);
     } catch (err) {
       setEditError(err instanceof Error ? err.message : 'Failed to update vendor');
+      toast.error(err instanceof Error ? err.message : 'Failed to update vendor');
     } finally {
       setIsSaving(false);
     }
@@ -278,10 +295,12 @@ export function VendorManagement({ onNavigateToRegistration, onNavigate }: Vendo
     setDeleteError(null);
     try {
       await vendorService.deleteVendor(vendorToDelete.id);
+      toast.success(`${vendorToDelete.name || 'Vendor'} deleted.`);
       setVendorToDelete(null);
       await Promise.all([refetchVendors(), refetchOverview()]);
     } catch (err) {
       setDeleteError(err instanceof Error ? err.message : 'Failed to delete vendor');
+      toast.error(err instanceof Error ? err.message : 'Failed to delete vendor');
     } finally {
       setIsDeleting(false);
     }
@@ -422,9 +441,9 @@ export function VendorManagement({ onNavigateToRegistration, onNavigate }: Vendo
   };
 
   return (
-    <div className="px-6 pb-6 space-y-6 w-full max-w-full overflow-x-hidden">
+    <div className="px-4 sm:px-6 pb-8 space-y-6 w-full max-w-full overflow-x-hidden">
       {/* Sticky Header section with Breadcrumbs */}
-      <div className="sticky top-0 bg-background/95 backdrop-blur z-20 border-b py-3 -mx-6 px-6 space-y-1.5 flex flex-col no-print">
+      <div className="sticky top-0 bg-background/95 backdrop-blur z-20 border-b py-3 -mx-4 px-4 sm:-mx-6 sm:px-6 space-y-1.5 flex flex-col no-print">
         <Breadcrumb className="text-xs">
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -445,22 +464,31 @@ export function VendorManagement({ onNavigateToRegistration, onNavigate }: Vendo
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
-        <div className="flex items-center justify-between w-full">
-          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">Vendor Management</h1>
-          <div className="flex items-center gap-2">
-          <Button
-            className="gap-2"
-            onClick={onNavigateToRegistration}
-          >
-            <Plus className="w-4 h-4" />
-            Add Vendor
-          </Button>
-          <Button variant="outline" className="gap-2">
-            <UserPlus className="w-4 h-4" />
-            Registration Portal
-          </Button>
-        </div>
-        </div>
+        <PageHeader
+          title="Vendor Management"
+          description="Step 1 of the purchase flow: the approved suppliers you can raise requests, RFQs and orders against."
+          actions={<>
+            <Button variant="outline" className="gap-2">
+              <UserPlus className="w-4 h-4" />
+              Registration Portal
+            </Button>
+            <Button className="gap-2" onClick={onNavigateToRegistration}>
+              <Plus className="w-4 h-4" />
+              Add Vendor
+            </Button>
+          </>}
+        />
+      </div>
+
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <KpiCard label="Total vendors" value={overview?.summary.totalVendors ?? vendors.length} icon={Building} tone="blue"
+          hint={`${overview?.summary.totalContracts ?? 0} contracts`} loading={vendorLoading && !vendors.length} />
+        <KpiCard label="Active" value={overview?.summary.activeVendors ?? vendorCounts.active} icon={CheckCircle} tone="emerald"
+          hint="Ready to buy from" loading={vendorLoading && !vendors.length} />
+        <KpiCard label="Under review" value={vendorCounts.review} icon={Clock} tone="amber"
+          hint="Onboarding not finished" loading={vendorLoading && !vendors.length} />
+        <KpiCard label="Total spend" value={formatINR(overview?.summary.totalSpend ?? 0)} icon={TrendingUp} tone="violet"
+          hint={`Avg rating ${formatScore(overview?.summary.averageRating, ' / 5')}`} loading={overviewLoading && !overview} />
       </div>
 
       {/* Vendor Registration CTA */}
@@ -487,12 +515,9 @@ export function VendorManagement({ onNavigateToRegistration, onNavigate }: Vendo
         </div>
       </Card>
 
-      {/* Loading / error state */}
-      {vendorLoading && (
-        <div className="text-sm text-muted-foreground text-center py-4">Loading vendors from API...</div>
-      )}
+      {/* Error state */}
       {vendorError && (
-        <div className="text-sm text-destructive text-center py-2">⚠ Could not reach backend: {vendorError}</div>
+        <FormAlert>Could not reach the backend: {vendorError}. Start the backend server, then reload this page.</FormAlert>
       )}
 
       {/* Tabs Navigation */}
@@ -539,23 +564,27 @@ export function VendorManagement({ onNavigateToRegistration, onNavigate }: Vendo
           {/* Vendors Table */}
           <Card>
             <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
+              <table className="w-full text-sm">
+                <thead className="bg-muted/40">
                   <tr className="border-b">
-                    <th className="text-left p-4 font-medium">Vendor</th>
-                    <th className="text-left p-4 font-medium">Category</th>
-                    <th className="text-left p-4 font-medium">Contact</th>
-                    <th className="text-left p-4 font-medium">Status</th>
-                    <th className="text-left p-4 font-medium">Contracts</th>
-                    <th className="text-left p-4 font-medium">Total Spend</th>
-                    <th className="text-left p-4 font-medium">Rating</th>
-                    <th className="text-left p-4 font-medium">Actions</th>
+                    <SortableHeader k="name" label="Vendor" sort={vendorSort} onSort={toggleVendorSort} />
+                    <SortableHeader k="category" label="Category" sort={vendorSort} onSort={toggleVendorSort} />
+                    <th className="h-10 px-3 text-left font-medium text-muted-foreground">Contact</th>
+                    <SortableHeader k="status" label="Status" sort={vendorSort} onSort={toggleVendorSort} />
+                    <SortableHeader k="contracts" label="Contracts" align="right" sort={vendorSort} onSort={toggleVendorSort} />
+                    <SortableHeader k="totalSpend" label="Total spend" align="right" sort={vendorSort} onSort={toggleVendorSort} />
+                    <SortableHeader k="rating" label="Rating" sort={vendorSort} onSort={toggleVendorSort} />
+                    <th className="h-10 px-3 text-right font-medium text-muted-foreground"><span className="sr-only">Actions</span></th>
                   </tr>
                 </thead>
-                <tbody>
-                  {filteredVendors.map((vendor: any) => (
-                    <tr key={vendor.id} className="border-b hover:bg-muted/50">
-                      <td className="p-4">
+                <tbody className="divide-y">
+                  {vendorLoading && !vendors.length && Array.from({ length: 5 }).map((_, i) => (
+                    <tr key={`sk-${i}`}><td colSpan={8} className="p-3"><div className="h-8 rounded bg-muted animate-pulse" /></td></tr>
+                  ))}
+                  {sortedVendors.map((vendor: any) => (
+                    <tr key={vendor.id} className="cursor-pointer" tabIndex={0} aria-label={`Open ${vendor.name}`}
+                      onClick={() => handleViewVendor(vendor)} onKeyDown={(e) => { if (e.key === 'Enter') handleViewVendor(vendor); }}>
+                      <td className="p-3">
                         <div>
                           <p className="font-medium">{vendor.name}</p>
                           <div className="flex items-center gap-1 text-sm text-muted-foreground">
@@ -564,10 +593,10 @@ export function VendorManagement({ onNavigateToRegistration, onNavigate }: Vendo
                           </div>
                         </div>
                       </td>
-                      <td className="p-4">
+                      <td className="p-3">
                         <Badge variant="outline">{vendor.category}</Badge>
                       </td>
-                      <td className="p-4">
+                      <td className="p-3">
                         <div className="space-y-1">
                           <div className="flex items-center gap-1 text-sm">
                             <Mail className="w-3 h-3" />
@@ -579,23 +608,21 @@ export function VendorManagement({ onNavigateToRegistration, onNavigate }: Vendo
                           </div>
                         </div>
                       </td>
-                      <td className="p-4">
-                        <Badge variant={getStatusColor(vendor.status) as any}>
-                          {vendor.status}
-                        </Badge>
+                      <td className="p-3 whitespace-nowrap">
+                        <StatusBadge status={vendor.status} />
                       </td>
-                      <td className="p-4">{vendor.contracts}</td>
-                      <td className="p-4">{formatINR(vendor.totalSpend)}</td>
-                      <td className="p-4">
-                        <div className="flex items-center gap-1">
+                      <td className="p-3 text-right tabular-nums">{vendor.contracts}</td>
+                      <td className="p-3 text-right tabular-nums font-medium whitespace-nowrap">{formatINR(vendor.totalSpend)}</td>
+                      <td className="p-3">
+                        <div className="flex items-center gap-1 tabular-nums">
                           <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
                           {vendor.rating}
                         </div>
                       </td>
-                      <td className="p-4">
+                      <td className="p-3 text-right" onClick={(e) => e.stopPropagation()}>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="sm">
+                            <Button variant="ghost" size="sm" aria-label={`Actions for ${vendor.name}`}>
                               <MoreHorizontal className="w-4 h-4" />
                             </Button>
                           </DropdownMenuTrigger>
@@ -625,11 +652,17 @@ export function VendorManagement({ onNavigateToRegistration, onNavigate }: Vendo
                     </tr>
                   ))}
                   {!vendorLoading && filteredVendors.length === 0 && (
-                    <tr>
-                      <td colSpan={8} className="p-8 text-center text-muted-foreground">
-                        {vendorError ? 'Backend unavailable — start the backend server to see live data.' : 'No vendors found.'}
-                      </td>
-                    </tr>
+                    vendorError ? (
+                      <EmptyTableRow colSpan={8} icon={Building} title="Vendors could not be loaded"
+                        description="The backend is unavailable. Start the backend server to see live data." />
+                    ) : vendors.length > 0 ? (
+                      <EmptyTableRow colSpan={8} filtered title={`No vendors match "${searchTerm}"`}
+                        description="Search by vendor name, category or contact email." onClearFilters={() => setSearchTerm('')} />
+                    ) : (
+                      <EmptyTableRow colSpan={8} icon={Building} title="No vendors yet"
+                        description="Register your first supplier to start raising purchase requests and RFQs against them."
+                        action={{ label: 'Add Vendor', icon: Plus, onClick: () => onNavigateToRegistration?.() }} />
+                    )
                   )}
                 </tbody>
               </table>
@@ -865,27 +898,15 @@ export function VendorManagement({ onNavigateToRegistration, onNavigate }: Vendo
               </div>
               <h3 className="font-semibold text-slate-800">Portfolio Snapshot</h3>
             </div>
-            <div className="p-6 grid grid-cols-2 lg:grid-cols-4 gap-6">
-              <Card className="p-5 border-none shadow-none bg-orange-50/60 gap-1">
-                <h4 className="text-sm font-semibold text-slate-800">Total Vendors</h4>
-                <div className="text-2xl font-bold text-slate-900">{overview?.summary.totalVendors ?? vendors.length}</div>
-                <p className="text-[11px] text-muted-foreground">{overview?.summary.activeVendors ?? 0} active</p>
-              </Card>
-              <Card className="p-5 border-none shadow-none bg-pink-50/60 gap-1">
-                <h4 className="text-sm font-semibold text-slate-800">Total Spend</h4>
-                <div className="text-2xl font-bold text-slate-900">{formatINR(overview?.summary.totalSpend ?? 0)}</div>
-                <p className="text-[11px] text-muted-foreground">{overview?.summary.totalContracts ?? 0} contracts</p>
-              </Card>
-              <Card className="p-5 border-none shadow-none bg-emerald-100/40 gap-1">
-                <h4 className="text-sm font-semibold text-slate-800">Average Rating</h4>
-                <div className="text-2xl font-bold text-slate-900">{formatScore(overview?.summary.averageRating, ' / 5')}</div>
-                <p className="text-[11px] text-muted-foreground">Rated vendors only</p>
-              </Card>
-              <Card className="p-5 border-none shadow-none bg-blue-50/60 gap-1">
-                <h4 className="text-sm font-semibold text-slate-800">Average Score</h4>
-                <div className="text-2xl font-bold text-slate-900">{formatScore(overview?.summary.averageOverall, ' / 100')}</div>
-                <p className="text-[11px] text-muted-foreground">Weighted scorecard</p>
-              </Card>
+            <div className="p-4 sm:p-6 grid grid-cols-2 lg:grid-cols-4 gap-3">
+              <KpiCard label="Total vendors" value={overview?.summary.totalVendors ?? vendors.length} icon={Building} tone="blue"
+                hint={`${overview?.summary.activeVendors ?? 0} active`} />
+              <KpiCard label="Total spend" value={formatINR(overview?.summary.totalSpend ?? 0)} icon={TrendingUp} tone="violet"
+                hint={`${overview?.summary.totalContracts ?? 0} contracts`} />
+              <KpiCard label="Average rating" value={formatScore(overview?.summary.averageRating, ' / 5')} icon={Star} tone="amber"
+                hint="Rated vendors only" />
+              <KpiCard label="Average score" value={formatScore(overview?.summary.averageOverall, ' / 100')} icon={Award} tone="emerald"
+                hint="Weighted scorecard" />
             </div>
           </Card>
         </TabsContent>
@@ -898,7 +919,7 @@ export function VendorManagement({ onNavigateToRegistration, onNavigate }: Vendo
             <DrawerTitle className="text-xl font-semibold">{selectedVendor?.name}</DrawerTitle>
             <DrawerDescription className="flex items-center gap-2">
               <Badge variant="outline">{selectedVendor?.category}</Badge>
-              <Badge variant={getStatusColor(selectedVendor?.status) as any}>{selectedVendor?.status}</Badge>
+              {selectedVendor?.status && <StatusBadge status={selectedVendor.status} />}
             </DrawerDescription>
           </DrawerHeader>
           {selectedVendor && (

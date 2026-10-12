@@ -1,4 +1,5 @@
 // Shared types and helpers for the Invoices module.
+import { statusClass } from '@/components/common/status';
 import { formatCompactMoney, formatDate, formatMoney } from '../../procurement/purchase-orders/poModel';
 
 export { formatCompactMoney, formatDate, formatMoney };
@@ -69,14 +70,14 @@ export interface Invoice {
 }
 
 export const STATUS_META: Record<InvoiceStatus, { label: string; className: string }> = {
-  draft: { label: 'Draft', className: 'bg-slate-100 text-slate-700 border-slate-200' },
-  submitted: { label: 'Pending approval', className: 'bg-amber-50 text-amber-700 border-amber-200' },
-  approved: { label: 'Approved', className: 'bg-blue-50 text-blue-700 border-blue-200' },
-  paid: { label: 'Paid', className: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
-  disputed: { label: 'Disputed', className: 'bg-red-50 text-red-700 border-red-200' },
+  draft: { label: 'Draft', className: statusClass('neutral') },
+  submitted: { label: 'Pending approval', className: statusClass('pending') },
+  approved: { label: 'Approved', className: statusClass('success') },
+  paid: { label: 'Paid', className: statusClass('success') },
+  disputed: { label: 'Disputed', className: statusClass('danger') },
 };
 
-export const OVERDUE_META = { label: 'Overdue', className: 'bg-red-50 text-red-700 border-red-200' };
+export const OVERDUE_META = { label: 'Overdue', className: statusClass('danger') };
 
 export const STATUS_FILTERS: { id: string; label: string }[] = [
   { id: 'all', label: 'All' },

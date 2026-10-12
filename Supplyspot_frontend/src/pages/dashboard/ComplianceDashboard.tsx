@@ -24,6 +24,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { formatDate } from '../procurement/purchase-orders/poModel';
 import { DateFilter, Preset, PRESETS, presetRange, rangeLabel } from './dateRange';
+import { KpiCard, KpiTone } from '@/components/common';
 
 // ---------- Response shapes (/compliance/*) ----------
 
@@ -196,8 +197,8 @@ export function ComplianceDashboard({ onNavigate }: { onNavigate?: (view: any) =
 
   return (
     <TooltipProvider delayDuration={150}>
-      <div className="px-6 pb-6 space-y-6 w-full max-w-full overflow-x-hidden">
-        <div className="sticky top-0 bg-background/95 backdrop-blur z-20 border-b py-3 -mx-6 px-6">
+      <div className="px-4 sm:px-6 pb-8 space-y-6 w-full max-w-full overflow-x-hidden">
+        <div className="sticky top-0 bg-background/95 backdrop-blur z-20 border-b py-3 -mx-4 px-4 sm:-mx-6 sm:px-6">
           <Breadcrumb className="text-xs">
             <BreadcrumbList>
               <BreadcrumbItem>
@@ -211,7 +212,7 @@ export function ComplianceDashboard({ onNavigate }: { onNavigate?: (view: any) =
 
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">Compliance Dashboard</h1>
+            <h1 className="text-2xl sm:text-[1.75rem] font-semibold tracking-tight text-foreground">Compliance Dashboard</h1>
             <p className="text-sm text-muted-foreground mt-1">
               Certifications, audits and compliance issues · {data?.scope.label || '…'}
             </p>
@@ -385,7 +386,7 @@ function KpiRow({ data, loading, onCertified, onIssues, onAuditsDue, onDocs }: {
       suffix: k ? ` / ${k.certified.total}` : '',
       sub: k ? `${pct(k.certified.count, k.certified.total)}% of vendors` : 'Certification status',
       icon: BadgeCheck,
-      tone: 'border-l-green-500 [&_.kpi-icon]:bg-green-50 [&_.kpi-icon]:text-green-600',
+      tone: 'emerald' as KpiTone,
       valueClass: 'text-foreground',
       onClick: onCertified,
     },
@@ -395,7 +396,7 @@ function KpiRow({ data, loading, onCertified, onIssues, onAuditsDue, onDocs }: {
       value: k ? `${k.issues.count}` : '–',
       sub: k ? (k.issues.critical ? `${k.issues.critical} critical · open disputes` : 'Open compliance or high-priority disputes') : 'Open disputes',
       icon: AlertTriangle,
-      tone: 'border-l-red-500 [&_.kpi-icon]:bg-red-50 [&_.kpi-icon]:text-red-600',
+      tone: 'red' as KpiTone,
       valueClass: k && k.issues.count ? 'text-red-600' : 'text-foreground',
       onClick: onIssues,
     },
@@ -407,7 +408,7 @@ function KpiRow({ data, loading, onCertified, onIssues, onAuditsDue, onDocs }: {
         ? `Last audit over a year ago${k.auditsDue.neverAudited ? ` · ${k.auditsDue.neverAudited} never audited` : ''}`
         : 'Last audit over a year ago',
       icon: CalendarClock,
-      tone: 'border-l-yellow-500 [&_.kpi-icon]:bg-yellow-50 [&_.kpi-icon]:text-yellow-600',
+      tone: 'amber' as KpiTone,
       valueClass: k && k.auditsDue.count ? 'text-yellow-700' : 'text-foreground',
       onClick: onAuditsDue,
     },
@@ -417,7 +418,7 @@ function KpiRow({ data, loading, onCertified, onIssues, onAuditsDue, onDocs }: {
       value: k ? `${k.documentation.percent}%` : '–',
       sub: k ? `${k.documentation.complete} of ${k.documentation.total} vendors · GST, PAN and a current certificate` : 'GST, PAN and a current certificate',
       icon: FileCheck2,
-      tone: 'border-l-blue-500 [&_.kpi-icon]:bg-blue-50 [&_.kpi-icon]:text-blue-600',
+      tone: 'blue' as KpiTone,
       valueClass: 'text-foreground',
       progress: k?.documentation.percent,
       onClick: onDocs,
@@ -426,26 +427,12 @@ function KpiRow({ data, loading, onCertified, onIssues, onAuditsDue, onDocs }: {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
-      {tiles.map(t => {
-        const Icon = t.icon;
-        return (
-          <button key={t.id} type="button" onClick={t.onClick} className="text-left rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-            <Card className={`border-l-4 shadow-sm h-full hover:shadow-md transition-all ${t.tone}`}>
-              <CardContent className="p-4 flex items-start justify-between gap-3">
-                <div className="min-w-0 flex-1 space-y-1">
-                  <p className="text-xs text-muted-foreground font-medium truncate">{t.label}</p>
-                  <p className={`text-2xl font-bold tabular-nums ${t.valueClass} ${loading && !data ? 'animate-pulse' : ''}`}>
-                    {t.value}<span className="text-sm font-medium text-muted-foreground">{t.suffix}</span>
-                  </p>
-                  {t.progress !== undefined && <Progress value={t.progress} className="h-1.5" />}
-                  <p className="text-[11px] text-muted-foreground truncate" title={t.sub}>{t.sub}</p>
-                </div>
-                <div className="kpi-icon rounded-lg p-2 shrink-0"><Icon className="w-5 h-5" /></div>
-              </CardContent>
-            </Card>
-          </button>
-        );
-      })}
+      {tiles.map(t => (
+        <KpiCard key={t.id} label={t.label} value={t.value} suffix={t.suffix} hint={t.sub} icon={t.icon} tone={t.tone}
+          valueClassName={t.valueClass.replace('text-yellow-700', 'text-amber-700')} loading={loading && !data} onClick={t.onClick}>
+          {t.progress !== undefined && <Progress value={t.progress} className="h-1.5" />}
+        </KpiCard>
+      ))}
     </div>
   );
 }
@@ -972,7 +959,9 @@ function EditCertificationDialog({ cert, canWrite, onClose, onSaved }: {
       toast.success(`${form.type} for ${cert.vendorName} updated.`);
       onSaved();
     } catch (e) {
-      setErr(e instanceof Error ? e.message : 'Could not save the certificate');
+      const message = e instanceof Error ? e.message : 'Could not save the certificate';
+      setErr(message);
+      toast.error(message);
     } finally {
       setSaving(false);
     }
@@ -1029,7 +1018,7 @@ function EditCertificationDialog({ cert, canWrite, onClose, onSaved }: {
         {err && <p className="text-xs text-red-600">{err}</p>}
         <DialogFooter>
           <Button variant="ghost" onClick={onClose}>{canWrite ? 'Cancel' : 'Close'}</Button>
-          {canWrite && <Button onClick={save} disabled={saving || datesInvalid || !form.type.trim()}>{saving ? 'Saving…' : 'Save'}</Button>}
+          {canWrite && <Button onClick={save} disabled={saving || datesInvalid || !form.type.trim()} loading={saving}>{saving ? 'Saving…' : 'Save'}</Button>}
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -1059,7 +1048,9 @@ function RecordAuditDialog({ vendor, onClose, onSaved }: { vendor: ComplianceVen
       toast.success(`Audit recorded for ${vendor.name}.`);
       onSaved();
     } catch (e) {
-      setErr(e instanceof Error ? e.message : 'Could not record the audit');
+      const message = e instanceof Error ? e.message : 'Could not record the audit';
+      setErr(message);
+      toast.error(message);
     } finally {
       setSaving(false);
     }
@@ -1126,7 +1117,7 @@ function RecordAuditDialog({ vendor, onClose, onSaved }: { vendor: ComplianceVen
         {err && <p className="text-xs text-red-600">{err}</p>}
         <DialogFooter>
           <Button variant="ghost" onClick={onClose}>Cancel</Button>
-          <Button onClick={save} disabled={saving || scoreInvalid || dateInvalid}>{saving ? 'Saving…' : 'Record audit'}</Button>
+          <Button onClick={save} disabled={saving || scoreInvalid || dateInvalid} loading={saving}>{saving ? 'Saving…' : 'Record audit'}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -1152,7 +1143,9 @@ function SettleDisputeDialog({ value, onClose, onSaved }: {
       toast.success(`${value.dispute.disputeNumber} ${value.action === 'close' ? 'closed' : 'resolved'}.`);
       onSaved();
     } catch (e) {
-      setErr(e instanceof Error ? e.message : `Could not ${value.action} the dispute`);
+      const message = e instanceof Error ? e.message : `Could not ${value.action} the dispute`;
+      setErr(message);
+      toast.error(message);
     } finally {
       setSaving(false);
     }
@@ -1172,7 +1165,7 @@ function SettleDisputeDialog({ value, onClose, onSaved }: {
         {err && <p className="text-xs text-red-600">{err}</p>}
         <DialogFooter>
           <Button variant="ghost" onClick={onClose}>Cancel</Button>
-          <Button onClick={save} disabled={saving}>{saving ? 'Saving…' : verb}</Button>
+          <Button onClick={save} disabled={saving} loading={saving}>{saving ? 'Saving…' : verb}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

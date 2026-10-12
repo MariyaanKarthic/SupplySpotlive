@@ -9,6 +9,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from '@/components/ui/drawer';
 import { PurchaseOrder, POPriority, formatMoney, mapPurchaseOrder } from './poModel';
+import { FormAlert } from '@/components/common';
+import { toast } from 'sonner';
 
 interface LineDraft {
   key: number;
@@ -129,7 +131,9 @@ export function POFormDrawer({
       }
       onSaved(mapPurchaseOrder(res.data), !po);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Could not save the purchase order');
+      const message = err instanceof Error ? err.message : 'Could not save the purchase order';
+      setError(message);
+      toast.error(message);
     } finally {
       setSaving(null);
     }
@@ -150,7 +154,7 @@ export function POFormDrawer({
             <h3 className="text-sm font-semibold text-foreground">Vendor and dates</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5 sm:col-span-2">
-                <Label>Vendor</Label>
+                <Label className="label-required">Vendor</Label>
                 <Select value={form.vendorId || undefined} onValueChange={(v) => set('vendorId', v)}>
                   <SelectTrigger aria-label="Vendor"><SelectValue placeholder={vendorsLoading ? 'Loading vendors…' : 'Choose a vendor'} /></SelectTrigger>
                   <SelectContent className="max-h-72">
@@ -159,11 +163,11 @@ export function POFormDrawer({
                 </Select>
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="po-issue">Issue date</Label>
+                <Label className="label-required" htmlFor="po-issue">Issue date</Label>
                 <Input id="po-issue" type="date" value={form.issueDate} onChange={(e) => set('issueDate', e.target.value)} />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="po-delivery">Expected delivery</Label>
+                <Label className="label-required" htmlFor="po-delivery">Expected delivery</Label>
                 <Input id="po-delivery" type="date" min={form.issueDate} value={form.expectedDeliveryDate} onChange={(e) => set('expectedDeliveryDate', e.target.value)} />
               </div>
               <div className="space-y-1.5">
@@ -241,14 +245,14 @@ export function POFormDrawer({
             <p className="text-lg font-semibold tabular-nums">{formatMoney(total, form.currency)}</p>
           </div>
           <div className="flex flex-col items-stretch sm:items-end gap-2">
-            {error && <p className="text-sm text-destructive" role="alert">{error}</p>}
+            {error && <FormAlert>{error}</FormAlert>}
             <div className="flex gap-2 justify-end">
               <Button variant="ghost" onClick={() => onOpenChange(false)} disabled={!!saving}>Cancel</Button>
-              <Button variant="outline" onClick={() => save('draft')} disabled={!!saving}>
+              <Button variant="outline" onClick={() => save('draft')} disabled={!!saving} loading={saving === 'draft'}>
                 {saving === 'draft' ? 'Saving…' : po ? 'Save changes' : 'Save draft'}
               </Button>
               {(!po || po.status === 'new') && (
-                <Button onClick={() => save('submit')} disabled={!!saving}>
+                <Button onClick={() => save('submit')} disabled={!!saving} loading={saving === 'submit'}>
                   {saving === 'submit' ? 'Submitting…' : 'Submit for approval'}
                 </Button>
               )}

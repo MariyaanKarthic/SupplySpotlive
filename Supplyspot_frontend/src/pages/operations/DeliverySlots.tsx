@@ -1159,9 +1159,9 @@ export function DeliverySlots({ onNavigate }: DeliverySlotsProps) {
   const weekDays = getWeekDays(selectedDate);
 
   return (
-    <div className="px-6 pb-6 space-y-6 w-full max-w-full overflow-x-hidden">
+    <div className="px-4 sm:px-6 pb-8 space-y-6 w-full max-w-full overflow-x-hidden">
       {/* Sticky Header section with Breadcrumbs */}
-      <div className="sticky top-0 bg-background/95 backdrop-blur z-20 border-b py-3 -mx-6 px-6 space-y-1.5 flex flex-col no-print">
+      <div className="sticky top-0 bg-background/95 backdrop-blur z-20 border-b py-3 -mx-4 px-4 sm:-mx-6 sm:px-6 space-y-1.5 flex flex-col no-print">
         <Breadcrumb className="text-xs">
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -1183,7 +1183,7 @@ export function DeliverySlots({ onNavigate }: DeliverySlotsProps) {
           </BreadcrumbList>
         </Breadcrumb>
         <div className="flex items-center justify-between w-full">
-          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">Delivery Slots Management</h1>
+          <h1 className="text-2xl sm:text-[1.75rem] font-semibold tracking-tight text-foreground">Delivery Slots Management</h1>
           
         </div>
       </div>

@@ -119,7 +119,7 @@ export function PurchaseRequisitions({ onNavigate }: { onNavigate?: (view: any) 
   const formOpen = creating || !!editing;
 
   const crumbs = (
-    <div className="sticky top-0 bg-background/95 backdrop-blur z-20 border-b py-3 -mx-6 px-6 no-print">
+    <div className="sticky top-0 bg-background/95 backdrop-blur z-20 border-b py-3 -mx-4 px-4 sm:-mx-6 sm:px-6 no-print">
       <Breadcrumb className="text-xs">
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -197,7 +197,7 @@ export function PurchaseRequisitions({ onNavigate }: { onNavigate?: (view: any) 
   }
 
   return (
-    <div className="px-6 pb-6 space-y-6 w-full max-w-full overflow-x-hidden">
+    <div className="px-4 sm:px-6 pb-8 space-y-6 w-full max-w-full overflow-x-hidden">
       {crumbs}
       {body}
       <PRFormDrawer

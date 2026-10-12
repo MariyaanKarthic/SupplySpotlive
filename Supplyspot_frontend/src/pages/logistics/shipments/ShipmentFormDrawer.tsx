@@ -8,6 +8,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from '@/components/ui/drawer';
 import { Shipment, formatQty, mapShipment } from './shipmentModel';
+import { FormAlert } from '@/components/common';
+import { toast } from 'sonner';
 
 interface LineDraft { poLineIndex: number; description: string; ordered: number; remaining: number; quantity: string }
 
@@ -128,7 +130,9 @@ export function ShipmentFormDrawer({
       const res: any = shipment ? await shipmentService.updateShipment(shipment.id, payload) : await shipmentService.createShipment(payload);
       onSaved(mapShipment(res.data), !shipment);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Could not save the shipment');
+      const message = err instanceof Error ? err.message : 'Could not save the shipment';
+      setError(message);
+      toast.error(message);
     } finally {
       setSaving(false);
     }
@@ -148,7 +152,7 @@ export function ShipmentFormDrawer({
           {!shipment && (
             <section className="space-y-3">
               <div className="space-y-1.5">
-                <Label>Purchase order</Label>
+                <Label className="label-required">Purchase order</Label>
                 <Select value={form.poId} onValueChange={(v) => loadPO(v)} disabled={posLoading}>
                   <SelectTrigger><SelectValue placeholder={posLoading ? 'Loading purchase orders…' : 'Choose a sent purchase order'} /></SelectTrigger>
                   <SelectContent className="max-h-72">
@@ -192,7 +196,7 @@ export function ShipmentFormDrawer({
               <p className="text-xs text-muted-foreground">Leave empty while it is still awaiting dispatch.</p>
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="expected">Expected delivery</Label>
+              <Label className="label-required" htmlFor="expected">Expected delivery</Label>
               <Input id="expected" type="date" value={form.expectedDeliveryDate} onChange={(e) => set('expectedDeliveryDate', e.target.value)} />
             </div>
             <div className="space-y-1.5 sm:col-span-2">
@@ -211,10 +215,10 @@ export function ShipmentFormDrawer({
         </div>
 
         <div className="p-4 border-t flex items-center justify-between gap-3 shrink-0">
-          <p className="text-sm text-destructive min-h-5" role="alert">{error}</p>
+          <div className="min-h-5 min-w-0 flex-1">{error && <FormAlert>{error}</FormAlert>}</div>
           <div className="flex gap-2 shrink-0">
             <Button variant="ghost" onClick={() => onOpenChange(false)} disabled={saving}>Cancel</Button>
-            <Button onClick={save} disabled={saving || loadingLines || !!nothingLeft}>{saving ? 'Saving…' : shipment ? 'Save changes' : 'Create shipment'}</Button>
+            <Button onClick={save} disabled={saving || loadingLines || !!nothingLeft} loading={saving}>{saving ? 'Saving…' : shipment ? 'Save changes' : 'Create shipment'}</Button>
           </div>
         </div>
       </DrawerContent>

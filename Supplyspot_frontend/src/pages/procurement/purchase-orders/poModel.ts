@@ -1,4 +1,5 @@
 // Shared types and helpers for the Purchase Orders module.
+import { statusClass } from '@/components/common/status';
 
 export type POStatus =
   | 'new'
@@ -48,15 +49,15 @@ export interface PurchaseOrder {
 }
 
 export const STATUS_META: Record<POStatus, { label: string; className: string }> = {
-  new: { label: 'Draft', className: 'bg-slate-100 text-slate-700 border-slate-200' },
-  pending_approval: { label: 'Pending approval', className: 'bg-amber-50 text-amber-700 border-amber-200' },
-  approved: { label: 'Approved', className: 'bg-blue-50 text-blue-700 border-blue-200' },
-  sent: { label: 'Sent to vendor', className: 'bg-indigo-50 text-indigo-700 border-indigo-200' },
-  acknowledged: { label: 'Acknowledged', className: 'bg-violet-50 text-violet-700 border-violet-200' },
-  partially_received: { label: 'Partially received', className: 'bg-cyan-50 text-cyan-700 border-cyan-200' },
-  received: { label: 'Received', className: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
-  closed: { label: 'Closed', className: 'bg-slate-100 text-slate-500 border-slate-200' },
-  cancelled: { label: 'Cancelled', className: 'bg-red-50 text-red-700 border-red-200' },
+  new: { label: 'Draft', className: statusClass('neutral') },
+  pending_approval: { label: 'Pending approval', className: statusClass('pending') },
+  approved: { label: 'Approved', className: statusClass('success') },
+  sent: { label: 'Sent to vendor', className: statusClass('info') },
+  acknowledged: { label: 'Acknowledged', className: statusClass('info') },
+  partially_received: { label: 'Partially received', className: statusClass('info') },
+  received: { label: 'Received', className: statusClass('success') },
+  closed: { label: 'Closed', className: statusClass('muted') },
+  cancelled: { label: 'Cancelled', className: statusClass('danger') },
 };
 
 export const PRIORITY_META: Record<POPriority, { label: string; className: string }> = {

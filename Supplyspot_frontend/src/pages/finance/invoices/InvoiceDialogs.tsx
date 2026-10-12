@@ -6,6 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Invoice, PAYMENT_METHODS, formatMoney } from './invoiceModel';
+import { FormAlert } from '@/components/common';
 
 const todayIso = () => {
   const d = new Date();
@@ -92,9 +93,9 @@ export function PaymentDialog({
           </div>
         </div>
         <DialogFooter className="items-center gap-3">
-          <p className="text-sm text-destructive mr-auto" role="alert">{error}</p>
+          {error ? <FormAlert className="mr-auto">{error}</FormAlert> : null}
           <Button variant="ghost" onClick={() => onOpenChange(false)} disabled={busy}>Cancel</Button>
-          <Button onClick={submit} disabled={busy}>{busy ? 'Saving…' : partial ? 'Record part payment' : 'Mark as paid'}</Button>
+          <Button onClick={submit} disabled={busy} loading={busy}>{busy ? 'Saving…' : partial ? 'Record part payment' : 'Mark as paid'}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -137,11 +138,11 @@ export function ReasonDialog({
         <div className="space-y-1.5">
           <Label htmlFor="reason">{label}</Label>
           <Textarea id="reason" rows={3} placeholder={placeholder} value={reason} onChange={(e) => setReason(e.target.value)} />
-          {error && <p className="text-sm text-destructive" role="alert">{error}</p>}
+          {error && <FormAlert>{error}</FormAlert>}
         </div>
         <DialogFooter>
           <Button variant="ghost" onClick={() => onOpenChange(false)} disabled={busy}>Cancel</Button>
-          <Button onClick={submit} disabled={busy} className={destructive ? 'bg-destructive text-white hover:bg-destructive/90' : ''}>
+          <Button onClick={submit} disabled={busy} className={destructive ? 'bg-destructive text-white hover:bg-destructive/90' : ''} loading={busy}>
             {busy ? 'Working…' : confirmLabel}
           </Button>
         </DialogFooter>

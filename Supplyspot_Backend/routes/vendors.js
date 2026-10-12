@@ -40,7 +40,7 @@ class Vendor {
     const query = db('vendors').select('*');
     if (filters.status) query.where('status', filters.status);
     if (filters.category) query.where('category', filters.category);
-    if (filters.search) query.where('name', 'ilike', `%${filters.search}%`);
+    if (filters.search) query.whereRaw('lower(name) like ?', [`%${filters.search.toLowerCase()}%`]);
     const vendors = await query.limit(filters.limit).offset((filters.page - 1) * filters.limit);
     return {
       vendors,

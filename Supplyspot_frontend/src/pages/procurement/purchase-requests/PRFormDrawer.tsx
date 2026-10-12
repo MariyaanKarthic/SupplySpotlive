@@ -8,6 +8,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from '@/components/ui/drawer';
 import { CATEGORIES, CURRENCIES, DEPARTMENTS, PRPriority, PurchaseRequest, formatMoney, mapPurchaseRequest } from './prModel';
+import { FormAlert } from '@/components/common';
+import { toast } from 'sonner';
 
 interface ItemDraft {
   key: number;
@@ -122,7 +124,9 @@ export function PRFormDrawer({
       }
       onSaved(mapPurchaseRequest(res.data), !pr);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Could not save the purchase request');
+      const message = err instanceof Error ? err.message : 'Could not save the purchase request';
+      setError(message);
+      toast.error(message);
     } finally {
       setSaving(null);
     }
@@ -143,11 +147,11 @@ export function PRFormDrawer({
             <h3 className="text-sm font-semibold text-foreground">What do you need?</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5 sm:col-span-2">
-                <Label htmlFor="pr-title">Title</Label>
+                <Label className="label-required" htmlFor="pr-title">Title</Label>
                 <Input id="pr-title" value={form.title} onChange={(e) => set('title', e.target.value)} placeholder="e.g. Laptops for new hires" />
               </div>
               <div className="space-y-1.5">
-                <Label>Department</Label>
+                <Label className="label-required">Department</Label>
                 <Select value={form.department || undefined} onValueChange={(v) => set('department', v)}>
                   <SelectTrigger aria-label="Department"><SelectValue placeholder="Choose a department" /></SelectTrigger>
                   <SelectContent>
@@ -156,7 +160,7 @@ export function PRFormDrawer({
                 </Select>
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="pr-needed">Needed by</Label>
+                <Label className="label-required" htmlFor="pr-needed">Needed by</Label>
                 <Input id="pr-needed" type="date" min={todayIso()} value={form.requestedDate} onChange={(e) => set('requestedDate', e.target.value)} />
               </div>
               <div className="space-y-1.5">
@@ -226,13 +230,13 @@ export function PRFormDrawer({
             <p className="text-lg font-semibold tabular-nums">{formatMoney(total, form.currency)}</p>
           </div>
           <div className="flex flex-col items-stretch sm:items-end gap-2">
-            {error && <p className="text-sm text-destructive" role="alert">{error}</p>}
+            {error && <FormAlert>{error}</FormAlert>}
             <div className="flex gap-2 justify-end">
               <Button variant="ghost" onClick={() => onOpenChange(false)} disabled={!!saving}>Cancel</Button>
-              <Button variant="outline" onClick={() => save('draft')} disabled={!!saving}>
+              <Button variant="outline" onClick={() => save('draft')} disabled={!!saving} loading={saving === 'draft'}>
                 {saving === 'draft' ? 'Saving…' : pr ? 'Save changes' : 'Save draft'}
               </Button>
-              <Button onClick={() => save('submit')} disabled={!!saving}>
+              <Button onClick={() => save('submit')} disabled={!!saving} loading={saving === 'submit'}>
                 {saving === 'submit' ? 'Submitting…' : 'Submit for approval'}
               </Button>
             </div>

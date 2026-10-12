@@ -17,6 +17,7 @@ import {
   PurchaseOrder, STATUS_FILTERS, deliveryLabel, exportPurchaseOrdersCsv, formatCompactMoney, formatDate, formatMoney, isOpen, isOverdue,
 } from './poModel';
 import { POAction, PriorityBadge, StatusBadge, nextStep } from './PODetail';
+import { EmptyTableRow, KpiCard, KpiTone, PageHeader, SortIndicator } from '@/components/common';
 
 type SortKey = 'poNumber' | 'vendorName' | 'totalAmount' | 'issueDate' | 'expectedDeliveryDate' | 'status';
 
@@ -128,45 +129,28 @@ export function POList({
     { id: 'overdue', label: 'Overdue deliveries', value: counts.overdue.length, hint: 'Past expected date', icon: AlertTriangle, tone: 'red',
       active: filters.overdueOnly, apply: () => updateFilters({ status: 'all', overdueOnly: true }) },
   ];
-  const toneClass: Record<string, string> = {
-    blue: 'border-l-blue-500 [&_.kpi-icon]:bg-blue-50 [&_.kpi-icon]:text-blue-600',
-    amber: 'border-l-amber-500 [&_.kpi-icon]:bg-amber-50 [&_.kpi-icon]:text-amber-600',
-    violet: 'border-l-violet-500 [&_.kpi-icon]:bg-violet-50 [&_.kpi-icon]:text-violet-600',
-    red: 'border-l-red-500 [&_.kpi-icon]:bg-red-50 [&_.kpi-icon]:text-red-600',
-  };
-
-  const SortIcon = ({ k }: { k?: SortKey }) =>
-    !k ? null : sort.key !== k ? <ArrowUpDown className="w-3.5 h-3.5 text-muted-foreground/60" />
-      : sort.dir === 'asc' ? <ArrowUp className="w-3.5 h-3.5 text-primary" /> : <ArrowDown className="w-3.5 h-3.5 text-primary" />;
+  const SortIcon = ({ k }: { k?: SortKey }) => (!k ? null : <SortIndicator active={sort.key === k} dir={sort.dir} />);
 
   return (
     <div className="space-y-5">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">Purchase Orders</h1>
-        <div className="flex gap-2">
+      <PageHeader
+        title="Purchase Orders"
+        description="Approve orders, send them to vendors and follow each one through to delivery."
+        actions={<>
           <Button variant="outline" className="gap-2" onClick={onRefresh} disabled={loading}>
             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} /> Refresh
           </Button>
           <Button className="gap-2" onClick={onCreate}>
             <Plus className="w-4 h-4" /> New purchase order
           </Button>
-        </div>
-      </div>
+        </>}
+      />
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {kpis.map(k => (
-          <button key={k.id} type="button" onClick={k.apply} aria-pressed={k.active} className="text-left rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-            <Card className={`border-l-4 shadow-sm hover:shadow-md transition-all ${toneClass[k.tone]} ${k.active ? 'ring-2 ring-primary/30' : ''}`}>
-              <CardContent className="p-3.5 flex items-center justify-between">
-                <div>
-                  <p className="text-xs text-muted-foreground font-medium">{k.label}</p>
-                  <p className="text-xl font-bold text-foreground mt-0.5 tabular-nums">{loading && !purchaseOrders.length ? '–' : k.value}</p>
-                  <p className="text-[11px] text-muted-foreground">{k.hint}</p>
-                </div>
-                <div className="kpi-icon p-2.5 rounded-lg"><k.icon className="w-5 h-5" /></div>
-              </CardContent>
-            </Card>
-          </button>
+          <KpiCard key={k.id} label={k.label} value={k.value} hint={k.hint} icon={k.icon} tone={k.tone as KpiTone}
+            valueClassName={k.id === 'overdue' && k.value > 0 ? 'text-red-600' : undefined}
+            loading={loading && !purchaseOrders.length} active={k.active} onClick={k.apply} />
         ))}
       </div>
 
@@ -300,23 +284,15 @@ export function POList({
                 <tr key={i}><td colSpan={9} className="p-3"><div className="h-6 rounded bg-muted animate-pulse" /></td></tr>
               ))}
               {!loading && !error && sorted.length === 0 && (
-                <tr>
-                  <td colSpan={9} className="py-14 text-center">
-                    <ShoppingCart className="w-10 h-10 mx-auto text-muted-foreground/40" />
-                    {purchaseOrders.length === 0 ? (
-                      <>
-                        <p className="mt-3 font-medium text-foreground">No purchase orders yet</p>
-                        <p className="text-sm text-muted-foreground">Create your first PO to start tracking orders with vendors.</p>
-                        <Button className="mt-4 gap-2" onClick={onCreate}><Plus className="w-4 h-4" /> New purchase order</Button>
-                      </>
-                    ) : (
-                      <>
-                        <p className="mt-3 font-medium text-foreground">No purchase orders match these filters</p>
-                        <Button variant="link" onClick={() => updateFilters({ status: 'all', search: '', priority: 'all', overdueOnly: false })}>Clear filters</Button>
-                      </>
-                    )}
-                  </td>
-                </tr>
+                purchaseOrders.length === 0 ? (
+                  <EmptyTableRow colSpan={9} icon={ShoppingCart} title="No purchase orders yet"
+                    description="Award a quotation on an RFQ to get a draft PO, or create one directly to start tracking an order."
+                    action={{ label: 'New purchase order', icon: Plus, onClick: onCreate }} />
+                ) : (
+                  <EmptyTableRow colSpan={9} filtered title="No purchase orders match these filters"
+                    description="Try a different status, priority or search term."
+                    onClearFilters={() => updateFilters({ status: 'all', search: '', priority: 'all', overdueOnly: false })} />
+                )
               )}
               {paged.map(po => {
                 const step = nextStep(po);
@@ -346,9 +322,9 @@ export function POList({
                     {visible.includes('status') && <td className="p-3 whitespace-nowrap"><StatusBadge po={po} /></td>}
                     <td className="p-3 text-right whitespace-nowrap no-print" onClick={(e) => e.stopPropagation()}>
                       {step && (
-                        <Button size="sm" variant={quickAction ? 'outline' : 'ghost'} className="h-8 gap-1.5" disabled={busyId === po.id}
+                        <Button size="sm" variant={quickAction ? 'outline' : 'ghost'} className="h-8 gap-1.5" loading={busyId === po.id}
                           onClick={() => (quickAction ? onAction(po, step.action) : onOpen(po))}>
-                          <step.icon className="w-3.5 h-3.5" />
+                          {busyId !== po.id && <step.icon className="w-3.5 h-3.5" />}
                           {busyId === po.id ? 'Working…' : step.label}
                         </Button>
                       )}

@@ -34,7 +34,7 @@ router.get('/', [
     if (status) q = q.where('status', status);
     if (category) q = q.where('category', category);
     if (priority) q = q.where('priority', priority);
-    if (search) q = q.where(function() { this.where('title', 'like', `%${search}%`).orWhere('dispute_number', 'like', `%${search}%`); });
+    if (search) q = q.where(function() { this.whereRaw('lower(title) like ?', [`%${search.toLowerCase()}%`]).orWhereRaw('lower(dispute_number) like ?', [`%${search.toLowerCase()}%`]); });
 
     const total = await q.clone().count('id as count').first();
     const disputes = await q.orderBy('created_at', 'desc').limit(parseInt(limit)).offset(offset);

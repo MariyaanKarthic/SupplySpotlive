@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react';
-import { AlertTriangle, CheckCircle2, Clock, Download, FilePen, Filter, Plus, RefreshCw, Search, ShieldCheck, X } from 'lucide-react';
+import React, { useMemo, useState } from 'react';
+import { AlertTriangle, CheckCircle2, Clock, Download, FilePen, Filter, Plus, Receipt, RefreshCw, Search, ShieldCheck, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
@@ -11,6 +11,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import {
   Invoice, OVERDUE_META, STATUS_FILTERS, STATUS_META, dueLabel, exportInvoicesCsv, formatDate, formatMoney, isPartlyPaid, sumByCurrency, toneClass,
 } from './invoiceModel';
+import { EmptyTableRow, KpiCard, KpiTone, PageHeader, SortableHeader, SortState, sortRows } from '@/components/common';
 
 export interface InvoiceFilters {
   status: string;
@@ -94,54 +95,48 @@ export function InvoiceList({
       });
   }, [invoices, filters]);
 
+  // 'priority' keeps the overdue-first order above; clicking a column header sorts by that column instead.
+  type SortKey = 'priority' | 'invoiceNumber' | 'vendorName' | 'poNumber' | 'totalAmount' | 'dueDate' | 'status';
+  const [sort, setSort] = useState<SortState<SortKey>>({ key: 'priority', dir: 'asc' });
+  const toggleSort = (key: SortKey) =>
+    setSort(s => (s.key === key ? { key, dir: s.dir === 'asc' ? 'desc' : 'asc' } : { key, dir: key === 'totalAmount' ? 'desc' : 'asc' }));
+  const rows = useMemo(() => (sort.key === 'priority' ? filtered
+    : sortRows(filtered, i => (sort.key === 'status' ? STATUS_META[i.status]?.label : (i as any)[sort.key]), sort.dir)), [filtered, sort]);
+  const clearFilters = () => onFiltersChange({ status: 'all', search: '', vendorId: '', poId: '', dueFrom: '', dueTo: '' });
+
   const kpis = [
-    { id: 'draft', label: 'Draft', list: groups.draft, amount: (i: Invoice) => i.totalAmount, icon: FilePen, tone: 'border-l-slate-400 [&_.kpi-icon]:bg-slate-100 [&_.kpi-icon]:text-slate-600' },
-    { id: 'submitted', label: 'Pending approval', list: groups.submitted, amount: (i: Invoice) => i.totalAmount, icon: Clock, tone: 'border-l-amber-500 [&_.kpi-icon]:bg-amber-50 [&_.kpi-icon]:text-amber-600' },
-    { id: 'approved', label: 'Approved', list: groups.approved, amount: (i: Invoice) => i.outstanding, icon: ShieldCheck, tone: 'border-l-blue-500 [&_.kpi-icon]:bg-blue-50 [&_.kpi-icon]:text-blue-600' },
-    { id: 'paid', label: 'Paid', list: groups.paid, amount: (i: Invoice) => i.totalAmount, icon: CheckCircle2, tone: 'border-l-emerald-500 [&_.kpi-icon]:bg-emerald-50 [&_.kpi-icon]:text-emerald-600' },
-    { id: 'overdue', label: 'Overdue', list: groups.overdue, amount: (i: Invoice) => i.outstanding, icon: AlertTriangle, tone: 'border-l-red-500 [&_.kpi-icon]:bg-red-50 [&_.kpi-icon]:text-red-600' },
+    { id: 'draft', label: 'Draft', list: groups.draft, amount: (i: Invoice) => i.totalAmount, icon: FilePen, tone: 'slate' },
+    { id: 'submitted', label: 'Pending approval', list: groups.submitted, amount: (i: Invoice) => i.totalAmount, icon: Clock, tone: 'amber' },
+    { id: 'approved', label: 'Approved', list: groups.approved, amount: (i: Invoice) => i.outstanding, icon: ShieldCheck, tone: 'blue' },
+    { id: 'paid', label: 'Paid', list: groups.paid, amount: (i: Invoice) => i.totalAmount, icon: CheckCircle2, tone: 'emerald' },
+    { id: 'overdue', label: 'Overdue', list: groups.overdue, amount: (i: Invoice) => i.outstanding, icon: AlertTriangle, tone: 'red' },
   ];
   const advancedCount = [filters.vendorId, filters.dueFrom, filters.dueTo].filter(Boolean).length;
 
   return (
     <div className="space-y-5">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">Invoices</h1>
-          <p className="text-sm text-muted-foreground mt-1">Supplier bills against purchase orders and goods receipts, from approval to payment.</p>
-        </div>
-        <div className="flex gap-2">
+      <PageHeader
+        title="Invoices"
+        description="Supplier bills against purchase orders and goods receipts, from approval to payment."
+        actions={<>
           <Button variant="outline" className="gap-2" onClick={onRefresh} disabled={loading}>
             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} /> Refresh
           </Button>
-          <Button variant="outline" className="gap-2" disabled={!filtered.length} onClick={() => exportInvoicesCsv(filtered, 'invoices.csv')}>
+          <Button variant="outline" className="gap-2" disabled={!filtered.length} onClick={() => exportInvoicesCsv(rows, 'invoices.csv')}>
             <Download className="w-4 h-4" /> Export
           </Button>
           {canCreate && <Button className="gap-2" onClick={onCreate}><Plus className="w-4 h-4" /> New invoice</Button>}
-        </div>
-      </div>
+        </>}
+      />
 
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
         {kpis.map(k => {
           const active = filters.status === k.id;
           return (
-            <button key={k.id} type="button" aria-pressed={active} className="text-left rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-              onClick={() => onFiltersChange({ status: active ? 'all' : k.id })}>
-              <Card className={`border-l-4 shadow-sm hover:shadow-md transition-all h-full ${k.tone} ${active ? 'ring-2 ring-primary/30' : ''}`}>
-                <CardContent className="p-3.5 flex items-center justify-between gap-2">
-                  <div className="min-w-0">
-                    <p className="text-xs text-muted-foreground font-medium">{k.label}</p>
-                    <p className={`text-xl font-bold mt-0.5 tabular-nums ${k.id === 'overdue' && k.list.length > 0 ? 'text-red-600' : 'text-foreground'}`}>
-                      {loading && !invoices.length ? '–' : k.list.length}
-                    </p>
-                    <p className="text-[11px] text-muted-foreground truncate">
-                      {k.list.length ? `${sumByCurrency(k.list, k.amount)}${k.id === 'approved' || k.id === 'overdue' ? ' due' : ''}` : 'None'}
-                    </p>
-                  </div>
-                  <div className="kpi-icon p-2.5 rounded-lg shrink-0"><k.icon className="w-5 h-5" /></div>
-                </CardContent>
-              </Card>
-            </button>
+            <KpiCard key={k.id} label={k.label} value={k.list.length} icon={k.icon} tone={k.tone as KpiTone}
+              hint={k.list.length ? `${sumByCurrency(k.list, k.amount)}${k.id === 'approved' || k.id === 'overdue' ? ' due' : ''}` : 'None'}
+              valueClassName={k.id === 'overdue' && k.list.length > 0 ? 'text-red-600' : undefined}
+              loading={loading && !invoices.length} active={active} onClick={() => onFiltersChange({ status: active ? 'all' : k.id })} />
           );
         })}
       </div>
@@ -233,29 +228,31 @@ export function InvoiceList({
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Invoice</TableHead>
-                  <TableHead>Vendor</TableHead>
-                  <TableHead>Against</TableHead>
-                  <TableHead className="text-right">Amount</TableHead>
-                  <TableHead>Due</TableHead>
-                  <TableHead>Status</TableHead>
+                  <SortableHeader k="invoiceNumber" label="Invoice" sort={sort} onSort={toggleSort} />
+                  <SortableHeader k="vendorName" label="Vendor" sort={sort} onSort={toggleSort} />
+                  <SortableHeader k="poNumber" label="Against" sort={sort} onSort={toggleSort} />
+                  <SortableHeader k="totalAmount" label="Amount" align="right" sort={sort} onSort={toggleSort} />
+                  <SortableHeader k="dueDate" label="Due" sort={sort} onSort={toggleSort} />
+                  <SortableHeader k="status" label="Status" sort={sort} onSort={toggleSort} />
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {loading && !invoices.length && [0, 1, 2, 3].map(i => (
                   <TableRow key={i}><TableCell colSpan={6}><div className="h-6 rounded bg-muted animate-pulse" /></TableCell></TableRow>
                 ))}
-                {!loading && filtered.length === 0 && (
-                  <TableRow>
-                    <TableCell colSpan={6} className="py-12 text-center text-muted-foreground">
-                      {invoices.length ? 'No invoices match these filters.' : 'No invoices yet. Create one from a sent purchase order or a goods receipt.'}
-                    </TableCell>
-                  </TableRow>
-                )}
-                {filtered.map(i => {
+                {!loading && filtered.length === 0 && (invoices.length ? (
+                  <EmptyTableRow colSpan={6} filtered title="No invoices match these filters"
+                    description="Try a different status, vendor or due date range." onClearFilters={clearFilters} />
+                ) : (
+                  <EmptyTableRow colSpan={6} icon={Receipt} title="No invoices yet"
+                    description="Record a supplier bill against a sent purchase order or a goods receipt, then send it for approval."
+                    action={canCreate ? { label: 'New invoice', icon: Plus, onClick: onCreate } : null} />
+                ))}
+                {rows.map(i => {
                   const due = dueLabel(i);
                   return (
-                    <TableRow key={i.id} className={`cursor-pointer ${i.isOverdue ? 'bg-red-50/60 hover:bg-red-50' : ''}`} onClick={() => onOpen(i)}>
+                    <TableRow key={i.id} className={`cursor-pointer ${i.isOverdue ? 'bg-red-50/60 hover:bg-red-50' : ''}`} onClick={() => onOpen(i)}
+                      tabIndex={0} onKeyDown={(e) => { if (e.key === 'Enter') onOpen(i); }} aria-label={`Open ${i.invoiceNumber}`}>
                       <TableCell>
                         <span className="font-medium text-foreground">{i.invoiceNumber}</span>
                         {i.vendorInvoiceNumber && <span className="block text-xs text-muted-foreground">Vendor ref {i.vendorInvoiceNumber}</span>}

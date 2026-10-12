@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { RFQ, STATUS_FILTERS, dueLabel, dueOffset, exportRFQsCsv, formatCompactMoney, formatDate, formatMoney } from './rfqModel';
 import { StatusBadge } from './RFQDetail';
+import { EmptyTableRow, KpiCard, KpiTone, PageHeader, SortableHeader } from '@/components/common';
 
 type SortKey = 'rfqNumber' | 'dueDate' | 'budget' | 'quotationCount' | 'createdAt' | 'status';
 
@@ -113,56 +114,29 @@ export function RFQList({
     { id: 'review', label: 'Under review', value: groups.review.length, hint: `${quotesToReview} quotation${quotesToReview === 1 ? '' : 's'} to compare`, icon: Scale, tone: 'amber' },
     { id: 'awarded', label: 'Awarded', value: groups.awarded.length, hint: `${formatCompactMoney(awardedValue, 'INR')} committed`, icon: Award, tone: 'emerald' },
   ];
-  const toneClass: Record<string, string> = {
-    slate: 'border-l-slate-400 [&_.kpi-icon]:bg-slate-100 [&_.kpi-icon]:text-slate-600',
-    indigo: 'border-l-indigo-500 [&_.kpi-icon]:bg-indigo-50 [&_.kpi-icon]:text-indigo-600',
-    amber: 'border-l-amber-500 [&_.kpi-icon]:bg-amber-50 [&_.kpi-icon]:text-amber-600',
-    emerald: 'border-l-emerald-500 [&_.kpi-icon]:bg-emerald-50 [&_.kpi-icon]:text-emerald-600',
-  };
-
   const SortHeader = ({ k, label, align }: { k: SortKey; label: string; align?: 'right' }) => (
-    <th className={`p-3 font-medium text-muted-foreground whitespace-nowrap ${align === 'right' ? 'text-right' : 'text-left'}`}
-      aria-sort={sort.key === k ? (sort.dir === 'asc' ? 'ascending' : 'descending') : undefined}>
-      <button className="inline-flex items-center gap-1 hover:text-foreground" onClick={() => toggleSort(k)}>
-        {label}
-        {sort.key !== k ? <ArrowUpDown className="w-3.5 h-3.5 text-muted-foreground/60" />
-          : sort.dir === 'asc' ? <ArrowUp className="w-3.5 h-3.5 text-primary" /> : <ArrowDown className="w-3.5 h-3.5 text-primary" />}
-      </button>
-    </th>
+    <SortableHeader k={k} label={label} align={align} sort={sort} onSort={toggleSort} />
   );
 
   return (
     <div className="space-y-5">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">RFQs and Quotations</h1>
-          <p className="text-sm text-muted-foreground">Send approved purchase requests to vendors, compare their quotations and award the best one.</p>
-        </div>
-        <div className="flex gap-2">
+      <PageHeader
+        title="RFQs and Quotations"
+        description="Send approved purchase requests to vendors, compare their quotations and award the best one."
+        actions={<>
           <Button variant="outline" className="gap-2" onClick={onRefresh} disabled={loading}>
             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} /> Refresh
           </Button>
           {canManage && <Button className="gap-2" onClick={onCreate}><Plus className="w-4 h-4" /> New RFQ</Button>}
-        </div>
-      </div>
+        </>}
+      />
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {kpis.map(k => {
           const active = filters.status === k.id;
           return (
-            <button key={k.id} type="button" onClick={() => updateFilters({ status: active ? 'all' : k.id })} aria-pressed={active}
-              className="text-left rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-              <Card className={`border-l-4 shadow-sm hover:shadow-md transition-all ${toneClass[k.tone]} ${active ? 'ring-2 ring-primary/30' : ''}`}>
-                <CardContent className="p-3.5 flex items-center justify-between">
-                  <div>
-                    <p className="text-xs text-muted-foreground font-medium">{k.label}</p>
-                    <p className="text-xl font-bold text-foreground mt-0.5 tabular-nums">{loading && !rfqs.length ? '–' : k.value}</p>
-                    <p className="text-[11px] text-muted-foreground">{k.hint}</p>
-                  </div>
-                  <div className="kpi-icon p-2.5 rounded-lg"><k.icon className="w-5 h-5" /></div>
-                </CardContent>
-              </Card>
-            </button>
+            <KpiCard key={k.id} label={k.label} value={k.value} hint={k.hint} icon={k.icon} tone={k.tone as KpiTone}
+              loading={loading && !rfqs.length} active={active} onClick={() => updateFilters({ status: active ? 'all' : k.id })} />
           );
         })}
       </div>
@@ -235,23 +209,14 @@ export function RFQList({
                 <tr key={i}><td colSpan={7} className="p-3"><div className="h-6 rounded bg-muted animate-pulse" /></td></tr>
               ))}
               {!loading && !error && sorted.length === 0 && (
-                <tr>
-                  <td colSpan={7} className="py-14 text-center">
-                    <Quote className="w-10 h-10 mx-auto text-muted-foreground/40" />
-                    {rfqs.length === 0 ? (
-                      <>
-                        <p className="mt-3 font-medium text-foreground">No RFQs yet</p>
-                        <p className="text-sm text-muted-foreground">Create one from an approved purchase request to start collecting quotations.</p>
-                        {canManage && <Button className="mt-4 gap-2" onClick={onCreate}><Plus className="w-4 h-4" /> New RFQ</Button>}
-                      </>
-                    ) : (
-                      <>
-                        <p className="mt-3 font-medium text-foreground">No RFQs match these filters</p>
-                        <Button variant="link" onClick={clearFilters}>Clear filters</Button>
-                      </>
-                    )}
-                  </td>
-                </tr>
+                rfqs.length === 0 ? (
+                  <EmptyTableRow colSpan={7} icon={Quote} title="No RFQs yet"
+                    description="Create one from an approved purchase request to start collecting quotations from vendors."
+                    action={canManage ? { label: 'New RFQ', icon: Plus, onClick: onCreate } : null} />
+                ) : (
+                  <EmptyTableRow colSpan={7} filtered title="No RFQs match these filters"
+                    description="Try a different status, purchase request or vendor." onClearFilters={clearFilters} />
+                )
               )}
               {paged.map(rfq => {
                 const step = nextStep(rfq);

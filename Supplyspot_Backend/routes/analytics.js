@@ -7,6 +7,11 @@ const logger = require('../config/logger');
 
 const router = express.Router();
 
+// Year-month bucket that works on both SQLite and PostgreSQL
+const monthExpr = () => (db.client.config.client === 'pg'
+  ? "to_char(created_at, 'YYYY-MM') as month"
+  : "strftime('%Y-%m', created_at) as month");
+
 // GET /analytics/dashboard — aggregated KPIs
 router.get('/dashboard', [authenticate, authorize('admin', 'procurement_manager', 'finance_manager', 'ap_clerk', 'viewer')], async (req, res) => {
   try {
@@ -96,7 +101,7 @@ router.get('/dashboard', [authenticate, authorize('admin', 'procurement_manager'
     sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
     const monthlyInvoices = await db('invoices')
       .where('created_at', '>=', sixMonthsAgo)
-      .select(db.raw("strftime('%Y-%m', created_at) as month"), db.raw('COUNT(*) as count'), db.raw('SUM(amount) as total'))
+      .select(db.raw(monthExpr()), db.raw('COUNT(*) as count'), db.raw('SUM(amount) as total'))
       .groupBy('month')
       .orderBy('month', 'asc');
 
@@ -165,7 +170,7 @@ router.get('/invoices', [authenticate, authorize('admin', 'finance_manager', 'ap
   try {
     const byStatus = await db('invoices').groupBy('status').select('status', db.raw('COUNT(*) as count'), db.raw('SUM(amount) as total'));
     const byMonth = await db('invoices')
-      .select(db.raw("strftime('%Y-%m', created_at) as month"), db.raw('COUNT(*) as count'), db.raw('SUM(amount) as total'))
+      .select(db.raw(monthExpr()), db.raw('COUNT(*) as count'), db.raw('SUM(amount) as total'))
       .groupBy('month').orderBy('month', 'asc').limit(12);
     res.json({ success: true, data: { byStatus: byStatus.map(s => ({ ...s, count: Number(s.count), total: Number(s.total) })), byMonth } });
   } catch (error) {

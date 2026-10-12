@@ -21,6 +21,7 @@ import {
   CurrentUser, PRHistoryEntry, PRIORITY_META, PurchaseRequest, STATUS_META, canCreateRfq, canDecide, canEdit, formatDate, formatDateTime,
   formatMoney, isOwnerOrAdmin, neededByLabel, neededByOffset, waitingDays,
 } from './prModel';
+import { FormAlert } from '@/components/common';
 
 export type PRAction = 'submit' | 'approve' | 'reject' | 'revise' | 'delete' | 'create_rfq';
 
@@ -235,7 +236,7 @@ export function PRDetail({
           </Button>
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
-              <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">{pr.prNumber}</h1>
+              <h1 className="text-2xl sm:text-[1.75rem] font-semibold tracking-tight text-foreground">{pr.prNumber}</h1>
               <StatusBadge pr={pr} />
               <PriorityBadge pr={pr} />
             </div>
@@ -398,13 +399,13 @@ export function PRDetail({
                 <Textarea id="pr-reject-reason" rows={4} value={reason} onChange={(e) => setReason(e.target.value)} placeholder="What needs to change before this can be approved?" autoFocus />
               </div>
             )}
-            {dialogError && <p className="text-sm text-destructive" role="alert">{dialogError}</p>}
+            {dialogError && <FormAlert>{dialogError}</FormAlert>}
           </div>
 
           <DialogFooter>
             <Button variant="ghost" onClick={() => setDialog(null)} disabled={busy}>Cancel</Button>
             <Button onClick={confirmDialog} disabled={busy}
-              className={shown === 'reject' ? 'bg-destructive text-white hover:bg-destructive/90' : ''}>
+              className={shown === 'reject' ? 'bg-destructive text-white hover:bg-destructive/90' : ''} loading={busy}>
               {busy ? 'Working…' : shown === 'approve' ? 'Approve' : 'Reject request'}
             </Button>
           </DialogFooter>

@@ -256,7 +256,7 @@ export default function InviteManager() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">Invite Management</h1>
+          <h1 className="text-2xl sm:text-[1.75rem] font-semibold tracking-tight text-foreground">Invite Management</h1>
         </div>
         <Sheet open={showCreateDialog} onOpenChange={setShowCreateDialog}>
           <SheetTrigger asChild>

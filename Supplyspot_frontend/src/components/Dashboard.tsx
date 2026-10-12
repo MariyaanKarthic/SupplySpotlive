@@ -71,7 +71,7 @@ export function Dashboard() {
     <div className="p-6 space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">Dashboard</h1>
+        <h1 className="text-2xl sm:text-[1.75rem] font-semibold tracking-tight text-foreground">Dashboard</h1>
       </div>
 
       {/* Key Metrics */}

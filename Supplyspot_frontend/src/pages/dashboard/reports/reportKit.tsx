@@ -3,6 +3,7 @@ import React from 'react';
 import { ArrowDownRight, ArrowUpRight, Minus } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { formatDate } from '../../procurement/purchase-orders/poModel';
+import { KpiCard, KpiTone } from '@/components/common';
 
 export { formatDate };
 
@@ -160,14 +161,7 @@ export interface KpiSpec {
   onClick?: () => void;
 }
 
-const TONES: Record<KpiSpec['tone'], string> = {
-  blue: 'border-l-blue-500 [&_.kpi-icon]:bg-blue-50 [&_.kpi-icon]:text-blue-600',
-  green: 'border-l-emerald-500 [&_.kpi-icon]:bg-emerald-50 [&_.kpi-icon]:text-emerald-600',
-  amber: 'border-l-amber-500 [&_.kpi-icon]:bg-amber-50 [&_.kpi-icon]:text-amber-600',
-  red: 'border-l-red-500 [&_.kpi-icon]:bg-red-50 [&_.kpi-icon]:text-red-600',
-  violet: 'border-l-violet-500 [&_.kpi-icon]:bg-violet-50 [&_.kpi-icon]:text-violet-600',
-  slate: 'border-l-slate-400 [&_.kpi-icon]:bg-slate-100 [&_.kpi-icon]:text-slate-600',
-};
+const TONES: Record<KpiSpec['tone'], KpiTone> = { blue: 'blue', green: 'emerald', amber: 'amber', red: 'red', violet: 'violet', slate: 'slate' };
 
 function Delta({ k, previousLabel }: { k: KpiSpec; previousLabel: string }) {
   const cur = k.current;
@@ -195,28 +189,11 @@ function Delta({ k, previousLabel }: { k: KpiSpec; previousLabel: string }) {
 export function KpiRow({ kpis, loading, hasData, previousLabel }: { kpis: KpiSpec[]; loading: boolean; hasData: boolean; previousLabel: string | null }) {
   return (
     <div className={`grid grid-cols-1 sm:grid-cols-2 ${kpis.length === 3 ? 'xl:grid-cols-3' : 'xl:grid-cols-4'} gap-3`}>
-      {kpis.map(k => {
-        const Icon = k.icon;
-        const body = (
-          <Card className={`border-l-4 shadow-sm h-full ${TONES[k.tone]} ${k.onClick ? 'hover:shadow-md transition-all' : ''}`}>
-            <CardContent className="p-4">
-              <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0 space-y-1">
-                  <p className="text-xs text-muted-foreground font-medium truncate">{k.label}</p>
-                  <p className={`text-2xl font-bold tabular-nums truncate ${loading && !hasData ? 'animate-pulse text-muted-foreground' : 'text-foreground'}`}>{k.value}</p>
-                  {k.sub && <p className="text-[11px] text-muted-foreground truncate" title={k.sub}>{k.sub}</p>}
-                  {k.note && <p className="text-[11px] text-amber-700 truncate" title={k.note}>{k.note}</p>}
-                </div>
-                <div className="kpi-icon rounded-lg p-2 shrink-0"><Icon className="w-5 h-5" /></div>
-              </div>
-              {previousLabel && <Delta k={k} previousLabel={previousLabel} />}
-            </CardContent>
-          </Card>
-        );
-        return k.onClick ? (
-          <button key={k.id} type="button" onClick={k.onClick} className="text-left rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">{body}</button>
-        ) : <div key={k.id}>{body}</div>;
-      })}
+      {kpis.map(k => (
+        <KpiCard key={k.id} label={k.label} value={k.value} hint={k.sub} note={k.note} icon={k.icon} tone={TONES[k.tone]}
+          loading={loading && !hasData} onClick={k.onClick}
+          footer={previousLabel ? <Delta k={k} previousLabel={previousLabel} /> : null} />
+      ))}
     </div>
   );
 }

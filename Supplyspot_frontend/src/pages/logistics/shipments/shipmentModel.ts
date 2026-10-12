@@ -1,4 +1,5 @@
 // Shared types and helpers for the Shipment Tracking module.
+import { statusClass } from '@/components/common/status';
 
 export type ShipmentStatus = 'pending' | 'in_transit' | 'delayed' | 'delivered' | 'partially_received' | 'cancelled';
 export type TrackingEventType = 'picked_up' | 'in_transit' | 'out_for_delivery' | 'delivered' | 'exception';
@@ -76,12 +77,12 @@ export interface Shipment {
 }
 
 export const STATUS_META: Record<ShipmentStatus, { label: string; className: string }> = {
-  pending: { label: 'Awaiting dispatch', className: 'bg-slate-100 text-slate-700 border-slate-200' },
-  in_transit: { label: 'In transit', className: 'bg-blue-50 text-blue-700 border-blue-200' },
-  delayed: { label: 'Delayed', className: 'bg-red-50 text-red-700 border-red-200' },
-  delivered: { label: 'Delivered', className: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
-  partially_received: { label: 'Partially received', className: 'bg-amber-50 text-amber-700 border-amber-200' },
-  cancelled: { label: 'Cancelled', className: 'bg-slate-100 text-slate-500 border-slate-200' },
+  pending: { label: 'Awaiting dispatch', className: statusClass('pending') },
+  in_transit: { label: 'In transit', className: statusClass('info') },
+  delayed: { label: 'Delayed', className: statusClass('danger') },
+  delivered: { label: 'Delivered', className: statusClass('success') },
+  partially_received: { label: 'Partially received', className: statusClass('info') },
+  cancelled: { label: 'Cancelled', className: statusClass('danger') },
 };
 
 export const EVENT_META: Record<TrackingEventType, { label: string; dot: string }> = {

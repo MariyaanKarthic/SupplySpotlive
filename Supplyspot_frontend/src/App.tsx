@@ -37,6 +37,8 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Login from './components/Login';
 import Register from './components/Register';
 import { PageSkeleton } from "./components/PageSkeleton";
+import { PurchaseFlowBar } from "./components/PurchaseFlow";
+import { Toaster } from "./components/ui/sonner";
 import { Analytics as VercelAnalytics } from "@vercel/analytics/react";
 
 export type NavigationItem =
@@ -194,6 +196,7 @@ function Dashboard() {
         activeSection={activeSection}
         onSectionChange={setActiveSection}
       />
+      <PurchaseFlowBar activeSection={activeSection} onSectionChange={setActiveSection} />
       <main className="flex-1 overflow-hidden flex flex-col min-w-0">
         <div className="flex-1 overflow-y-auto">
           <React.Suspense fallback={<PageSkeleton />}>
@@ -224,6 +227,8 @@ export default function App() {
           <Route path="*" element={<Navigate to="/dashboard" />} />
         </Routes>
       </BrowserRouter>
+      {/* Without this, every toast.success / toast.error call in the app rendered nothing. */}
+      <Toaster position="bottom-right" richColors closeButton duration={4000} />
       <VercelAnalytics />
     </AuthProvider>
   );

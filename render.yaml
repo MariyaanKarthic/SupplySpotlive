@@ -1,0 +1,45 @@
+# Render Blueprint: backend API + frontend static site (free plans).
+# Deploy: Render dashboard -> New -> Blueprint -> pick this repo.
+# You will be asked for DATABASE_URL (Neon connection string) and ANTHROPIC_API_KEY.
+services:
+  - type: web
+    name: supplyspot-api
+    runtime: node
+    plan: free
+    rootDir: Supplyspot_Backend
+    buildCommand: npm ci
+    # Runs pending migrations on every start, then the server
+    startCommand: npm run start:prod
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: "22"
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: API_DOCS_ENABLED
+        value: "false"
+
+  - type: web
+    name: supplyspot-web
+    runtime: static
+    rootDir: Supplyspot_frontend
+    buildCommand: npm ci && npm run build
+    staticPublishPath: build
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      # If Render gives the API a different URL, change this and redeploy the site
+      - key: VITE_API_BASE_URL
+        value: https://supplyspot-api.onrender.com/api/v1

@@ -147,7 +147,7 @@ export function PODetail({
           <Button variant="ghost" size="sm" className="h-9 w-9 p-0 no-print" onClick={onBack} aria-label="Back to purchase orders">
             <ArrowLeft className="w-4 h-4" />
           </Button>
-          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground truncate">{po.poNumber}</h1>
+          <h1 className="text-2xl sm:text-[1.75rem] font-semibold tracking-tight text-foreground truncate">{po.poNumber}</h1>
           <StatusBadge po={po} />
           {overdue && <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">Delivery overdue</Badge>}
         </div>
@@ -335,7 +335,7 @@ export function PODetail({
           </div>
           <DialogFooter>
             <Button variant="ghost" onClick={() => setReceiving(false)} disabled={busy}>Cancel</Button>
-            <Button onClick={submitReceipt} disabled={busy}>{busy ? 'Saving…' : 'Save receipt'}</Button>
+            <Button onClick={submitReceipt} disabled={busy} loading={busy}>{busy ? 'Saving…' : 'Save receipt'}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

@@ -1,6 +1,7 @@
 // Shared types and helpers for the RFQ and quotation module.
 import { formatCompactMoney, formatDate, formatMoney } from '../purchase-orders/poModel';
 import { formatDateTime, parseTimestamp } from '../purchase-requests/prModel';
+import { statusClass } from '@/components/common/status';
 
 export { formatCompactMoney, formatDate, formatDateTime, formatMoney };
 
@@ -108,19 +109,19 @@ export interface RFQ {
 }
 
 export const STATUS_META: Record<RFQStatus, { label: string; className: string }> = {
-  draft: { label: 'Draft', className: 'bg-slate-100 text-slate-700 border-slate-200' },
-  sent: { label: 'Awaiting quotations', className: 'bg-indigo-50 text-indigo-700 border-indigo-200' },
-  quotations_received: { label: 'Quotations received', className: 'bg-cyan-50 text-cyan-700 border-cyan-200' },
-  under_review: { label: 'Under review', className: 'bg-amber-50 text-amber-700 border-amber-200' },
-  awarded: { label: 'Awarded', className: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
-  closed: { label: 'Closed', className: 'bg-slate-100 text-slate-500 border-slate-200' },
+  draft: { label: 'Draft', className: statusClass('neutral') },
+  sent: { label: 'Awaiting quotations', className: statusClass('info') },
+  quotations_received: { label: 'Quotations received', className: statusClass('info') },
+  under_review: { label: 'Under review', className: statusClass('pending') },
+  awarded: { label: 'Awarded', className: statusClass('success') },
+  closed: { label: 'Closed', className: statusClass('muted') },
 };
 
 export const QUOTATION_STATUS_META: Record<QuotationStatus, { label: string; className: string }> = {
-  submitted: { label: 'Submitted', className: 'bg-indigo-50 text-indigo-700 border-indigo-200' },
-  reviewed: { label: 'Reviewed', className: 'bg-amber-50 text-amber-700 border-amber-200' },
-  accepted: { label: 'Accepted', className: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
-  rejected: { label: 'Rejected', className: 'bg-red-50 text-red-700 border-red-200' },
+  submitted: { label: 'Submitted', className: statusClass('pending') },
+  reviewed: { label: 'Reviewed', className: statusClass('info') },
+  accepted: { label: 'Accepted', className: statusClass('success') },
+  rejected: { label: 'Rejected', className: statusClass('danger') },
 };
 
 // Filter chips above the list; each maps to one or more statuses.

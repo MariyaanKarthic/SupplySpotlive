@@ -9,6 +9,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from '@/components/ui/drawer';
 import { Invoice, formatDate, formatMoney, formatQty, mapInvoice, round2 } from './invoiceModel';
+import { FormAlert } from '@/components/common';
+import { toast } from 'sonner';
 
 type Source = 'po' | 'grn' | 'manual';
 
@@ -210,7 +212,9 @@ export function InvoiceFormDrawer({
       const res: any = creating ? await invoiceService.createInvoice(payload) : await invoiceService.updateInvoice(invoice!.id, payload);
       onSaved(mapInvoice(res.data), creating);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Could not save the invoice');
+      const message = err instanceof Error ? err.message : 'Could not save the invoice';
+      setError(message);
+      toast.error(message);
     } finally {
       setSaving(false);
     }
@@ -248,7 +252,7 @@ export function InvoiceFormDrawer({
               </div>
               {form.source === 'po' && (
                 <div className="space-y-1.5">
-                  <Label>Purchase order</Label>
+                  <Label className="label-required">Purchase order</Label>
                   <Select value={form.poId} onValueChange={(v) => loadSource('po', v)} disabled={posLoading}>
                     <SelectTrigger><SelectValue placeholder={posLoading ? 'Loading purchase orders…' : 'Choose a sent purchase order'} /></SelectTrigger>
                     <SelectContent className="max-h-72">
@@ -260,7 +264,7 @@ export function InvoiceFormDrawer({
               )}
               {form.source === 'grn' && (
                 <div className="space-y-1.5">
-                  <Label>Goods receipt</Label>
+                  <Label className="label-required">Goods receipt</Label>
                   <Select value={form.grnId} onValueChange={(v) => loadSource('grn', v)} disabled={grnsLoading}>
                     <SelectTrigger><SelectValue placeholder={grnsLoading ? 'Loading goods receipts…' : grns.length ? 'Choose a GRN' : 'No goods receipts yet'} /></SelectTrigger>
                     <SelectContent className="max-h-72">
@@ -276,7 +280,7 @@ export function InvoiceFormDrawer({
               {form.source === 'manual' && (
                 <div className="grid grid-cols-1 sm:grid-cols-[1fr_140px] gap-3">
                   <div className="space-y-1.5">
-                    <Label>Vendor</Label>
+                    <Label className="label-required">Vendor</Label>
                     <Select value={form.vendorId} onValueChange={(v) => setForm(f => ({ ...f, vendorId: v, vendorName: vendors.find(x => x.id === v)?.name || '' }))} disabled={vendorsLoading}>
                       <SelectTrigger><SelectValue placeholder={vendorsLoading ? 'Loading vendors…' : 'Choose a vendor'} /></SelectTrigger>
                       <SelectContent className="max-h-72">
@@ -311,11 +315,11 @@ export function InvoiceFormDrawer({
               <Input id="vendor-ref" placeholder="As printed on their bill" value={form.vendorInvoiceNumber} onChange={(e) => set('vendorInvoiceNumber', e.target.value)} />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="issue">Invoice date</Label>
+              <Label className="label-required" htmlFor="issue">Invoice date</Label>
               <Input id="issue" type="date" value={form.issueDate} onChange={(e) => set('issueDate', e.target.value)} />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="due">Due date</Label>
+              <Label className="label-required" htmlFor="due">Due date</Label>
               <Input id="due" type="date" value={form.dueDate} onChange={(e) => set('dueDate', e.target.value)} />
             </div>
           </section>
@@ -396,10 +400,10 @@ export function InvoiceFormDrawer({
         </div>
 
         <div className="p-4 border-t flex items-center justify-between gap-3 shrink-0">
-          <p className="text-sm text-destructive min-h-5" role="alert">{error}</p>
+          <div className="min-h-5 min-w-0 flex-1">{error && <FormAlert>{error}</FormAlert>}</div>
           <div className="flex gap-2 shrink-0">
             <Button variant="ghost" onClick={() => onOpenChange(false)} disabled={saving}>Cancel</Button>
-            <Button onClick={save} disabled={saving || loadingLines}>{saving ? 'Saving…' : invoice ? 'Save changes' : 'Save draft'}</Button>
+            <Button onClick={save} disabled={saving || loadingLines} loading={saving}>{saving ? 'Saving…' : invoice ? 'Save changes' : 'Save draft'}</Button>
           </div>
         </div>
       </DrawerContent>

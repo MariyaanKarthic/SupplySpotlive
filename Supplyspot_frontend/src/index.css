@@ -150,3 +150,38 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+/* Status pills: a small dot in the pill's own colour, so status reads at a glance. */
+.status-pill::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: currentColor;
+  opacity: 0.75;
+  flex-shrink: 0;
+}
+
+/* Consistent tabular figures for money and counts. */
+.tabular-nums { font-variant-numeric: tabular-nums; }
+
+/* Clickable table rows: a clear hover tint, a brand edge, and a visible keyboard focus ring. */
+tbody tr.cursor-pointer {
+  transition: background-color 120ms ease, box-shadow 120ms ease;
+}
+tbody tr.cursor-pointer:hover {
+  box-shadow: inset 3px 0 0 0 #2563eb;
+}
+tbody tr.cursor-pointer:not([class*='bg-red']):not([class*='bg-amber']):hover {
+  background-color: color-mix(in oklch, #2563eb 4%, transparent);
+}
+tbody tr.cursor-pointer:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: -2px;
+}
+
+/* Required form fields: a red asterisk after the label. */
+.label-required::after {
+  content: ' *';
+  color: var(--destructive);
+  font-weight: 600;
+}

@@ -20,6 +20,7 @@ import {
   isExpired, isOpenForQuotes, isPendingQuote,
 } from './rfqModel';
 import { QuotationComparison } from './QuotationComparison';
+import { FormAlert } from '@/components/common';
 
 export type RFQAction = 'send' | 'start_review' | 'close' | 'delete';
 export type QuoteAction = 'review' | 'accept' | 'reject' | 'archive' | 'unarchive';
@@ -370,7 +371,7 @@ export function RFQDetail({
           </Button>
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
-              <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">{rfq.rfqNumber}</h1>
+              <h1 className="text-2xl sm:text-[1.75rem] font-semibold tracking-tight text-foreground">{rfq.rfqNumber}</h1>
               <StatusBadge rfq={rfq} />
             </div>
             <p className="mt-1 text-muted-foreground truncate">{rfq.title}</p>
@@ -621,12 +622,12 @@ export function RFQDetail({
                 placeholder={shown.kind === 'reject' ? 'e.g. Above budget, delivery too late, missing items' : shown.kind === 'close' ? 'e.g. Requirement dropped, budget moved' : 'Anything the PO approver should know'} />
             </div>
           )}
-          {dialogError && <p className="text-sm text-destructive" role="alert">{dialogError}</p>}
+          {dialogError && <FormAlert>{dialogError}</FormAlert>}
 
           <DialogFooter>
             <Button variant="ghost" onClick={() => setDialog(null)} disabled={dialogBusy}>Cancel</Button>
             <Button onClick={confirm} disabled={dialogBusy}
-              className={shown?.kind === 'reject' || shown?.kind === 'delete' ? 'bg-destructive text-white hover:bg-destructive/90' : ''}>
+              className={shown?.kind === 'reject' || shown?.kind === 'delete' ? 'bg-destructive text-white hover:bg-destructive/90' : ''} loading={dialogBusy}>
               {dialogBusy ? 'Working…'
                 : shown?.kind === 'send' ? 'Send RFQ'
                   : shown?.kind === 'delete' ? 'Delete draft'

@@ -33,6 +33,9 @@ const aiRoutes = require('./routes/ai');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Behind a hosting proxy (Render), use the client's IP for rate limiting
+if (process.env.TRUST_PROXY !== 'false') app.set('trust proxy', 1);
+
 // Security middleware
 app.use(helmet({
   crossOriginResourcePolicy: { policy: "cross-origin" }

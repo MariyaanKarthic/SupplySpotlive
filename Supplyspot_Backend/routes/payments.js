@@ -32,11 +32,11 @@ router.get('/', [
         'payment_date', 'status', 'po_number', 'created_at', 'updated_at', 'created_by'
       );
 
-    if (search) q = q.where('invoice_number', 'like', `%${search}%`);
+    if (search) q = q.whereRaw('lower(invoice_number) like ?', [`%${search.toLowerCase()}%`]);
     if (dateFrom) q = q.where('payment_date', '>=', dateFrom);
     if (dateTo) q = q.where('payment_date', '<=', dateTo);
 
-    const total = await q.clone().count('id as count').first();
+    const total = await q.clone().clearSelect().count('id as count').first();
     const invoices = await q.orderBy('created_at', 'desc').limit(parseInt(limit)).offset(offset);
 
     // Enrich with vendor names

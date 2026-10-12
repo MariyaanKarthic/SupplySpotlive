@@ -12,6 +12,8 @@ import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } f
 import { PurchaseRequest } from '../purchase-requests/prModel';
 import { AiVendorRecommendationsPanel, FIT_META } from './AiVendorRecommendations';
 import { RFQ, RFQItem, RFQVendor, formatDate, formatMoney, inDaysIso, mapRFQ, todayIso } from './rfqModel';
+import { FormAlert } from '@/components/common';
+import { toast } from 'sonner';
 
 // Purchase-request item categories → the vendor categories that usually supply them, used to suggest vendors.
 const CATEGORY_MATCH: Record<string, string[]> = {
@@ -191,7 +193,9 @@ export function RFQFormDrawer({
       }
       onSaved(mapRFQ(res.data), { created: !rfq, sent: mode === 'send' });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Could not save the RFQ');
+      const message = err instanceof Error ? err.message : 'Could not save the RFQ';
+      setError(message);
+      toast.error(message);
     } finally {
       setSaving(null);
     }
@@ -264,11 +268,11 @@ export function RFQFormDrawer({
 
           <section className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5 sm:col-span-2">
-              <Label htmlFor="rfq-title">RFQ title</Label>
+              <Label className="label-required" htmlFor="rfq-title">RFQ title</Label>
               <Input id="rfq-title" value={title} onChange={(e) => { setError(null); setTitle(e.target.value); }} placeholder={source?.title || 'e.g. Laptops for new hires'} />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="rfq-due">Quotations due</Label>
+              <Label className="label-required" htmlFor="rfq-due">Quotations due</Label>
               <Input id="rfq-due" type="date" min={todayIso()} value={dueDate} onChange={(e) => { setError(null); setDueDate(e.target.value); }} />
               <p className={`text-xs flex items-center gap-1 ${dueDays !== null && (dueDays < 7 || dueDays > 14) ? 'text-amber-700' : 'text-muted-foreground'}`}>
                 <CalendarClock className="w-3.5 h-3.5" />
@@ -337,13 +341,13 @@ export function RFQFormDrawer({
             <p className="text-lg font-semibold tabular-nums">{source?.budget != null ? formatMoney(source.budget, source.currency) : '—'}</p>
           </div>
           <div className="flex flex-col items-stretch sm:items-end gap-2">
-            {error && <p className="text-sm text-destructive" role="alert">{error}</p>}
+            {error && <FormAlert>{error}</FormAlert>}
             <div className="flex gap-2 justify-end">
               <Button variant="ghost" onClick={() => onOpenChange(false)} disabled={!!saving}>Cancel</Button>
-              <Button variant="outline" onClick={() => save('draft')} disabled={!!saving}>
+              <Button variant="outline" onClick={() => save('draft')} disabled={!!saving} loading={saving === 'draft'}>
                 {saving === 'draft' ? 'Saving…' : rfq ? 'Save changes' : 'Save draft'}
               </Button>
-              <Button onClick={() => save('send')} disabled={!!saving}>
+              <Button onClick={() => save('send')} disabled={!!saving} loading={saving === 'send'}>
                 {saving === 'send' ? 'Sending…' : `Send to ${selected.length || ''} vendor${selected.length === 1 ? '' : 's'}`.replace('  ', ' ')}
               </Button>
             </div>

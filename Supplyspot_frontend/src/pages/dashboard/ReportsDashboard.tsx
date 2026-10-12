@@ -30,6 +30,7 @@ import { DeliveryReport } from './reports/DeliveryReport';
 import { PrApprovalReport } from './reports/PrApprovalReport';
 import { InvoicePaymentReport } from './reports/InvoicePaymentReport';
 import { ComplianceReport } from './reports/ComplianceReport';
+import { toast } from 'sonner';
 
 const REPORTS: { id: ReportType; label: string; short: string; icon: React.ComponentType<{ className?: string }>; blurb: string }[] = [
   { id: 'spend', label: 'Spend Analysis', short: 'Spend', icon: BarChart3, blurb: 'Committed purchase order spend by month, vendor, category and terms' },
@@ -124,8 +125,10 @@ export function ReportsDashboard({ onNavigate }: { onNavigate?: (view: any) => v
       a.click();
       a.remove();
       setTimeout(() => URL.revokeObjectURL(url), 1000);
+      toast.success(`Downloaded ${fileName}`);
     } catch (err) {
       setNotice({ tone: 'error', text: err instanceof Error ? err.message : 'Export failed' });
+      toast.error(err instanceof Error ? err.message : 'Export failed');
     } finally {
       setExporting(null);
     }
@@ -142,8 +145,8 @@ export function ReportsDashboard({ onNavigate }: { onNavigate?: (view: any) => v
   const props = { data, previous, periodLabel, previousLabel, loading, go };
 
   return (
-    <div className="px-6 pb-6 space-y-5 w-full max-w-full overflow-x-hidden">
-      <div className="sticky top-0 bg-background/95 backdrop-blur z-20 border-b py-3 -mx-6 px-6">
+    <div className="px-4 sm:px-6 pb-8 space-y-5 w-full max-w-full overflow-x-hidden">
+      <div className="sticky top-0 bg-background/95 backdrop-blur z-20 border-b py-3 -mx-4 px-4 sm:-mx-6 sm:px-6">
         <Breadcrumb className="text-xs">
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -157,7 +160,7 @@ export function ReportsDashboard({ onNavigate }: { onNavigate?: (view: any) => v
 
       <div className="flex flex-col 2xl:flex-row 2xl:items-start justify-between gap-3">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">Reports</h1>
+          <h1 className="text-2xl sm:text-[1.75rem] font-semibold tracking-tight text-foreground">Reports</h1>
           <p className="text-sm text-muted-foreground mt-1">
             Procurement, spending, supplier, delivery and compliance analytics · {data?.scope?.label || meta?.scopeLabel || '…'}
           </p>
@@ -413,8 +416,10 @@ function EmailDialog({ open, onOpenChange, report, schedule, defaultEmail, filte
       const res: any = await reportsService.saveSchedule(report.id, { frequency, format, email, filters });
       onSaved(res.data);
       onOpenChange(false);
+      toast.success(`Email schedule saved for ${email}.`);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Could not save');
+      toast.error(err instanceof Error ? err.message : 'Could not save the email schedule');
     } finally {
       setSaving(false);
     }
@@ -425,8 +430,10 @@ function EmailDialog({ open, onOpenChange, report, schedule, defaultEmail, filte
       await reportsService.deleteSchedule(report.id);
       onSaved(null);
       onOpenChange(false);
+      toast.success('Email schedule removed.');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Could not remove');
+      toast.error(err instanceof Error ? err.message : 'Could not remove the email schedule');
     } finally {
       setSaving(false);
     }
@@ -472,7 +479,7 @@ function EmailDialog({ open, onOpenChange, report, schedule, defaultEmail, filte
         </div>
         <DialogFooter className="gap-2 sm:justify-between">
           {schedule ? <Button variant="ghost" className="text-red-600" disabled={saving} onClick={remove}>Stop emailing</Button> : <span />}
-          <Button disabled={saving || !email} onClick={save}>{saving ? 'Saving…' : schedule ? 'Update' : 'Save'}</Button>
+          <Button disabled={saving || !email} onClick={save} loading={saving}>{saving ? 'Saving…' : schedule ? 'Update' : 'Save'}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

@@ -3,6 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { NavigationItem } from "@/App";
+import { PurchaseFlowOverview } from "@/components/PurchaseFlow";
+import { PageHeader, StatusBadge } from "@/components/common";
 import { 
   BarChart3, 
   UserPlus, 
@@ -271,26 +273,27 @@ export function HomeScreen({ onNavigate }: HomeScreenProps) {
   ];
 
   return (
-    <div className="p-6 md:p-8 max-w-[1700px] mx-auto space-y-8">
+    <div className="px-4 py-6 sm:p-6 md:p-8 max-w-[1700px] mx-auto space-y-8">
       {/* Header Info */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900">Welcome Back</h1>
-          <p className="text-slate-500 text-sm mt-1">Manage vendor lifecycles, payments, and logistics in one unified platform.</p>
+      <PageHeader
+        title="Welcome back"
+        description="Manage vendor lifecycles, payments, and logistics in one unified platform."
+      />
+
+      {/* The buying flow, step by step */}
+      <section aria-labelledby="flow-heading" className="space-y-3">
+        <div className="flex items-baseline justify-between gap-3">
+          <h2 id="flow-heading" className="text-base font-semibold text-foreground">Purchase flow</h2>
+          <p className="hidden sm:block text-xs text-muted-foreground">Each step feeds the next. Pick up wherever your work is.</p>
         </div>
-        <div className="hidden sm:flex items-center gap-2">
-          <Button variant="outline" size="sm" className="gap-2 h-9">
-            <RefreshCw className="w-3.5 h-3.5" />
-            Refresh Data
-          </Button>
-        </div>
-      </div>
+        <PurchaseFlowOverview onNavigate={onNavigate} />
+      </section>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
         {/* Main Grid: My Access (Module Icons) */}
         <div className="lg:col-span-3 space-y-5">
           <div className="flex items-center justify-between border-b pb-3">
-            <h2 className="text-xl font-semibold text-slate-800 tracking-tight">My Access</h2>
+            <h2 className="text-base font-semibold text-foreground">All modules</h2>
             <Badge variant="secondary" className="bg-blue-50 text-blue-700 hover:bg-blue-100">
               {modules.length} Modules Available
             </Badge>
@@ -376,19 +379,11 @@ export function HomeScreen({ onNavigate }: HomeScreenProps) {
                   </div>
                   <div className="text-right">
                     <span className="font-semibold text-slate-800 block">{order.amount}</span>
-                    <Badge 
-                      variant={
-                        order.statusVariant === "success" ? "default" :
-                        order.statusVariant === "warning" ? "outline" : "secondary"
-                      }
-                      className={`text-[9px] px-1 py-0 h-4 mt-0.5 rounded-md ${
-                        order.statusVariant === "success" ? "bg-emerald-50 text-emerald-700 border-emerald-200" :
-                        order.statusVariant === "warning" ? "bg-amber-50 text-amber-700 border-amber-200" :
-                        "bg-blue-50 text-blue-700 border-blue-200"
-                      }`}
-                    >
-                      {order.status}
-                    </Badge>
+                    <StatusBadge
+                      status={order.status}
+                      tone={order.statusVariant === "success" ? "success" : order.statusVariant === "warning" ? "pending" : "info"}
+                      className="mt-0.5 text-[10px] px-1.5 py-0"
+                    />
                   </div>
                 </div>
               ))}

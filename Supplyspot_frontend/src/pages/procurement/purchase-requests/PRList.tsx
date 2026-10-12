@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import {
   ArrowDown, ArrowUp, ArrowUpDown, CheckCircle, ChevronLeft, ChevronRight, ClipboardList, Clock, Download, FilePlus2, FileText, Filter, Plus,
-  RefreshCw, Search, X,
+  RefreshCw, Search, X, XCircle,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -15,6 +15,7 @@ import {
   neededByLabel, neededByOffset,
 } from './prModel';
 import { PRAction, PriorityBadge, StatusBadge, nextStep } from './PRDetail';
+import { EmptyTableRow, KpiCard, KpiTone, PageHeader, SortableHeader } from '@/components/common';
 
 type SortKey = 'prNumber' | 'title' | 'department' | 'budgetTotal' | 'createdAt' | 'requestedDate' | 'status';
 
@@ -108,35 +109,19 @@ export function PRList({
       active: filters.status === 'approved', apply: () => updateFilters({ status: 'approved', mineOnly: false }) },
     { id: 'drafts', label: 'My drafts', value: counts.drafts.length, hint: 'Not submitted yet', icon: FileText, tone: 'slate',
       active: filters.status === 'draft' && filters.mineOnly, apply: () => updateFilters({ status: 'draft', mineOnly: true }) },
-    { id: 'rejected', label: 'Rejected', value: counts.rejected.length, hint: 'Can be revised', icon: X, tone: 'red',
+    { id: 'rejected', label: 'Rejected', value: counts.rejected.length, hint: 'Can be revised', icon: XCircle, tone: 'red',
       active: filters.status === 'rejected', apply: () => updateFilters({ status: 'rejected', mineOnly: false }) },
   ];
-  const toneClass: Record<string, string> = {
-    amber: 'border-l-amber-500 [&_.kpi-icon]:bg-amber-50 [&_.kpi-icon]:text-amber-600',
-    emerald: 'border-l-emerald-500 [&_.kpi-icon]:bg-emerald-50 [&_.kpi-icon]:text-emerald-600',
-    slate: 'border-l-slate-400 [&_.kpi-icon]:bg-slate-100 [&_.kpi-icon]:text-slate-600',
-    red: 'border-l-red-500 [&_.kpi-icon]:bg-red-50 [&_.kpi-icon]:text-red-600',
-  };
-
   const SortHeader = ({ k, label, align }: { k: SortKey; label: string; align?: 'right' }) => (
-    <th className={`p-3 font-medium text-muted-foreground whitespace-nowrap ${align === 'right' ? 'text-right' : 'text-left'}`}
-      aria-sort={sort.key === k ? (sort.dir === 'asc' ? 'ascending' : 'descending') : undefined}>
-      <button className="inline-flex items-center gap-1 hover:text-foreground" onClick={() => toggleSort(k)}>
-        {label}
-        {sort.key !== k ? <ArrowUpDown className="w-3.5 h-3.5 text-muted-foreground/60" />
-          : sort.dir === 'asc' ? <ArrowUp className="w-3.5 h-3.5 text-primary" /> : <ArrowDown className="w-3.5 h-3.5 text-primary" />}
-      </button>
-    </th>
+    <SortableHeader k={k} label={label} align={align} sort={sort} onSort={toggleSort} />
   );
 
   return (
     <div className="space-y-5">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">Purchase Requests</h1>
-          <p className="text-sm text-muted-foreground">Ask for what your team needs. Approved requests go out to vendors as RFQs.</p>
-        </div>
-        <div className="flex gap-2">
+      <PageHeader
+        title="Purchase Requests"
+        description="Ask for what your team needs. Approved requests go out to vendors as RFQs."
+        actions={<>
           <Button variant="outline" className="gap-2" onClick={onRefresh} disabled={loading}>
             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} /> Refresh
           </Button>
@@ -145,23 +130,13 @@ export function PRList({
               <Plus className="w-4 h-4" /> New request
             </Button>
           )}
-        </div>
-      </div>
+        </>}
+      />
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {kpis.map(k => (
-          <button key={k.id} type="button" onClick={k.apply} aria-pressed={k.active} className="text-left rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-            <Card className={`border-l-4 shadow-sm hover:shadow-md transition-all ${toneClass[k.tone]} ${k.active ? 'ring-2 ring-primary/30' : ''}`}>
-              <CardContent className="p-3.5 flex items-center justify-between">
-                <div>
-                  <p className="text-xs text-muted-foreground font-medium">{k.label}</p>
-                  <p className="text-xl font-bold text-foreground mt-0.5 tabular-nums">{loading && !requests.length ? '–' : k.value}</p>
-                  <p className="text-[11px] text-muted-foreground">{k.hint}</p>
-                </div>
-                <div className="kpi-icon p-2.5 rounded-lg"><k.icon className="w-5 h-5" /></div>
-              </CardContent>
-            </Card>
-          </button>
+          <KpiCard key={k.id} label={k.label} value={k.value} hint={k.hint} icon={k.icon} tone={k.tone as KpiTone}
+            loading={loading && !requests.length} active={k.active} onClick={k.apply} />
         ))}
       </div>
 
@@ -258,23 +233,14 @@ export function PRList({
                 <tr key={i}><td colSpan={8} className="p-3"><div className="h-6 rounded bg-muted animate-pulse" /></td></tr>
               ))}
               {!loading && !error && sorted.length === 0 && (
-                <tr>
-                  <td colSpan={8} className="py-14 text-center">
-                    <ClipboardList className="w-10 h-10 mx-auto text-muted-foreground/40" />
-                    {requests.length === 0 ? (
-                      <>
-                        <p className="mt-3 font-medium text-foreground">No purchase requests yet</p>
-                        <p className="text-sm text-muted-foreground">Raise a request for the items your team needs, then submit it for approval.</p>
-                        {canRequest(user) && <Button className="mt-4 gap-2" onClick={onCreate}><Plus className="w-4 h-4" /> New request</Button>}
-                      </>
-                    ) : (
-                      <>
-                        <p className="mt-3 font-medium text-foreground">No purchase requests match these filters</p>
-                        <Button variant="link" onClick={clearFilters}>Clear filters</Button>
-                      </>
-                    )}
-                  </td>
-                </tr>
+                requests.length === 0 ? (
+                  <EmptyTableRow colSpan={8} icon={ClipboardList} title="No purchase requests yet"
+                    description="Raise a request for the items your team needs, then submit it for approval. Approved requests become RFQs."
+                    action={canRequest(user) ? { label: 'New request', icon: Plus, onClick: onCreate } : null} />
+                ) : (
+                  <EmptyTableRow colSpan={8} filtered title="No purchase requests match these filters"
+                    description="Try a different status or search term." onClearFilters={clearFilters} />
+                )
               )}
               {paged.map(pr => {
                 const step = nextStep(pr, user);
@@ -303,9 +269,9 @@ export function PRList({
                     </td>
                     <td className="p-3 text-right whitespace-nowrap no-print" onClick={(e) => e.stopPropagation()}>
                       {step ? (
-                        <Button size="sm" variant={quickAction ? 'outline' : 'ghost'} className="h-8 gap-1.5" disabled={busyId === pr.id}
+                        <Button size="sm" variant={quickAction ? 'outline' : 'ghost'} className="h-8 gap-1.5" loading={busyId === pr.id}
                           onClick={() => (quickAction ? onAction(pr, step.action) : onOpen(pr))}>
-                          <step.icon className="w-3.5 h-3.5" />
+                          {busyId !== pr.id && <step.icon className="w-3.5 h-3.5" />}
                           {busyId === pr.id ? 'Working…' : step.label}
                         </Button>
                       ) : pr.status === 'approved' && pr.rfqNumber ? (

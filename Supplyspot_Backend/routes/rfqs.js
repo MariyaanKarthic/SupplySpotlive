@@ -75,7 +75,7 @@ router.get('/', [
   if (prId) q = q.where('purchase_request_id', prId);
   if (vendorId) {
     q = q.where((b) => b
-      .where('vendor_ids', 'like', `%${vendorId}%`)
+      .whereRaw('CAST(vendor_ids AS TEXT) like ?', [`%${vendorId}%`])
       .orWhereIn('id', db('quotations').select('rfq_id').where('vendor_id', vendorId)));
   }
   if (search) {

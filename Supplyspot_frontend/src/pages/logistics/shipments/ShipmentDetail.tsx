@@ -183,7 +183,7 @@ export function ShipmentDetail({
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
         <div className="flex items-center gap-3 min-w-0 flex-wrap">
           <Button variant="ghost" size="sm" className="h-9 w-9 p-0" onClick={onBack} aria-label="Back to shipments"><ArrowLeft className="w-4 h-4" /></Button>
-          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground truncate">{s.shipmentNumber}</h1>
+          <h1 className="text-2xl sm:text-[1.75rem] font-semibold tracking-tight text-foreground truncate">{s.shipmentNumber}</h1>
           <ShipmentStatusBadge shipment={s} />
         </div>
         <div className="flex flex-wrap gap-2">

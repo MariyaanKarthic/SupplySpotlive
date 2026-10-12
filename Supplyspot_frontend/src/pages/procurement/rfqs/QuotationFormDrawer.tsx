@@ -8,6 +8,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from '@/components/ui/drawer';
 import { PAYMENT_TERMS, Quotation, RFQ, formatMoney, inDaysIso, isPendingQuote, mapQuotation, todayIso } from './rfqModel';
+import { FormAlert } from '@/components/common';
+import { toast } from 'sonner';
 
 interface LineDraft {
   quote: boolean; // false = the vendor did not quote this item
@@ -103,7 +105,9 @@ export function QuotationFormDrawer({
       });
       onSaved(mapQuotation(res.data));
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Could not save the quotation');
+      const message = err instanceof Error ? err.message : 'Could not save the quotation';
+      setError(message);
+      toast.error(message);
     } finally {
       setSaving(false);
     }
@@ -120,7 +124,7 @@ export function QuotationFormDrawer({
         <div className="flex-1 overflow-y-auto p-6 space-y-6">
           <section className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5 sm:col-span-2">
-              <Label>Vendor</Label>
+              <Label className="label-required">Vendor</Label>
               {availableVendors.length === 0 ? (
                 <p className="text-sm text-muted-foreground">Every invited vendor already has an open quotation. Reject one first to record a revised quote.</p>
               ) : (
@@ -133,7 +137,7 @@ export function QuotationFormDrawer({
               )}
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="qt-delivery">Delivery date</Label>
+              <Label className="label-required" htmlFor="qt-delivery">Delivery date</Label>
               <Input id="qt-delivery" type="date" min={todayIso()} value={deliveryDate} onChange={(e) => { setError(null); setDeliveryDate(e.target.value); }} />
             </div>
             <div className="space-y-1.5">
@@ -207,10 +211,10 @@ export function QuotationFormDrawer({
             )}
           </div>
           <div className="flex flex-col items-stretch sm:items-end gap-2">
-            {error && <p className="text-sm text-destructive" role="alert">{error}</p>}
+            {error && <FormAlert>{error}</FormAlert>}
             <div className="flex gap-2 justify-end">
               <Button variant="ghost" onClick={() => onOpenChange(false)} disabled={saving}>Cancel</Button>
-              <Button onClick={save} disabled={saving || availableVendors.length === 0}>{saving ? 'Saving…' : 'Save quotation'}</Button>
+              <Button onClick={save} disabled={saving || availableVendors.length === 0} loading={saving}>{saving ? 'Saving…' : 'Save quotation'}</Button>
             </div>
           </div>
         </div>

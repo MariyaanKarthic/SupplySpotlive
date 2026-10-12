@@ -15,6 +15,7 @@ import { formatDate } from '../procurement/purchase-orders/poModel';
 import { STATUS_META, InvoiceStatus } from '../finance/invoices/invoiceModel';
 import { DateFilter, Preset, PRESETS, presetRange, rangeLabel } from './dateRange';
 import { AiFinanceSummary } from './AiFinanceSummary';
+import { KpiCard, KpiTone } from '@/components/common';
 
 const DEFAULT_PRESET: Preset = 'this_year';
 
@@ -129,8 +130,8 @@ export function FinanceDashboard({ onNavigate }: { onNavigate?: (view: any) => v
   const label = rangeLabel(preset, range.from, range.to);
 
   return (
-    <div className="px-6 pb-6 space-y-6 w-full max-w-full overflow-x-hidden">
-      <div className="sticky top-0 bg-background/95 backdrop-blur z-20 border-b py-3 -mx-6 px-6">
+    <div className="px-4 sm:px-6 pb-8 space-y-6 w-full max-w-full overflow-x-hidden">
+      <div className="sticky top-0 bg-background/95 backdrop-blur z-20 border-b py-3 -mx-4 px-4 sm:-mx-6 sm:px-6">
         <Breadcrumb className="text-xs">
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -144,7 +145,7 @@ export function FinanceDashboard({ onNavigate }: { onNavigate?: (view: any) => v
 
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">Finance Dashboard</h1>
+          <h1 className="text-2xl sm:text-[1.75rem] font-semibold tracking-tight text-foreground">Finance Dashboard</h1>
           <p className="text-sm text-muted-foreground mt-1">
             Spending, invoices and payments · {data?.scope.label || '…'}
           </p>
@@ -214,7 +215,7 @@ function KpiRow({ data, loading, periodLabel, onOpenInvoices }: {
       sub: k ? `${k.totalSpending.count} approved PO${k.totalSpending.count === 1 ? '' : 's'} · ${periodLabel}` : periodLabel,
       note: k ? othersNote(k.totalSpending.others) : null,
       icon: IndianRupee,
-      tone: 'border-l-blue-500 [&_.kpi-icon]:bg-blue-50 [&_.kpi-icon]:text-blue-600',
+      tone: 'blue' as KpiTone,
       valueClass: 'text-foreground',
     },
     {
@@ -229,7 +230,7 @@ function KpiRow({ data, loading, periodLabel, onOpenInvoices }: {
         : null,
       noteClass: 'text-amber-700',
       icon: Wallet,
-      tone: 'border-l-red-400 [&_.kpi-icon]:bg-red-50 [&_.kpi-icon]:text-red-500',
+      tone: 'amber' as KpiTone,
       valueClass: 'text-foreground',
       onClick: () => onOpenInvoices('approved'),
     },
@@ -240,7 +241,7 @@ function KpiRow({ data, loading, periodLabel, onOpenInvoices }: {
       sub: k ? `${k.paid.count} payment${k.paid.count === 1 ? '' : 's'} recorded` : 'Payments by payment date',
       note: k ? othersNote(k.paid.others) : null,
       icon: CheckCircle2,
-      tone: 'border-l-emerald-500 [&_.kpi-icon]:bg-emerald-50 [&_.kpi-icon]:text-emerald-600',
+      tone: 'emerald' as KpiTone,
       valueClass: 'text-emerald-700',
       onClick: () => onOpenInvoices('paid'),
     },
@@ -251,7 +252,7 @@ function KpiRow({ data, loading, periodLabel, onOpenInvoices }: {
       sub: k ? `${k.overdue.count} approved and past due` : 'Approved and past due',
       note: k ? othersNote(k.overdue.others) : null,
       icon: AlertTriangle,
-      tone: 'border-l-red-600 [&_.kpi-icon]:bg-red-100 [&_.kpi-icon]:text-red-600',
+      tone: 'red' as KpiTone,
       valueClass: k && k.overdue.count ? 'text-red-600' : 'text-foreground',
       onClick: () => onOpenInvoices('overdue'),
     },
@@ -259,27 +260,10 @@ function KpiRow({ data, loading, periodLabel, onOpenInvoices }: {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
-      {tiles.map(t => {
-        const Icon = t.icon;
-        const body = (
-          <Card className={`border-l-4 shadow-sm h-full ${t.tone} ${t.onClick ? 'hover:shadow-md transition-all' : ''}`}>
-            <CardContent className="p-4 flex items-start justify-between gap-3">
-              <div className="min-w-0 space-y-1">
-                <p className="text-xs text-muted-foreground font-medium truncate">{t.label}</p>
-                <p className={`text-2xl font-bold tabular-nums ${t.valueClass} ${loading && !data ? 'animate-pulse' : ''}`}>{t.value}</p>
-                <p className="text-[11px] text-muted-foreground truncate">{t.sub}</p>
-                {t.note && <p className={`text-[11px] truncate ${t.noteClass || 'text-muted-foreground'}`}>{t.note}</p>}
-              </div>
-              <div className="kpi-icon rounded-lg p-2 shrink-0"><Icon className="w-5 h-5" /></div>
-            </CardContent>
-          </Card>
-        );
-        return t.onClick ? (
-          <button key={t.id} type="button" onClick={t.onClick} className="text-left rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-            {body}
-          </button>
-        ) : <div key={t.id}>{body}</div>;
-      })}
+      {tiles.map(t => (
+        <KpiCard key={t.id} label={t.label} value={t.value} hint={t.sub} note={t.note} noteClassName={t.noteClass || 'text-muted-foreground'}
+          icon={t.icon} tone={t.tone} valueClassName={t.valueClass} loading={loading && !data} onClick={t.onClick} />
+      ))}
     </div>
   );
 }
